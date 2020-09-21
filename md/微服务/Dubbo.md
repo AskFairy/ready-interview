@@ -93,3 +93,5 @@ registry://multicast://224.5.6.7:1234/com.alibaba.dubbo.registry.RegistryService
 ```
 
 然后基于扩展点自适应机制，通过 URL 的“`registry://`”协议头识别，就会调用 `RegistryProtocol` 的 `refer()` 方法，基于 refer 参数中的条件，查询服务 demoService 的地址。
+
+#### 服务调用
