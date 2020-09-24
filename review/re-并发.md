@@ -2,9 +2,13 @@
 
 ## 基础
 
+### [四大引用](https://www.bilibili.com/video/BV1fA411b7SX?from=search&seid=15217194448663357475)
+
 
 
 ### ThreadLocal
+
+
 
 如果共享数据的代码是能保证在同一个线程中执行，即**一个变量只要被某个线程独享**。
 
@@ -65,7 +69,7 @@ rehash() 时先探测石清理所有元素
 2. **没有直接定**位到了，key不同，需要**拉链式寻找**。
 3. **没有直接定位到**了，key不同，拉链式寻找，**遇到GC清理元素，需要探测式清理，再寻找元素。**
 
- ThreadLocal 一定要记得 `new ThreadLocal<>().remove();` 操作。避免弱引用发生GC后，导致内存泄漏的问题。
+ ThreadLocal 一定要记得 `new ThreadLocal<>().remove();` 操作。避免弱引用发生GC后，导致内存泄漏的问题。![1f0c4cca490b83f953b3a74299fc7cf](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200924172037.png)
 
 
 
