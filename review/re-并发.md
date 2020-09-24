@@ -20,15 +20,31 @@
 
 #### 实现原理
 
-每一个线程的`Thread对象中都有一个ThreadLocalMap对象`，它是一个数组，当
+每一个线程的`Thread对象中都有一个ThreadLocalMap对象`，
 
-`ThreadLocal对象`就是当前线程的ThreadLocalMap的`访问入口`，`每一个 ThreadLocal对象`都包含了一个独一无二的`threadLocalHashCode`值，使用这个值就可以在线程K-V值对中找回对应的本地线程变量。
+ThreadLocalMap对象底层采用数组结构Entry[]存储数据，Entry[]是一个弱引用实现，当Key、不是强引用时，发生GC时就会被垃圾回收。
 
-ThreadLocalMap对象底层采用数组结构存储数据，它是一个弱引用实现，当
+`ThreadLocal对象`就是当前线程的ThreadLocalMap的`访问入口`，
 
-`ThreadLocal对象`就是当前线程的ThreadLocalMap的`访问入口`，`每一个 ThreadLocal对象`都包含了一个独一无二的`threadLocalHashCode`值，使用这个值就可以在线程K-V值对中找回对应的本地线程变量。
+**为了让数据更加散列，减少哈希碰撞** `ThreadLocal` 使用的就是 **斐波那契（Fibonacci）散列法 + 拉链法存储数据到数组结构中**。
 
-其中存储了一组`以ThreadLocal.threadLocalHashCode为键`，`以本地线程变量为值`的K-V值对。
+`f(k) = (k * 2654435769) >> 28`
+
+只要实例化一个 `ThreadLocal` 对象，就会获取一个相应的哈希值`threadLocalHashCode`值。
+
+并通过`int i = key.threadLocalHashCode & (len-1);`获取数组下标的。
+
+插入时待插入的下标，是空位置直接插入。待插入的下标，不为空，key 相同，直接更新情况3，待插入的下标，不为空，key 不相同，拉链法寻址情况4，不为空，key 不相同，碰到过期key。其实情况4，遇到的是弱引用发生GC时，产生的情况。碰到这种情况，`ThreadLocal` 会进行探测清理过期key，这部分清理内容后续讲解。
+
+
+
+
+
+
+
+
+
+
 
 ## 并发工具类
 
