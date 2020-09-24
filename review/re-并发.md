@@ -4,6 +4,20 @@
 
 
 
+### ThreadLocal
+
+如果共享数据的代码是能保证在同一个线程中执行，即**一个变量只要被某个线程独享**。
+
+我们可以通过**ThreadLocal类来将变量存储到线程本地**，来解决线程安全问题。
+
+#### 应用场景
+
+
+
+每一个线程的`Thread对象中都有一个ThreadLocalMap对象`，其中存储了一组`以ThreadLocal.threadLocalHashCode为键`，`以本地线程变量为值`的K-V值对
+
+`ThreadLocal对象`就是当前线程的ThreadLocalMap的`访问入口`，`每一个 ThreadLocal对象`都包含了一个独一无二的`threadLocalHashCode`值，使用这个值就可以在线程K-V值对中找回对应的本地线程变量。
+
 
 
 ## 并发工具类
