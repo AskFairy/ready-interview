@@ -12,6 +12,13 @@
 
 #### 应用场景
 
+1. `SimpleDateFormat`
+   - SimpleDateFormat(下面简称sdf)类内部有一个Calendar对象引用,它用来储存和这个sdf相关的日期信息如果你的sdf是个static的, 那么**多个thread** 之间就会共享这个sdf, 同时也是共享这个Calendar引用,**对这个Calendar同时操作就会导致读写不一致的情况**,常见的异常有: 1.数组下标越界; 2. input为空字符串。
+2. 基于[谷歌`Dapper`](https://bigbully.github.io/Dapper-translation/)论文实现**非入侵全链路追踪**，使用 `ThreadLocal` 记录方法执行ID。
+3. MDC日志框架
+
+可以使用ThreadLocal 分别为每个线程创建独立的 SimpleDateFormat。
+
 
 
 每一个线程的`Thread对象中都有一个ThreadLocalMap对象`，其中存储了一组`以ThreadLocal.threadLocalHashCode为键`，`以本地线程变量为值`的K-V值对
