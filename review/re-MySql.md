@@ -123,6 +123,8 @@ WHERE b = 1 ORDER BY time DESC
 
 #### 索引原理
 
+读取基本单位  page  16k
+
 
 
 #### 资料
