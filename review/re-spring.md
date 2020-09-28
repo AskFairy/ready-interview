@@ -8,6 +8,17 @@ spring loC, spring容器，根据Xm配置，或者是你的注解，去实例化
 
 系统的类与类之间彻底的解耦合现在这套比较高大上的一点系统里，有几十个类都使用了@ Resource
 
+#### 反射
+
+<img src="https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928202111.png" alt="image-20200928202109635" style="zoom:50%;" />
+
+1. getDeclaredFiled 仅能获取类本身的属性成员（包括私有、共有、保护） 
+2. getField 仅能获取类(及其父类可以自己测试) public属性成员
+
+#### 注解
+
+
+
 #### AOP
 
 
