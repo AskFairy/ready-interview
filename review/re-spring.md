@@ -19,8 +19,14 @@ spring loC, spring容器，根据Xm配置，或者是你的注解，去实例化
 
 <img src="https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928202954.png" alt="image-20200928202951915" style="zoom:50%;" />
 
-### 
+### ICO容器
 
 
 
-![image-20200928204832272](upload\image-20200928204832272.png)
+![image-20200928204832272](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928205135.png)
+
+![image-20200928205153278](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928205155.png)
+
+3. 监听器模式
+
+<img src="upload\image-20200928205517338.png" alt="image-20200928205517338" style="zoom:33%;" />
