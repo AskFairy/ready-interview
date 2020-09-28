@@ -133,3 +133,9 @@ kill -SIGTERM 16882
 hub 重载日志文件
 
 usr1做日志文件的切割
+
+![image-20200928150532520](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928150534.png)
+
+![image-20200928150614260](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928150615.png)
+
+- shutdownTimeOut
