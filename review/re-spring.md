@@ -50,6 +50,6 @@ spring loC, spring容器，根据Xm配置，或者是你的注解，去实例化
 
 2. 再得到工厂BeanFactory
 3. BeanFactoryPostProcessor
-4.  BeanPostProcessor
-5. 时间，观察者模式
-6. 
+4.  BeanPostProcessor（AOP在这实现）
+5. 事件，观察者模式
+6. 开始对象实例化
