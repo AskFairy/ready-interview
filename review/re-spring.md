@@ -36,8 +36,20 @@ spring loC, spring容器，根据Xm配置，或者是你的注解，去实例化
 - BeanFactory：模板工厂
 - FactoryBean：个性化定制Bean
 
-![image-20200928211259988](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928211303.png)
-
 #### 核心方法
 
 ![image-20200928211433401](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928211435.png)
+
+
+
+
+
+1. 先读取环境值：
+
+![image-20200928211259988](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928211303.png)
+
+2. 再得到工厂BeanFactory
+3. BeanFactoryPostProcessor
+4.  BeanPostProcessor
+5. 时间，观察者模式
+6. 
