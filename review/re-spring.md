@@ -15,13 +15,9 @@ spring loC, spring容器，根据Xm配置，或者是你的注解，去实例化
 1. getDeclaredFiled 仅能获取类本身的属性成员（包括私有、共有、保护） 
 2. getField 仅能获取类(及其父类可以自己测试) public属性成员
 
-#### 注解
+#### 注解注入
 
-
-
-#### AOP
-
-
+<img src="https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928202954.png" alt="image-20200928202951915" style="zoom:50%;" />
 
 
 
