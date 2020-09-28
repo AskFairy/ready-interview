@@ -30,3 +30,8 @@ spring loC, spring容器，根据Xm配置，或者是你的注解，去实例化
 3. 监听器模式
 
 <img src="upload\image-20200928205517338.png" alt="image-20200928205517338" style="zoom:33%;" />
+
+![image-20200928210746438](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928210752.png)
+
+- BeanFactory：模板工厂
+- FactoryBean：个性化定制Bean
