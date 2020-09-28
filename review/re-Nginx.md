@@ -138,4 +138,12 @@ usr1做日志文件的切割
 
 ![image-20200928150614260](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928150615.png)
 
-- shutdownTimeOut
+- worker_shutdown_TimeOut
+
+升级Nginx，使用
+
+![image-20200928151105436](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928151107.png)
+
+优雅的关闭：针对HTTP请求
+
+![image-20200928151448502](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928151449.png)
