@@ -120,4 +120,16 @@ Nginx: 采用单线程来异步非阻塞处理请求(epoll)，不会为每个请
 
 一个worker绑定一个cpu核，更好使用cpu核中的缓存，减少缓存失效的命中率。
 
-kill
+![image-20200928145020276](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928145022.png)
+
+reload   ==   kill -SIGHUB 9170 
+
+kill -SIGTERM 16882
+
+命令行的子命令，就是向Master进程发送信号
+
+![image-20200928145530397](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928145533.png)
+
+hub 重载日志文件
+
+usr1做日志文件的切割
