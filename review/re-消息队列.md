@@ -6,10 +6,12 @@
 
 目前主流的消息队列有
 
-- Kafka
-- RabbitMQ
-- RocketMQ 
-- ActiveMQ 
+- Kafka：大数据、实时计算，kafka是业内标准。
+- RabbitMQ：开源，Erlang实现，Spring Cloud 支持上不错，社区活跃
+- RocketMQ ：Java实现，阿里出品。
+- ActiveMQ ：不清楚，没经过大规模吞吐量场景的验证，社区不活跃
+
+![image-20200928164858644](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928164900.png)
 
 #### 角色
 
