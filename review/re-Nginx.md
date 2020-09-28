@@ -147,3 +147,18 @@ usr1做日志文件的切割
 优雅的关闭：针对HTTP请求
 
 ![image-20200928151448502](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928151449.png)
+
+![image-20200928152111397](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928152112.png)
+
+![image-20200928152347122](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928152349.png)
+
+三次握手后，才通知唤醒Nginx，Nginx从操作系统kernel中获取事件
+
+
+
+
+
+![image-20200928152830807](https://gitee.com//chenchong0817/picture/raw/master/Aaron/20200928152832.png)
+
+- 每次取活跃链接，只会遍历链表，链表
+
