@@ -51,8 +51,36 @@
 #### 消费语义
 
 1. 消息至多被消费一次（At most once）：消息可能会丢失，但绝不重传。
+
    - 吞吐量大，容忍消息丢失。
    - Message Broker不对接收到的消息响应确认
+   - Message Broker转发不要求持久性，也不关心消费者是否真的收到
+   - Message Broker消息被拿走就删除，不关心消费者，消费情况
+
 2. 消息至少被消费一次（At least once）：消息可以重传，但绝不丢失。
+
+   - Message Broker 必须响应对消息的确认，并提供持久性保障
+   - 接收到消费者通知后，才删除消息。
+
 3. 消息仅被消费一次（Exactly once）：每一条消息只被传递一次。
+
+   - Message Broker 上存储的消息被 Consumer 仅消费一次。
+
+     - Message Broker不对接收到的消息响应确认
+
+     - Message Broker 提供持久性保障
+     - 消息有唯一标识，消费者记录唯一标准，防止重复消费
+
+   - Producer 上产生的消息被 Consumer 仅消费一次。
+
+     - Message Broker对接收到的消息响应确认。 Producer 负责为该消息产生唯一标识，以防止 Consumer 重复消费
+     - Message Broker 提供持久性保障，消息队列里有唯一标识
+     - 消费者记录唯一标识，防止重复消费
+
+#### 消息队列有几种投递方式？分别有什么优缺点
+
+push
+
+- 优点：即时
+- 缺点：就是受限于消费者的消费能力，可能造成消息的堆积
 
