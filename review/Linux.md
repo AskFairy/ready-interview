@@ -444,20 +444,20 @@ $ kill -9 7243
 - 同时将某个文件的属主改为 oracle ，属组改为 db ：`chown oracle:dba dbora.sh` 。
 - 使用 `-R` 选项对目录和目录下的文件进行递归修改：`chown -R oracle:dba /home/oracle` 。
 
-### uname 命令
+### uname 命令 （系统相关信息）
 
 [《Linux 命令大全 —— uname 命令》](http://man.linuxde.net/uname)
 
 - uname 可以显示一些重要的系统信息，例如内核名称、主机名、内核版本号、处理器类型之类的信息：`uname -a` 。
 
-### whereis 命令
+### whereis 命令 （定位指令的二进制程序、源代码文件和[man](http://man.linuxde.net/man)手册页等相关文件的路径。）
 
 [《Linux 命令大全 —— whereis 命令》](http://man.linuxde.net/whereis)
 
 - 当你不知道某个命令的位置时可以使用 whereis 命令，下面使用 whereis 查找 ls 的位置：`whereis ls` 。
 - 当你想查找某个可执行程序的位置，但这个程序又不在 whereis 的默认目录下，你可以使用 `-B` 选项，并指定目录作为这个选项的参数。下面的命令在 `/tmp` 目录下查找 lsmk 命令：`whereis -u -B /tmp -f lsmk` 。
 
-### locate 命令
+### locate 命令 （查找文件或目录，但查不到最新）
 
 [《Linux 命令大全 —— locate 命令》](http://man.linuxde.net/locate)
 
@@ -466,7 +466,7 @@ $ kill -9 7243
 
 另外，胖友如果使用 CentOS 找不到 locate 命令，可以看看 [《CentOS 系统找到 locate 命令及 locate 搜索不到存在的文件》](https://blog.csdn.net/u014800380/article/details/72476026) 文章。
 
-### man 命令
+### man 命令 （帮助）
 
 [《Linux 命令大全 —— man 命令》](http://man.linuxde.net/man)
 
