@@ -180,7 +180,7 @@
   CTRL+B – backward one window
   ```
 
-## 通用命令
+## 文件相关命令
 
 ### grep 命令
 
@@ -269,7 +269,7 @@ SELINUXTYPE=targeted
 - 打开文件跳到第一个匹配的行：`vim +/search-term filename.txt` 。
 - 以只读模式打开文件：`vim -R /etc/passwd` 。
 
-### diff 命令
+### diff 命令（比较）
 
 > 貌似不太常用，当学习下。
 
@@ -289,7 +289,7 @@ SELINUXTYPE=targeted
 
 🦅 ****
 
-### xargs 命令
+### xargs 命令 （给其他命令传递参数的一个过滤器，也是组合多个命令的一个工具）
 
 [《Linux 命令大全 —— xargs 命令》](http://man.linuxde.net/xargs)
 
@@ -304,7 +304,7 @@ SELINUXTYPE=targeted
 
 ## 压缩相关
 
-### tar 命令
+### tar 命令 (解压tar -xvf)
 
 [《tar 压缩解压缩命令详解》](https://www.cnblogs.com/jyaray/archive/2011/04/30/2033362.html)
 
@@ -312,7 +312,7 @@ SELINUXTYPE=targeted
 - 解压 tar 文件：`tar xvf archive_name.tar` 。
 - 查看 tar 文件：`tar tvf archive_name.tar` 。
 
-### gzip 命令
+### gzip 命令 (压缩：.gz格式)
 
 [《Linux 命令大全 —— gzip 命令》](http://man.linuxde.net/gzip)
 
@@ -320,7 +320,7 @@ SELINUXTYPE=targeted
 - 解压 `*.gz` 文件：`gzip -d test.txt.gz` 。
 - 显示压缩的比率：`gzip -l *.gz` 。
 
-### bzip2 命令
+### bzip2 命令(压缩：.bz2格式)
 
 [《Linux 命令大全 —— bzip2 命令》](http://man.linuxde.net/bzip2)
 
@@ -336,7 +336,7 @@ SELINUXTYPE=targeted
 
 ## 系统命令
 
-### export 命令
+### export 命令  （将shell变量输出为环境变量）
 
 [《Linux 命令大全 —— export 命令》](http://man.linuxde.net/export)
 
@@ -360,7 +360,7 @@ ramesh    7243  7222  9 22:43 pts/2    00:00:00 vim
 $ kill -9 7243
 ```
 
-### passwd 命令
+### passwd 命令（修改密码）
 
 [《Linux 命令大全 —— passwd 命令》](http://man.linuxde.net/passwd)
 
@@ -384,7 +384,7 @@ $ kill -9 7243
 
 - 用指定用户登录，并且使用指定的 shell 程序，而不用默认的：`su -s 'SHELLNAME' USERNAME` 。
 
-### yum 命令
+### yum 命令 （[rpm](http://man.linuxde.net/rpm)的软件包管理器）
 
 [《Linux 命令大全 —— yum 命令》](http://man.linuxde.net/yum)
 
@@ -392,7 +392,7 @@ $ kill -9 7243
 - 更新 apache ：`yum update httpd` 。
 - 卸载/删除 apache ：`yum remove httpd` 。
 
-### rpm 命令
+### rpm 命令 (rpm软件包管理命令)
 
 [《Linux 命令大全 —— rpm 命令》](http://man.linuxde.net/rpm)
 
@@ -400,7 +400,7 @@ $ kill -9 7243
 - 更新 apache ：`rpm -uvh httpd-2.2.3-22.0.1.el5.i386.rpm` 。
 - 卸载/删除 apache ：`rpm -ev httpd` 。
 
-### shutdown 命令
+### shutdown 命令  （关机）
 
 [《Linux 命令大全 —— shutdown 命令》](http://man.linuxde.net/shutdown)
 
@@ -409,14 +409,14 @@ $ kill -9 7243
 - 重启：`shutdown -r now` 。
 - 重启期间强制进行系统检查：`shutdown -Fr now` 。
 
-### crontab 命令
+### crontab 命令 (定时任务)
 
 [《Linux 命令大全 —— crontab 命令》](http://man.linuxde.net/crontab)
 
 - 查看某个用户的 crontab 配置：`crontab -u user -l` 。
 - 设置一个每十分钟执行一次的计划任务：`*/10 * * * * /home/ramesh/check-disk-space` 。【前提是，在 crontab 下】
 
-### service 命令
+### service 命令 （系统命令）
 
 [《Linux 命令大全 —— service 命令》](http://man.linuxde.net/service)
 
@@ -427,7 +427,7 @@ $ kill -9 7243
 
 另外，使用 chkconfig 命令，可以设置服务在系统启动时，是否自动启动。详细的，见 [《Linux 命令大全 —— chkconfig 命令》](http://man.linuxde.net/chkconfig) 文章。
 
-### chmod 命令
+### chmod 命令 （权限命令）
 
 [《Linux 命令大全 —— chmod 命令》](http://man.linuxde.net/chmod)
 
@@ -436,7 +436,7 @@ $ kill -9 7243
 - 删除指定文件的属组的所有权限：`chmod g-rwx file.txt` 。
 - 修改目录的权限，以及递归修改目录下面所有文件和子目录的权限：`chmod -R ug+rwx file.txt` 。
 
-### chown 命令
+### chown 命令  （分区命令）
 
 [《Linux 命令大全 —— chown 命令》](http://man.linuxde.net/chown)
 
