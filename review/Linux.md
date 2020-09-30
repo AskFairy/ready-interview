@@ -1,24 +1,3 @@
-
-
-[回到首页](http://svip.iocoder.cn/index)
-
-# [芋道源码 —— 知识星球](http://svip.iocoder.cn/)
-
-我是一段不羁的公告！
-记得给艿艿这两个项目加油，添加一个 STAR 噢。
-https://github.com/YunaiV/SpringBoot-Labs
-https://github.com/YunaiV/onemall
-
-# 精尽 Linux 面试题
-
-以下面试题，基于网络整理，和自己编辑。具体参考的文章，会在文末给出所有的链接。
-
-如果胖友有自己的疑问，欢迎在星球提问，我们一起整理吊吊的【网络】面试题的大保健。
-
-而题目的难度，艿艿尽量按照从容易到困难的顺序，逐步下去。
-
-另外，本面试题面向的是开发，而不是运维。所以会写的相对简单，以开发常见的 Linux 面试题为准。并且，本文会整理一些常用的 Linux 的命令，对应标题为 `命令` 结果为的小节，例如说 `cp` 命令，对应到 “cp 命令” 小节。
-
 # 常用命令
 
 > 艿艿：这一小节会非常非常非常长，当做温故知新吧。
@@ -86,7 +65,7 @@ https://github.com/YunaiV/onemall
 
 - `cd` ：可以在最近工作的两个目录间切换。
 
-## mkdir 命令
+### mkdir 命令
 
 [《Linux 命令大全 —— mkdir 命令》](http://man.linuxde.net/mkdir)
 
