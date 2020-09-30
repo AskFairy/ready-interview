@@ -111,6 +111,8 @@
   0 0 * * 7 /bin/cp /user/backup /tmp
   ```
 
+#### `rsync` 比 `scp` 的性能更好
+
 🦅 **每周一下午三点将 `/tmp/logs` 目录下面的后缀为 `\*.log` 的所有文件 rsync 同步到备份服务器 `192.168.1.100` 中同样的目录下面**
 
 - 配置如下：
@@ -122,11 +124,11 @@
 
 相比来说，`rsync` 比 `scp` 的性能更好。具体可以看看 [《scp 与 rsync 性能实测》](https://tinyhema.iteye.com/blog/2107158) 文章。
 
-### mount 命令
+### mount 命令 （挂载文件系统）
 
 [《Linux 命令大全 —— mount 命令》](http://man.linuxde.net/mount)
 
-- 如果要挂载一个文件系统，需要先创建一个目录，然后将这个文件系统挂载到这个目录上：
+- 如果要**挂载一个文件系统**，需要先创建一个目录，然后将这个文件系统挂载到这个目录上：
 
   ```
   # mkdir /u01
@@ -147,7 +149,7 @@
 - 你可以一次查看多个文件的内容，下面的命令会先打印 file1 的内容，然后打印 file2 的内容：`cat file1 file2` 。
 - `-n` 命令可以在每行的前面加上行号：`cat -n /etc/logrotate.conf` 。
 
-🦅 **如何看当前 Linux 系统有几颗物理 CPU 和每颗 CPU 的核数？**
+#### 🦅 **如何看当前 Linux 系统有几颗物理 CPU 和每颗 CPU 的核数？**
 
 ```
 [root@centos6 ~ 10:55 #35]# cat /proc/cpuinfo|grep -c 'physical id'
@@ -165,7 +167,7 @@
 - 你可以使用 `-n` 选项指定要显示的行数：`tail -n N filename.txt` 。
 - 你也可以使用 `-f` 选项进行实时查看，这个命令执行后会等待，如果有新行添加到文件尾部，它会继续输出新的行，在查看日志时这个选项会非常有用。你可以通过 `CTRL-C` 终止命令的执行：`tail -f log-file` 。
 
-### less 命令
+### less 命令  （不加载整个文件显示）
 
 [《Linux 命令大全 —— less 命令》](http://man.linuxde.net/less)
 
@@ -188,7 +190,9 @@
 - 输出成功匹配的行，以及该行之后的三行：`grep -A 3 -i "example" demo_text` 。
 - 在一个文件夹中递归查询包含指定字符串的文件：`grep -r "ramesh" *` 。
 
-### sed 命令
+### sed 命令  （命令行下编辑文件，行）
+
+主要用来自动编辑一个或多个文件；简化对文件的反复操作；编写转换程序等。
 
 [《Linux 命令大全 —— sed 命令》](http://man.linuxde.net/sed)
 
@@ -227,7 +231,7 @@ SELINUX=disabled
 SELINUXTYPE=targeted
 ```
 
-### awk 命令
+### awk 命令 （抽取整理文件，列）
 
 [《Linux 命令大全 —— awk 命令》](http://man.linuxde.net/awk)
 
@@ -257,7 +261,7 @@ SELINUXTYPE=targeted
   bin:x:1:1:bin:/bin:/sbin/nologin
   ```
 
-### vim 命令
+### vim 命令   
 
 [《Linux vi/vim》](http://www.runoob.com/linux/linux-vim.html)
 
