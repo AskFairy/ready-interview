@@ -145,7 +145,9 @@
 3. 消费端弄丢了数据
 
    - RabbitMQ 提供的 `ack` 机制，简单来说，就是**你必须关闭 RabbitMQ 的自动 ack** ，可以通过一个 api 来调用就行，然后每次你自己代码里确保处理完的时候，再在程序里 `ack` 一把。
-   - 为防止任务执行期间出错，设置NO_ACK=FALSE标志，这样、一旦任务没有应答的话，相应的任务就会被RabbitMQ自动Re-Queue,避免丢失任务（手动ACK超时怎么办？禁用心跳不行，线程池，定时统一处理异常。）
+   - [为防止任务执行期间出错](https://www.cnblogs.com/julygift/p/9445107.html)，设置NO_ACK=FALSE标志，这样、一旦任务没有应答的话，相应的任务就会被RabbitMQ自动Re-Queue,避免丢失任务
+     - 问题-超时一直Re-Queue，死循环。
+   - 绑定死信队列
 
 ###### **Kafka**
 
