@@ -220,7 +220,7 @@
 - **消费**的时候，只会从 leader 去读，但是只有当一个消息已经被所有 follower 都同步成功返回 ack 的时候，这个消息才会被消费者读到。
 -  broker 宕机：会从 follower 中**重新选举**一个新的 leader 出来
 
-#### 设计一个消息队列
+#### [设计一个消息队列](https://www.cnblogs.com/expiator/p/10021298.html)
 
 - 可伸缩，broker -> topic -> partition
 - 落地磁盘：顺序写
