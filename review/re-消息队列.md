@@ -152,34 +152,40 @@
 ###### **Kafka**
 
 1. 消费端弄丢了数据
-   - **关闭自动提交** offset，在处理完之后自己手动提交 offset，就可以保证数据不会丢，**可能会有重复消费**，自己保证幂等性
+   - **关闭自动提交** offset，在处理完之后自己**手动提交 offset**，就可以保证数据不会丢，**可能会有重复消费**，自己保证幂等性
 2. Kafka 弄丢了数据
    - broker 宕机，然后重新选举 partition 的 leader，没来得及同步，丢失数据，
    - 为了防止leader切换不丢数据
-     - 给 topic 设置 `replication.factor` 参数：这个值必须大于 1，要求每个 p**artition 必须有至少 2 个副本**。
+     - 给 topic 设置 `replication.factor` 参数：这个值必须大于 1，要求每个**partition 必须有至少 2 个副本**。
      - 在 Kafka 服务端设置 `min.insync.replicas` 参数：这个值必须大于 1，这个是**要求一个 leader 至少感知到有至少一个 follower 还跟自己保持联系，没掉队**，这样才能确保 leader 挂了还有一个 follower 吧。
      - 在 **producer 端**设置 `acks=all` ：这个是要求每条数据，必须是**写入所有 replica 之后，才能认为是写成功了**。
      - 在 **producer 端**设置 `retries=MAX` （很大很大很大的一个值，无限次重试的意思）：这个是**要求一旦写入失败，就无限重试**，卡在这里了。
 3. 生产者会不会弄丢数据？
-   - 设置了 `acks=all` ,生产者会自动不断的重试，重试无限次。
+   - 设置了 `acks=all`、`retries=Ingeter.Max` ,生产者会自动不断的重试，重试无限次。
 
 ##### 如何保证消息的顺序性？
 
 场景： mysql `binlog` 日志，到MQ，再出来，顺序得一致。多个消费者，多个线程消费。
 
-解决顺序型，得同步
+解决顺序型，得同步.
 
 ###### 解决方案
 
 **RabbitMQ**
 
 1. 拆分多个 queue，每个 queue 一个 consumer
+
 2. 一个 queue 但是对应一个 consumer，然后这个 consumer 内部用**内存队列做排队**，然后分发给底层不同的 worker 来处理。
+
+   ![rabbitmq-order-02](https://github.com/doocs/advanced-java/raw/master/docs/high-concurrency/images/rabbitmq-order-02.png)
 
 **Kafka**
 
-1. 一个 topic，一个 partition，一个 consumer，内部单线程消费
-2. 写 **N 个内存 queue**，具有相同 key 的数据都到同一个内存 queue；然后对于 N 个线程，**每个线程分别消费一个内存 queue** 即可，这样就能保证顺序性。
+1. 一个 topic，每个个 partition，对应一个 consumer，内部单线程消费
+
+2. 再写 **N 个内存 queue**，具有相同 key 的数据都到同一个内存 queue；然后对于 N 个线程，**每个线程分别消费一个内存 queue** 即可，这样就能保证顺序性。
+
+   ![kafka-order-02](https://github.com/doocs/advanced-java/raw/master/docs/high-concurrency/images/kafka-order-02.png)
 
 ##### 如何解决消息积压的问题？
 
