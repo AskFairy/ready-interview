@@ -266,6 +266,14 @@ MyISAM 的索引方式也叫做“**非聚集**”的，之所以这么称呼是
   >
   > 将被查询的字段，建立到联合索引里去。
 
+### 事物
+
+**什么是事务？事务的四大特性是什么？并发事务会带来哪些问题？有哪些解决方案？**
+
+https://mp.weixin.qq.com/s/Qfvfj9R_dJiV65s48IdLdQ
+
+https://www.jianshu.com/u/b64b58a43e1c
+
 #### 资料
 
 http://blog.codinglabs.org/articles/theory-of-mysql-index.html
