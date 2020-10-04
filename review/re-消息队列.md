@@ -335,15 +335,15 @@ RabbitMQ具体特点包括：
 
 是的。客户端感觉不到有何不同。
 
-🦅 **若 Cluster 中拥有某个 queue 的 owner node 失效了，且该 queue 被声明具有 durable 属性，是否能够成功从其他 node 上重新声明该 queue ？**
+🦅 **若 Cluster 中拥有某个 queue 的 owner node 失效了，且该 queue 被声明具有 durable 属性(持久化属性)，是否能够成功从其他 node 上重新声明该 queue ？**
 
 - 不能，在这种情况下，将得到 404 NOT_FOUND 错误。只能等 queue 所属的 node 恢复后才能使用该 queue 。
 - 但若该 queue 本身不具有 durable 属性，则可在其他 node 上重新声明。
 
-🦅 **Cluster 中 node 的失效会对 consumer 产生什么影响？若是在 cluster 中创建了 mirrored queue ，这时 node 失效会对 consumer 产生什么影响？**
+🦅 **Cluster 中 node 的失效会对 consumer 产生什么影响？若是在 cluster 中创建了 mirrored queue（镜像队列） ，这时 node 失效会对 consumer 产生什么影响？**
 
-- 若是 consumer 所连接的那个 node 失效（无论该 node 是否为 consumer 所订阅 queue 的 owner node），则 consumer 会在发现 TCP 连接断开时，按标准行为执行重连逻辑，并根据 “Assume Nothing” 原则重建相应的 fabric 即可。
-- 若是失效的 node 为 consumer 订阅 queue 的 owner node，则 consumer 只能通过 Consumer Cancellation Notification 机制来检测与该 queue 订阅关系的终止，否则会出现傻等却没有任何消息来到的问题。
+- 若是 consumer 所连接的那个 node 失效（无论该 node 是否为 consumer 所订阅 queue 的 owner node），则 **consumer 会在发现 TCP 连接断开时，按标准行为执行重连逻辑，并根据 “Assume Nothing” 原则重建相应的 fabric 即可**。
+- 若是失效的 node 为 consumer 订阅 queue 的 owner node，**则 consumer 只能通过 Consumer Cancellation Notification 机制来检测与该 queue 订阅关系的终止，否则会出现傻等却没有任何消息来到的问题。**
 
 🦅 **Consumer Cancellation Notification 机制用于什么场景？**
 
