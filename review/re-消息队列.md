@@ -318,7 +318,7 @@ RabbitMQ具体特点包括：
 
 🦅 **消息基于什么传输？**
 
-由于 TCP 连接的创建和销毁开销较大，且并发数受系统资源限制，会造成性能瓶颈。RabbitMQ 使用信道的方式来传输数据。信道是建立在真实的 TCP 连接内的虚拟连接，且每条 TCP连接上的信道数量没有限制。
+由于 TCP 连接的**创建和销毁开销较大**，且并发数受系统资源限制，会造成性能瓶颈。RabbitMQ 使用信道(`channel` )的方式来传输数据。信道是**建立在真实的 TCP 连接内的虚拟连接**，且每条 TCP连接上的信道数量没有限制。
 
 🦅 **RabbitMQ 上的一个 queue 中存放的 message 是否有数量限制？**
 
@@ -328,8 +328,8 @@ RabbitMQ具体特点包括：
 
 🦅 **在单 node 系统和多 node 构成的 cluster 系统中声明 queue、exchange ，以及进行 binding 会有什么不同？**
 
-- 当你在单 node 上声明 queue 时，只要该 node 上相关元数据进行了变更，你就会得到 `Queue.Declare-ok` 回应；而在 cluster 上声明 queue ，则要求 cluster 上的全部 node 都要进行元数据成功更新，才会得到 `Queue.Declare-ok` 回应。
-- 另外，若 node 类型为 RAM node 则变更的数据仅保存在内存中，若类型为 Disk node 则还要变更保存在磁盘上的数据。
+- 当你在单 node 上声明 queue 时，只要该 node 上相关元数据进行了变更，你就会得到 `Queue.Declare-ok` 回应；而在 cluster 上声明 queue ，则要求 cluster 上的**全部 node 都要进行元数据成功更新**，才会得到 `Queue.Declare-ok` 回应。
+- 另外，若 **node 类型为 RAM node** 则变更的数据仅保存在内存中，若类型为 Disk node 则还要变更保存在磁盘上的数据。
 
 🦅 **客户端连接到 Cluster 中的任意 node 上是否都能正常工作？**
 
