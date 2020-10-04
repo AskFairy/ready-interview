@@ -263,8 +263,8 @@ RabbitMQ具体特点包括：
 
 ## RabbitMQ 中的 Broker 是指什么？Cluster 又是指什么？
 
-- Broker ，是指一个或多个 erlang node 的逻辑分组，且 node 上运行着 RabbitMQ 应用程序。
-- Cluster ，是在 Broker 的基础之上，增加了 node 之间共享元数据的约束。
+- Broker（代理） ，是指**一个或多个 erlang node 的逻辑分组**，且 node 上运行着 RabbitMQ 应用程序。
+- Cluster（集群） ，是在 Broker 的基础之上，增加了 node 之间共享元数据的约束。
 
 🦅 **vhost 是什么？起什么作用？**
 
@@ -276,14 +276,14 @@ RabbitMQ具体特点包括：
 
 在非 Cluster 模式下，元数据主要分为：
 
-- Queue 元数据（queue 名字和属性等）
-- Exchange 元数据（exchange 名字、类型和属性等）
-- Binding 元数据（存放路由关系的查找表）
-- Vhost 元数据（vhost 范围内针对前三者的名字空间约束和安全属性设置）。
+- **Queue 元数据**（queue 名字和属性等）
+- **Exchange 元数据**（exchange 名字、类型和属性等）
+- **Binding 元数据**（存放路由关系的查找表）
+- **Vhost 元数据**（vhost 范围内针对前三者的名字空间约束和安全属性设置）。
 
 🦅 **与 Cluster 相关的元数据有哪些？元数据是如何保存的？元数据在 Cluster 中是如何分布的？**
 
-在 Cluster 模式下，还包括 Cluster 中 node 位置信息和 node 关系信息。
+在 Cluster 模式下，还包括 Cluster 中 **node 位置信息和 node 关系信息**。
 
 元数据根据 erlang node 的类型确定是仅保存于 RAM 中，还是同时保存在 RAM 和 disk 上。元数据在 Cluster 中是全 node 分布的。
 
@@ -294,13 +294,13 @@ RabbitMQ具体特点包括：
 🦅 **RAM node 和 Disk node 的区别？**
 
 - RAM node 仅将 fabric（即 queue、exchange 和 binding等 RabbitMQ基础构件）相关元数据保存到内存中，但 Disk node 会在内存和磁盘中均进行存储。
-- RAM node 上唯一会存储到磁盘上的元数据是 Cluster 中使用的 Disk node 的地址。并且要求在 RabbitMQ Cluster 中至少存在一个 Disk node 。
+- RAM node 上**唯一会存储到磁盘上的元数据是 Cluster 中使用的 Disk node 的地址**。并且要求在 RabbitMQ Cluster 中至少存在一个 Disk node 。
 
 ## RabbitMQ 概念里的 channel、exchange 和 queue 是什么？
 
-- queue 具有自己的 erlang 进程；
-- exchange 内部实现为保存 binding 关系的查找表；
-- channel 是实际进行路由工作的实体，即负责按照 routing_key 将 message 投递给 queue 。
+- `queue` 具有自己的 erlang 进程；
+- `exchange` 内部实现为保存 `binding` 关系的查找表；
+- `channel` 是实际进行**路由工作的实体**，即负责按照 routing_key 将 message 投递给 queue 。
 
 由 AMQP 协议描述可知，channel 是真实 TCP 连接之上的虚拟连接，所有 AMQP 命令都是通过 channel 发送的，且每一个 channel 有唯一的 ID 。
 
