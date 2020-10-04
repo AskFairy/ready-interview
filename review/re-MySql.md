@@ -124,7 +124,22 @@ WHERE b = 1 ORDER BY time DESC
 
 #### 索引原理
 
-读取基本单位  page  16k
+[《MySQL索引背后的数据结构及算法原理》](http://blog.codinglabs.org/articles/theory-of-mysql-index.html)
+
+在 MySQL 中，我们可以看到两种索引方式：
+
+- B-Tree 索引。
+- Hash 索引。
+
+##### 磁盘的相关知识
+
+系统从磁盘读取数据基本单位：磁盘块（block）
+
+InnoDB 读取基本单位  page：16k > block
+
+B-Tree 结构的数据可以让**系统高效的找到数据所在的磁盘块**。
+
+
 
 
 
