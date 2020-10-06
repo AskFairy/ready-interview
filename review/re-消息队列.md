@@ -780,24 +780,24 @@ Kafka 是基于**发布与订阅**的**消息系统**。Kafka 是一个分布式
 
 - 4、数据**压缩**
 
-- 5、Topic 划分为多个 Partition ，提高并行度。
+- 5、Topic 划分为多个 `Partition` ，提高并行度。
 
   > 数据在磁盘上存取代价为 `O(1)`。
   >
-  > - Kafka 以 Topic 来进行消息管理，每个 Topic 包含多个 Partition ，每个 Partition 对应一个逻辑 log ，有多个 segment 文件组成。
-  > - 每个 segment 中存储多条消息（见下图），消息 id 由其逻辑位置决定，即从消息 id 可直接定位到消息的存储位置，避免 id 到位置的额外映射。
-  > - 每个 Partition 在内存中对应一个 index ，记录每个 segment 中的第一条消息偏移。
+  > - Kafka 以 Topic 来进行消息管理，每个 Topic 包含多个 Partition ，每个 Partition 对应一个**逻辑 log** ，有**多个 segment 文件组成**。
+  > - 每个 segment 中存储多条消息（见下图），消息 id 由其逻辑位置决定，即**从消息 id 可直接定位到消息的存储位置**，避免 id 到位置的额外映射。
+  > - **每个 Partition 在内存中对应一个 index** ，记录每个 segment 中的第一条消息偏移。
   >
   > 发布者发到某个 Topic 的消息会被均匀的分布到多个 Partition 上（随机或根据用户指定的回调函数进行分布），Broker 收到发布消息往对应 Partition 的最后一个 segment 上添加该消息。
-  > 当某个 segment上 的消息条数达到配置值或消息发布时间超过阈值时，segment上 的消息会被 flush 到磁盘，只有 flush 到磁盘上的消息订阅者才能订阅到，segment 达到一定的大小后将不会再往该 segment 写数据，Broker 会创建新的 segment 文件。
+  > 当某个 `segment`上 的消息条数达到配置值或消息发布时间超过阈值时，segment上 的消息会**被 flush 到磁盘**，**只有 flush 到磁盘上的消息订阅者才能订阅到**，segment 达到一定的大小后将不会再往该 segment 写数据，Broker 会创建新的 segment 文件。
 
-2）负载均衡
+2）**负载均衡**
 
-- 1、Producer 根据用户指定的算法，将消息发送到指定的 Partition 中。
-- 2、Topic 存在多个 Partition ，每个 Partition 有自己的replica ，每个 replica 分布在不同的 Broker 节点上。多个Partition 需要选取出 Leader partition ，Leader Partition 负责读写，并由 Zookeeper 负责 fail over 。
+- 1、Producer 根据用户**指定的算法，将消息发送到指定的 Partition 中**。
+- 2、Topic 存在多个 `Partition` ，每个 Partition 有自己的`replica` ，每个 replica 分布在不同的 `Broker` 节点上。多个Partition 需要选取出 Leader partition ，**Leader Partition 负责读写**，并由 Zookeeper 负责 fail over （**失效转移**）。
 - 3、相同 Topic 的多个 Partition 会分配给不同的 Consumer 进行拉取消息，进行消费。
 
-3）拉取系统
+3）**拉取系统**
 
 由于 Kafka Broker 会持久化数据，Broker 没有内存压力，因此， Consumer 非常适合采取 pull 的方式消费数据，具有以下几点好处：
 
