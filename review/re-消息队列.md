@@ -760,37 +760,25 @@ Kafka 是基于**发布与订阅**的**消息系统**。Kafka 是一个分布式
 
 - 2、持久化。
 
-- 3、分布式系统，易于横向扩展。所有的 Producer、Broker 和Consumer 都会有多个，均为分布式的。并且，无需停机即可扩展机器。
+- 3、分布式系统，无需停机、易于横向扩展。
 
-- 4、消息被处理的状态是在 Consumer 端维护，而不是由 Broker 端维护。当失败时，能自动平衡。
+- 4、消息被处理的状态是在 Consumer 端维护。
 
-  > 这段是从网络上找来的。感觉想要表达的意思是
-  >
-  > - 消息是否被处理完成，是通过 Consumer 提交消费进度给 Broker ，而不是 Broker 消息被 Consumer 拉取后，就标记为已消费。
-  > - 当 Consumer 异常崩溃时，可以重新分配消息分区到其它的 Consumer 们，然后继续消费。
-
-- 5、支持 online 和 offline 的场景。
+- 5、支持 online（在线） 和 offline （离线）的场景。
 
 🦅 **聊聊 Kafka 的设计要点？**
 
 1）吞吐量
 
-高吞吐是 Kafka 需要实现的核心目标之一，为此 kafka 做了以下一些设计：
-
-- 1、数据磁盘持久化：消息不在内存中 Cache ，直接写入到磁盘，充分利用磁盘的顺序读写性能。
+- 1、数据磁盘**持久化**：消息不在内存中 Cache ，直接写入到磁盘，充分利用磁盘的**顺序读写性能**。
 
   > 直接使用 Linux 文件系统的 Cache ，来高效缓存数据。
 
-- 2、zero-copy：减少 IO 操作步骤
+- 2、`zero-copy`：减少 IO 操作步骤（`Linux Zero-Copy` 将数据发送的上线文切换由4次，改为2次）
 
-  > 采用 Linux Zero-Copy 提高发送性能。
-  >
-  > - 传统的数据发送需要发送 4 次上下文切换。
-  > - 采用 sendfile 系统调用之后，数据直接在内核态交换，系统上下文切换减少为 2 次。根据测试结果，可以提高 60% 的数据发送性能。Zero-Copy 详细的技术细节可以参考 [《Efficient data transfer through zero copy》](https://developer.ibm.com/articles/j-zerocopy/) 文章。
+- 3、数据**批量发送**
 
-- 3、数据批量发送
-
-- 4、数据压缩
+- 4、数据**压缩**
 
 - 5、Topic 划分为多个 Partition ，提高并行度。
 
