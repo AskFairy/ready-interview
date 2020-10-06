@@ -832,9 +832,25 @@ Kafka 是基于**发布与订阅**的**消息系统**。Kafka 是一个分布式
 - 当所有的"in sync replicas"的follower把一个消息写入到自己的log中时，这个消息才被认为是"committed"的。
 - 如果针对某个partition的所有复制节点都挂了**，Kafka默认选择最先复活的那个节点作为leader**（这个节点不一定在ISR里）。
 
-### Leader选举
+### 选举
 
 Kafka**在Zookeeper中**为每一个partition动态的维护了一个`ISR`，这个ISR里的所有replica都跟上了leader，只有`ISR里的成员才能有被选为leader的可能`（unclean.leader.election.enable=false）。
+
+在Kafka的选举中，有很多种选举，下面大概列举几类常见的选举。
+
+**1、Leader的选举**
+				分区**leader副本的选举是由kafka controller(控制器)具体负责实施**的，当在**创建分区**(创建主题，或者增加分区都有创建分区的操作)、**分区上线**(分区中原来的leader副本下线，需要分区选举出一个新的leader上线对外提供服务)、**分区的重分配**等都有执行leader选举的操作；
+
+**选举新leader的过程：从AR(所有的分区副本)集合中按照顺序找到第一个存活的副本，并且这个副本在ISR集合中**。
+一个分区的AR集合在分配的时候就指定好了，只要不发生重新分配的情况，集合内的顺序是不会发生改变的，而ISR集合内的顺序是可能发生改变的；
+在发生优先副本的选举时，直接将优先副本设置为leader，AR集合中的第一个副本即为优先副本；还有在某个broker节点被优雅的关闭时，处于这个节点上的leader副本都会下线，所以选举出的新leader副本确保不再被正在关闭节点上。
+
+**2、控制器的选举**
+kafka集群中有一个或多个broker，**其中的一个broker会被选举为控制器**（Kafka Controller），它负责**管理整个集群中的所有分区和副本的状态**等工作，Kafka Controller是由Zookeeper来实现的，只要哪个broker能够创建controller这个临时节点，那么他就可以成为Kafka controller。
+例如某个分区的Leader副本发生故障，由控制器为该分区选举出新的Leader；或者当某个分区的ISR集合发生改变时，由控制器通知所有的broker更新其元数据信息。
+
+**3、消费者相关的选举**
+组协调器会为消费者组内的消费者选举出一个消费组leader。当消费者组内没有leader时，选举第一个进入消费者组的消费者为leader；如果消费者组内的leader由于某种原因退出了消费者组，那么会选举出一个新的leader，组协调器是以HashMap的形式存在，key为member.id(组内成员id)，value为消费者的元数据信息，选举的是集合中的第一个键值对的key，那么这个member.id就是leader消费者的member.id。其实是很随意的选举。
 
 ### Producer消费者
 
