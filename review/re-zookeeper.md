@@ -421,7 +421,7 @@ Paxos 算法、ZAB 协议要想讲清楚可不是一时半会的事儿，自 199
 
 ## Zookeeper 的选举过程？
 
-Zookeeper 的选举算法有两种：一种是基于 `basic paxos` 实现的，另外一种是基于 fast paxos 算法实现的。系统默认的选举算法为 `fast paxos` 。
+Zookeeper 的选举算法有两种：一种是基于 `basic paxos` 实现的，另外一种是基于 fast paxos 算法实现的。Zookeeper 默认的选举算法为 `fast paxos` 。
 
 > 相对详细的，胖友可以看看 [《【分布式】Zookeeper的Leader选举》](http://www.cnblogs.com/leesf456/p/6107600.html) 和 [《Zookeeper 源码分析 —— Zookeeper Leader 选举算法》](https://juejin.im/post/5b949d595188255c6a041c22) 。
 >
@@ -493,23 +493,25 @@ FastLeaderElection 算法通过异步的通信方式来收集其它节点的选�
 
   > 认为不会存在脑裂问题。
 
-🦅 **机器中为什么会有 Leader？**
+### 机器中为什么会有 Leader？
 
-在分布式环境中，有些业务逻辑只需要集群中的某一台机器进行执行，其他的机器可以共享这个结果，这样可以大大减少重复计算，提高性能，于是就需要进行 Leader 选举。
+在分布式环境中，有些业务逻辑只需要集群中的某一台机器进行执行，其他的机器可以共享这个结果，这样可以大大**减少重复计算，提高性能**，于是就需要进行 Leader 选举。
+
+### 资料
+
+[选举的详细流程](https://blog.csdn.net/ljy950914/article/details/100773031)
 
 ## Zookeeper 的同步流程？
 
 选完 Leader 以后，Zookeeper 就进入状态同步过程。
 
 - 1、Leader 等待 Server 连接。
-- 2、Follower 连接 Leader ，将最大的 zxid 发送给 Leader 。
-- 3、Leader 根据 Follower 的 zxid 确定同步点。
+- 2、Follower 连接 Leader ，**将最大的 zxid 发送给 Leader** 。
+- 3、Leader 根据 Follower 的 zxid **确定同步点**。
 - 4、完成同步后通知 Follower 已经成为 update 状态。
 - 5、Follower 收到 update 消息后，又可以重新接受 Client 的请求进行服务了。
 
 当然，同步流程并不是像上述描述的这么简单，具体的，还是得看看 [《Zookeeper Leader 和 Learner 的数据同步》](https://blog.csdn.net/weixin_36145588/article/details/75043611) 。
-
-
 
 
 
