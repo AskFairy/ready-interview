@@ -821,6 +821,23 @@ Kafka 是基于**发布与订阅**的**消息系统**。Kafka 是一个分布式
 
 ![img](https://img2018.cnblogs.com/blog/907596/201907/907596-20190708110113755-1652522197.jpg)
 
+
+
+- producer（生产者）
+- consumer（消费者）
+- Consumer group（消费分组）：
+- broker（服务代理）
+- topic（话题）：逻辑概念
+- partition（分区）：物理上的概念
+- replica（副本）：
+  - leader（角色）：
+  - follower（随从）：
+- controller：kafka 集群中的其中**一个服务器**，用来进行 leader 选举以及 各种 failover。
+  11）zookeeper：
+  kafka 通过 zookeeper 来存储集群的 meta 信息。
+
+
+
 的整体架构非常简单，是分布式架构，Producer、Broker 和Consumer 都可以有多个。
 
 - Producer，Consumer 实现 Kafka 注册的接口。
