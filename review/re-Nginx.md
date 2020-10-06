@@ -92,7 +92,10 @@ Nginx 不这样，每进来一个 request ，会有一个 worker 进程去处理
 
 **master与worker**->监听->事件->轮询
 
+### Nginx轮询机制
 
+1. **简单轮询算法**
+   - 
 
 ### 为什么 Nginx 不使用多线程？
 
