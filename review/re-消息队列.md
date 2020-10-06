@@ -825,6 +825,13 @@ Kafka 是基于**发布与订阅**的**消息系统**。Kafka 是一个分布式
 - 1）N天前的删除（默认7天）。
 - 2）保留最近的多少Size数据。
 
+### 复制（Replication）
+
+- Followers通过pull获取leader上log（message和offset）
+- 如果一个**follower挂掉、卡住或者同步太慢**，leader会把这个follower从"in sync replicas"**（ISR）列表中删除**。
+- 当所有的"in sync replicas"的follower把一个消息写入到自己的log中时，这个消息才被认为是"committed"的。
+- 如果针对某个partition的所有复制节点都挂了**，Kafka默认选择最先复活的那个节点作为leader**（这个节点不一定在ISR里）。
+
 
 
 
