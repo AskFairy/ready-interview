@@ -13,9 +13,11 @@ ZooKeeper 是一个开放源码的**分布式协调服务，它是集群的管�
 - **集群管理**
 - **Master 选举**
 - **分布式锁**
-- 分布式队列等功能。
+- 分布式队列
+- **注册中心**
+- 等功能。
 
-Zookeeper 具有如下特性：
+### Zookeeper 特性
 
 - **顺序一致性(有序性)**
 
@@ -42,48 +44,40 @@ Zookeeper 具有如下特性：
 
   > Zookeeper 保证在一定的时间段内，客户端最终一定能够从服务端上读取到最新的数据状态。
 
-Zookeeper 对于读写请求有所不同：
+### Zookeeper 读写请求
 
-- 客户端的读请求可以被集群中的任意一台机器处理，如果读请求在节点上注册了监听器，这个监听器也是由所连接的 Zookeeper 机器来处理。
-- 对于写请求，这些请求会同时发给其他 Zookeeper 机器并且达成一致后，请求才会返回成功。因此，随着 Zookeeper 的集群机器增多，读请求的吞吐会提高但是写请求的吞吐会下降。
+- 客户端的读请求**可以被集群中的任意一台机器处理**，如果读请求在节点上注册了监听器，这个监听器也是由所连接的 Zookeeper 机器来处理。
+- 对于**写请求**，这些请求会**同时发给其他 Zookeeper 机器并且达成一致后**，请求才会返回成功。因此，随着 Zookeeper 的集群机器增多，读请求的吞吐会提高但是写请求的吞吐会下降。
 
-🦅 **Chubby 是什么？和 Zookeeper 对比你怎么看？**
+### Chubby 是什么？和 Zookeeper 对比你怎么看？
 
 - Chubby 是 Google 的，完全实现 Paxos 算法，不开源。
 - Zookeeper 是 Chubby 的开源实现，使用 ZAB 协议(Paxos 算法的变种)。
 
-🦅 **Zookeeper 的 Java 客户端都有哪些？**
+### Zookeeper 的 Java 客户端都有哪些？
 
-- Zookeeper 自带的 zkclient
+- Zookeeper 自带的 `zkclient`
 
-- Apache 开源的 Curator
+- Apache 开源的 `Curator`
 
   > 实际项目中，采用 Curator 居多。因为，功能更加强大。
 
 具体的使用，可以看看 [《ZK 客户端操作》](https://www.zybuluo.com/boothsun/note/990793) 文章。
 
-另外，Zookeeper 没有特别好用的 GUI 工具，有需要的胖友，可以看看 [ZooInspector](https://blog.52itstyle.com/archives/343/) ，凑活能用。
+Zookeeper 没有特别好用的 GUI 工具，可以看看 [ZooInspector](https://blog.52itstyle.com/archives/343/) ，凑活能用。
 
 ## Zookeeper 的设计目标？
 
-- 1、简单的数据结构，Zookeeper 使得分布式程序能够通过一个共享的树形结构的名字空间来进行相互协调，即 Zookeeper 服务器内存中的数据模型由一系列被称为 ZNode 的数据节点组成，Zookeeper 将全量的数据存储在内存中，以此来提高服务器吞吐、减少延迟的目的。
-
-- 2、可以构建集群 Zookeeper 集群通常由一组机器构成，组成 Zookeeper 集群的而每台机器都会在内存中维护当前服务器状态，并且每台机器之间都相互通信。
-
-- 3、顺序访问，对于来自客户端的每个更新请求，Zookeeper 都会分配一个全局唯一的递增编号，这个编号反映了所有事务操作的先后顺序。
-
-- 4、高性能，Zookeeper 和 Redis 一样全量数据存储在内存中，100%读请求压测 QPS 12-13W 。
-
-  > 没具体测试过，比想象中的高。感兴趣的胖友，可以看看 [《ZooKeeper 的一个性能测试》](https://blog.csdn.net/varyall/article/details/81638148) 。
+- 1、**简单的数据结构**，Zookeeper 使得分布式程序能够通过一个共享的**树形结构的名字空间**来进行相互协调，即 Zookeeper 服务器内存中的数据模型由一系列被称为 `ZNode` 的数据节点组成，**Zookeeper 将全量的数据存储在内存中**，以此来提高服务器吞吐、减少延迟的目的。
+- 2、可以构建集群 Zookeeper **集群**通常由一组机器构成，组成 Zookeeper 集群的而每台机器都会在内存中维护当前服务器状态，并且每台机器之间都相互通信。
+- 3、**顺序访问**，对于来自客户端的**每个更新请求**，Zookeeper 都会**分配一个全局唯一的递增编号**，这个编号反映了所有事务操作的先后顺序。
+- 4、**高性能**，Zookeeper 和 Redis 一样全量数据存储在内存中，100%读请求压测 `QPS 12-13W` 。
 
 ## Zookeeper 有哪些应用场景？
 
-Zookeeper 的功能很强大，应用场景很多，结合我们实际工作中使用 Dubbo 框架的情况，Zookeeper 主要是做注册中心用。
+Zookeeper 的功能很强大，应用场景很多，结合我们实际工作中使用 Dubbo 框架的情况，Zookeeper 主要是做
 
-- 基于 Dubbo 框架开发的提供者、消费者都向 Zookeeper 注册自己的 URL ，消费者还能拿到并订阅提供者的注册 URL ，以便在后续程序的执行中去调用提供者。
-- 而提供者发生了变动，也会通过 Zookeeper 向订阅的消费者发送通知。
-
-当然，Zookeeper 能提供的不仅仅如此，再例如：
+- **注册中心用**。
 
 - 统一命名服务。
 
@@ -91,7 +85,7 @@ Zookeeper 的功能很强大，应用场景很多，结合我们实际工作中�
 
 - 分布式锁服务。
 
-  > 这个比较好理解，Zookeeper 实现的分布式锁的可靠性会比 Redis 实现的分布式锁高，当然相对来说，性能会低。
+  > 这个比较好理解，Zookeeper 实现的分布式锁的**可靠性**会比 Redis 实现的分布式锁**高**，当然相对来说，**性能会低**。
 
 - 配置管理。
 
