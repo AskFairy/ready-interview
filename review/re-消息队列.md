@@ -826,7 +826,7 @@ Kafka 的整体架构非常简单，是分布式架构，Producer、Broker 和Co
 - Producer，Consumer 实现 Kafka 注册的接口。
 - 数据从 Producer 发送到 Broker 中，Broker 承担一个中间缓存和分发的作用。
 - Broker 分发注册到系统中的 Consumer。Broker 的作用类似于缓存，即活跃的数据和离线处理系统之间的缓存。
-- 客户端和服务器端的通信，是基于简单，高性能，且与编程语言无关的 TCP 协议。
+- 客户端和服务器端的通信，是基于简单，高性能，且与编程语言无关的 **TCP 协议**。
 
 几个重要的基本概念：
 
@@ -856,13 +856,13 @@ Kafka 的整体架构非常简单，是分布式架构，Producer、Broker 和Co
 
 > RocketMQ 从 Kafka 演化而来。
 
-- 1、Kafka 使用 Zookeeper 作为命名服务；RocketMQ 自己实现了一个轻量级的 Namesrv 。
+- 1、Kafka 使用 Zookeeper 作为命名服务；RocketMQ 自己实现了一个轻量级的 Namesrver 。
 
 - 2、Kafka Broker 的每个分区都有一个首领分区；RocketMQ 每个分区的“首领”分区，都在 Broker Master 节点上。
 
   > RocketMQ 没有首领分区一说，所以打上了引号。
 
-- 3、Kafka Consumer 使用 poll 的方式拉取消息；RocketMQ Consumer 提供 poll 的方式的同时，封装了一个 push 的方式。
+- 3、Kafka Consumer 使用 **poll 的方式**拉取消息；RocketMQ Consumer 提供 poll 的方式的同时，封装了一个 push 的方式。
 
   > RocketMQ 的 push 的方式，也是基于 poll 的方式的封装。
 
