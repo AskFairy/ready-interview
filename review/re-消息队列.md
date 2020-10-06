@@ -768,7 +768,7 @@ Kafka 是基于**发布与订阅**的**消息系统**。Kafka 是一个分布式
 
 1）吞吐量
 
-- 1、数据磁盘**持久化**：磁盘的**顺序读写性能**。
+- 1、数据磁盘**持久化**：避免随机磁盘访问，采用顺序IO，提交日志注脚方式写入，按序从分区读取。内存贵、并且副本多，内存多JVM垃圾回收。
 
 - 2、`zero-copy`
 
@@ -832,9 +832,44 @@ Kafka 是基于**发布与订阅**的**消息系统**。Kafka 是一个分布式
 - replica（副本）：
   - leader（角色）：
   - follower（随从）：
-- controller：kafka 集群中的其中**一个服务器**，用来进行 leader 选举以及 各种 failover。
-  11）zookeeper：
-  kafka 通过 zookeeper 来存储集群的 meta 信息。
+- controller：kafka 集群中的其中**一个服务器**，用来进行 **leader 选举**以及 **各种 failover**
+- zookeeper：存储集群的 meta 信息。
+
+### Kafka存储策略
+
+1. 逻辑`topic` -> 多个`partition` -> 逻辑`log` -> 多个`segment`
+2. 消息id由其逻辑位置决定，即从**消息id**可直接定位到**消息的存储位置**
+3. 每个part在内存中对应一个index，记录每个segment中的第一条消息偏移。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
