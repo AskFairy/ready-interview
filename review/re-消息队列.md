@@ -832,7 +832,18 @@ Kafka 是基于**发布与订阅**的**消息系统**。Kafka 是一个分布式
 - 当所有的"in sync replicas"的follower把一个消息写入到自己的log中时，这个消息才被认为是"committed"的。
 - 如果针对某个partition的所有复制节点都挂了**，Kafka默认选择最先复活的那个节点作为leader**（这个节点不一定在ISR里）。
 
+### Leader选举
 
+Kafka**在Zookeeper中**为每一个partition动态的维护了一个`ISR`，这个ISR里的所有replica都跟上了leader，只有`ISR里的成员才能有被选为leader的可能`（unclean.leader.election.enable=false）。
+
+### Producer消费者
+
+#### 发送确认
+
+通过request.required.acks来设置：
+
+- 默认值是1，收到后立即确认，可能会丢失
+- 推荐设置为：
 
 
 
