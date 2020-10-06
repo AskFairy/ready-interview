@@ -752,9 +752,9 @@ https://www.jianshu.com/p/78847c203b76
 
 ## Apache Kafka 是什么?
 
-Kafka 是基于**发布与订阅**的**消息系统**。Kafka 是一个分布式的，可分区的，冗余备份的持久性的日志服务。它主要用于处理活跃的流式数据。
+Kafka 是基于**发布与订阅**的**消息系统**。Kafka 是一个分布式的，高吞吐、可分区的，冗余备份的持久性的日志服务。它主要用于处理活跃的流式数据。
 
-- Kafka运行在JVM上，如果内存堆中的对象太多，必然会在垃圾回收时造成严重的延迟，从而影响系统的整体性能。
+- Kafka运行在JVM上
 
 🦅 **Kafka 的主要特点？**
 
@@ -777,8 +777,6 @@ Kafka 是基于**发布与订阅**的**消息系统**。Kafka 是一个分布式
 - 4、数据**压缩**
 
 - 5、Topic 划分为多个 `Partition` ，提高并行度。
-
-- 6、顺序IO，提交日志以追加的方式写入分区、
 
   > 数据在磁盘上存取代价为 `O(1)`。
   >
@@ -819,9 +817,11 @@ Kafka 是基于**发布与订阅**的**消息系统**。Kafka 是一个分布式
 
 ## Kafka 的架构是怎么样的？
 
-[![Kafka 架构图](http://static2.iocoder.cn/ac883ce247c1ff31c7cd4244392dcaed)](http://static2.iocoder.cn/ac883ce247c1ff31c7cd4244392dcaed)Kafka 架构图
+**Kafka拓扑结构**
 
-Kafka 的整体架构非常简单，是分布式架构，Producer、Broker 和Consumer 都可以有多个。
+![img](https://img2018.cnblogs.com/blog/907596/201907/907596-20190708110113755-1652522197.jpg)
+
+的整体架构非常简单，是分布式架构，Producer、Broker 和Consumer 都可以有多个。
 
 - Producer，Consumer 实现 Kafka 注册的接口。
 - 数据从 Producer 发送到 Broker 中，Broker 承担一个中间缓存和分发的作用。
