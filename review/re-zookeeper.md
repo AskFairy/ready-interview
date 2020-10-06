@@ -123,7 +123,7 @@ Zookeeper 的功能很强大，应用场景很多，结合我们实际工作中�
 
 参见 [《作为服务注册中心，Eureka 比 Zookeeper 好在哪里》](https://blog.csdn.net/xuyw10000/article/details/79851697) 文章。
 
-比较重要的原因是，注册中心对可用性比一致性有更高的要求，也就是说，能够容忍在异常情况下，读取到几分钟前的数据。
+比较重要的原因是，**注册中心对可用性比一致性有更高的要求**，也就是说，能够容忍在异常情况下，读取到几分钟前的数据。
 
 ## Zookeeper 提供了什么？ 
 
@@ -434,7 +434,7 @@ Zookeeper 的选举算法有两种：一种是基于 `basic paxos` 实现的，�
 >   - AuthFastLeaderElection ：在 FastLeaderElection 的基础上，增加认证。
 >   - 最终在 Zookeeper 3.4.0 版本之后，只保留 `FastLeaderElection` 版本。
 
-🦅 **Zookeeper 选主流程(basic paxos)？**
+### Zookeeper 选主流程(basic paxos)？
 
 > 选择性了解。
 
@@ -450,17 +450,17 @@ Zookeeper 的选举算法有两种：一种是基于 `basic paxos` 实现的，�
 
 [![流程](http://static2.iocoder.cn/4c9358ff89ffef1089190c6472ebe51c)](http://static2.iocoder.cn/4c9358ff89ffef1089190c6472ebe51c)流程
 
-🦅 **Zookeeper 选主流程(fast paxos)？**
+### Zookeeper 选主流程(fast paxos)？
 
-由于 LeaderElection 收敛速度较慢，所以 Zookeeper 引入了 FastLeaderElection 选举算法，FastLeaderElection 也成了Zookeeper默认的Leader选举算法。
+由于 LeaderElection **收敛速度较慢**，所以 Zookeeper 引入了 FastLeaderElection 选举算法，FastLeaderElection 也成了Zookeeper默认的Leader选举算法。
 
-FastLeaderElection 是标准的 Fast Paxos 的实现。它首先向所有 Server 提议自己要成为 Leader ，当其它 Server 收到提议以后，解决 epoch 和 zxid 的冲突，并接受对方的提议，然后向对方发送接受提议完成的消息。重复这个流程，最后一定能选举出Leader。
+FastLeaderElection 是标准的 Fast Paxos 的实现。**它首先向所有 Server 提议自己要成为 Leader** ，当其它 Server 收到提议以后，**解决 epoch 和 zxid 的冲突，并接受对方的提议，然后向对方发送接受提议完成的消息**。重复这个流程，最后一定能选举出Leader。
 
 FastLeaderElection 算法通过异步的通信方式来收集其它节点的选票，同时在分析选票时又根据投票者的当前状态来作不同的处理，以加快 Leader 的选举进程。
 
 [![流程](http://static2.iocoder.cn/6591164c09fd2dadef24bd984c9f3a14)](http://static2.iocoder.cn/6591164c09fd2dadef24bd984c9f3a14)流程
 
-🦅 **为什么 Zookeeper 集群推荐节点数是单数？**
+### 为什么 Zookeeper 集群推荐节点数是单数？
 
 在统计投票时，有个过半的概念，大于集群机器数量的一半，即大于或等于(`n/2+1`)。那么我们来看看如下的统计：
 
@@ -479,9 +479,9 @@ FastLeaderElection 算法通过异步的通信方式来收集其它节点的选�
 
 简单的来说，**节省资源**！
 
-另外，因为 Zookeeper 使用一致性协议，过多的节点，反倒会降低性能。😈
+另外，因为 Zookeeper 使用**一致性协议，过多的节点，反倒会降低性能**。
 
-🦅 **Zookeeper 是否需存在脑裂？**
+### Zookeeper 是否需存在脑裂？
 
 按道理说，Zookeeper 选举不会存在脑裂问题，因为需要 `n / 2 + 1` 投票通过，才能执行对应的写操作。但是听朋友说，实际场景下，貌似发生过脑裂问题。关于这块，艿艿心里也不太有底，欢迎在星球一起讨论。
 
