@@ -843,13 +843,48 @@ Kafka**在Zookeeper中**为每一个partition动态的维护了一个`ISR`，这
 通过request.required.acks来设置：
 
 - 默认值是1，收到后立即确认，可能会丢失
-- 推荐设置为：
+- 推荐设置为：all或者-1，此时只有ISR中的所有Replica都收到该数据，才会发送确认。
+
+#### 负载均衡
+
+partition的路由规则。
+
+- 默认路由规则：`hash(key)%numPartitions`，如果key为null则随机选择一个partition。
+- 自定义路由
+
+#### 异步批量发送
+
+批量发送：配置不多于固定消息数目一起发送并且等待时间小于一个固定延迟的数据。
 
 
 
+Kafka默认保证at-least-once delivery： 读取消息，处理消息，写log。如果消息处理成功，**写log失败，则消息会被处理两次**，对应”At least once“。
 
+### Distribution
 
+Consumer Offset Tracking
 
+- `High-level consumer`记录每个partition所消费的maximum offset，并定期commit到offset manager（broker）。
+- `Simple consumer`需要手动管理offset。现在的Simple consumer Java API只支持`commit offset到zookeeper。`
+
+Consumers and Consumer Groups
+
+- consumer注册到zookeeper
+- 属于同一个group的consumer（group id一样）平均分配partition，**每个partition只会被一个consumer消费**。
+  3）当broker或同一个group的其他consumer的状态发生变化的时候，consumer rebalance就会发生。
+
+**==Zookeeper协调控制==**
+1）管理broker与consumer的动态加入与离开。
+2）触发负载均衡，当broker或consumer加入或离开时会触发负载均衡算法，使得一个consumer group内的多个consumer的订阅负载平衡。
+3）维护消费关系及每个partition的消费信息。
+
+**==日志压缩（Log Compaction）==**
+1）针对一个topic的partition，压缩使得Kafka至少知道每个key对应的最后一个值。
+2）压缩不会重排序消息。
+3）消息的offset是不会变的。
+4）消息的offset是顺序的。
+5）压缩发送和接收能降低网络负载。
+6）以压缩后的形式持久化到磁盘。
 
 
 
