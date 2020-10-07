@@ -90,7 +90,7 @@ Nginx 不这样，每进来一个 request ，会有一个 worker 进程去处理
 
 ### Nginx的工作原理
 
-**master与worker**->监听->事件->轮询
+解析->监听->**master与worker**->事件->轮询
 
 ### Nginx轮询机制
 
