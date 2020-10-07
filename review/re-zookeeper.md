@@ -205,7 +205,7 @@ Zookeeper 允许客户端向服务端的**某个 znode 注册一个 Watcher 事�
 
 - 1、调用 getData、getChildren、exist 三个 API ，传入Watcher 对象。
 - 2、标记请求 request ，封装 Watcher 到 WatchRegistration 。
-- 3、封装成 Packe t对象，发服务端发送 request 。
+- 3、封装成 Packe t对象，向服务端发送 request 。
 - 4、收到服务端响应后，将 Watcher 注册到 ZKWatcherManager 中进行管理。
 - 5、请求返回，完成注册。
 
