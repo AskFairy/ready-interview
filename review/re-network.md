@@ -478,54 +478,46 @@ HTTP 请求所经历的步骤：
 
 - 【最重要】4、**长连接**
 
+  - 处理在一个 TCP 连接上可以传送多个 HTTP 请求和响应，减少了建立和关闭连接的消耗和延迟。在 HTTP1.1中 **默认开启**`Connection：keep-alive` ，一定程度上弥补了 HTTP1.0 每次请求都要创建连接的缺点。
+  - 请求的流水线（Pipelining）：HTTP1.1 还**允许客户端不用等待上一次请求结果返回，就可以发出下一次请求**，但服务器端必须按照接收到客户端请求的先后顺序依次回送响应结果，以保证客户端能够区分出每次请求的响应内容，这样也显著地减少了整个下载过程所需要的时间。
+
 - 6、Host 头域：解决多个虚拟主机共享IP的情况
 
 - 7、错误提示：新增了一些响应状态码
 
 - 8、内容协商：客户端可以告诉服务器自己可以接收以何种语言（或字符集）表示的资源
 
-详细的每一点的说明，可以看 [《HTTP1.0 与 HTTP1.1 的区别》](https://blog.csdn.net/ForgotAboutGirl/article/details/6936982) 文章，简单[《》](https://blog.csdn.net/ailunlee/article/details/97831912)
+详细的每一点的说明，可以看 [《HTTP1.0 与 HTTP1.1 的区别》](https://blog.csdn.net/ForgotAboutGirl/article/details/6936982) 文章，简单[《HTTP1.0和HTTP1.1和HTTP2.0的区别》](https://blog.csdn.net/ailunlee/article/details/97831912)
 
-> HTTP1.1 支持长连接（PersistentConnection）和请求的流水线（Pipelining）。
->
-> - 长连接（PersistentConnection）：处理在一个 TCP 连接上可以传送多个 HTTP 请求和响应，减少了建立和关闭连接的消耗和延迟。在 HTTP1.1中 默认开启`Connection：keep-alive` ，一定程度上弥补了 HTTP1.0 每次请求都要创建连接的缺点。
-> - 请求的流水线（Pipelining）：HTTP1.1 还允许客户端不用等待上一次请求结果返回，就可以发出下一次请求，但服务器端必须按照接收到客户端请求的先后顺序依次回送响应结果，以保证客户端能够区分出每次请求的响应内容，这样也显著地减少了整个下载过程所需要的时间。
->
 > 推荐，在看看 [《HTTP Keep-Alive 是什么？如何工作？》](http://www.nowamagic.net/academy/detail/23350305) 文章。
 >
 > 关于这一点，可能演变的问题有：
 >
 > - HTTP 的长连接是什么意思？
 > - HTTP Keep-Alive 机制是什么？
+>   - 一个 TCP 连接上可以传送多个 HTTP 请求和响应，减少了建立和关闭连接的消耗和延迟
+>   - **允许客户端不用等待上一次请求结果返回，就可以发出下一次请求**，但服务端必须顺序返回
+>   - keepalvie timeout
 > - HTTP Keep-Alive 机制和 TCP Keep-Alive 有什么区别？
+>   - http keep-alive与tcp keep-alive，不是同一回事，意图不一样。http keep-alive是**为了让tcp活得更久一点**，以便在同一个连接上传送多个http，提高socket的效率。而tcp keep-alive是TCP的一种**检测TCP连接状况的保鲜机制**
 
-## SPDY 是什么？
+## SPDY 
 
-> 艿艿：关于这个问题，了解就好。
->
+### SPDY 是什么？
+
 > HTTP Working-Group 最终决定以 SPDY/2 为基础，开发 HTTP/2 。
 
 2012 年，Google 如一声惊雷提出了 SPDY 的方案，优化了 HTTP1.X 的请求延迟，解决了 HTTP1.X 的安全性，具体如下：
 
-- 1、降低延迟
+- 1、**降低延迟：多路复用**，多路复用通过多个请求 Stream 共享一个 Tcp连 接的方式
 
-  > 针对 HTTP 高延迟的问题，SPDY 优雅的采取了多路复用（multiplexing）。多路复用通过多个请求 Stream 共享一个 Tcp连 接的方式，解决了 HOL blocking 的问题，降低了延迟同时提高了带宽的利用率。
-
-- 2、请求优先级（request prioritization）
-
-  > 多路复用带来一个新的问题是，在连接共享的基础之上有可能会导致关键请求被阻塞。SPDY 允许给每个 request 设置优先级，这样重要的请求就会优先得到响应。
-  >
-  > 比如浏览器加载首页，首页的 html 内容应该优先展示，之后才是各种静态资源文件，脚本文件等加载，这样可以保证用户能第一时间看到网页内容。
+- 2、**请求优先级**（request prioritization）：允许给每个 request 设置优先级
 
 - 3、header 压缩
 
-  > 前面提到 HTTP1.x 的 header 很多时候都是重复多余的。选择合适的压缩算法可以减小包的大小和数量。
-
 - 4、基于 HTTPS 的加密协议传输
 
-  > 大大提高了传输数据的安全性。
-
-- 5、服务端推送（server push）
+- 5、服务端推送（server push）：
 
   > 采用了 SPDY 的网页，例如我的网页有一个 `sytle.css` 的请求，在客户端收到 `sytle.css` 数据的同时，服务端会将 `sytle.js` 的文件推送给客户端。当客户端再次尝试获取 `sytle.js` 时就可以直接从缓存中获取到，不用再发请求了。
   >
@@ -533,7 +525,7 @@ HTTP 请求所经历的步骤：
 
 🚀 SPDY 构成图如下：[![SPDY 构成图](http://static2.iocoder.cn/82cf7ea112281d126f23db03a502c249)](http://static2.iocoder.cn/82cf7ea112281d126f23db03a502c249)SPDY 构成图
 
-- SPDY 位于 HTTP 之下，TCP 和 SSL 之上，这样可以轻松兼容老版本的 HTTP 协议(将 HTTP1.x 的内容封装成一种新的 frame 格式)，同时可以使用已有的 SSL 功能。
+- **SPDY 位于 HTTP 之下，TCP 和 SSL 之上**，这样可以轻松兼容老版本的 HTTP 协议(将 HTTP1.x 的内容封装成一种新的 frame 格式)，同时可以使用已有的 SSL 功能。
 
 
 
