@@ -84,7 +84,7 @@
 
 #### put方法
 
-1.8中放弃了Segment臃肿的设计，取而代之的是采用`Node + CAS + Synchronized`来保证并发安全进行实现，1.8中使用一个**volatile类型的变量baseCount记录元素的个数**，当插入新数据或则删除数据时，会通过addCount()方法更新baseCount，通过累加baseCount和CounterCell数组中的数量，即可得到元素的总个数；
+1.8中放弃了Segment臃肿的设计，取而代之的是采用`Node + CAS + Synchronized`来保证并发安全进行实现，
 
 ```java
 final V putVal(K key, V value, boolean onlyIfAbsent) { 
@@ -131,7 +131,7 @@ final V putVal(K key, V value, boolean onlyIfAbsent) {
 
 #### 初始化
 
-初始化操作实现在 initTable 里面，这是一个典型的 **CAS 使用场景**，利用 volatile 的 sizeCtl 作为互斥手段：如果发现竞争性的初始化，就 spin 在那里（`while（Thread.yield(); ）`），等待条件恢复；否则利用 CAS 设置排他标志。如果成功则进行初始化；否则重试。
+初始化操作实现在 initTable 里面，这是一个典型的 **CAS 使用场景**，利用 volatile 的 `sizeCtl` 作为互斥手段：如果发现竞争性的初始化，就 spin 在那里（`while（Thread.yield(); ）`），等待条件恢复；否则利用 CAS 设置排他标志。如果成功则进行初始化；否则重试。
 
 ```java
 private final Node<K,V>[] initTable() {
@@ -141,6 +141,7 @@ private final Node<K,V>[] initTable() {
         if ((sc = sizeCtl) < 0)
             Thread.yield(); 
         // CAS成功返回true，则进入真正的初始化逻辑
+        // 只有一个线程能够减一，如果多个线程都减了，会进入上面的if
         else if (U.compareAndSetInt(this, SIZECTL, sc, -1)) {
             try {
                 if ((tab = table) == null || tab.length == 0) {
@@ -165,7 +166,7 @@ private final Node<K,V>[] initTable() {
 
 你有没有注意到，在同步逻辑上，它**使用的是 synchronized，而不是通常建议的 ReentrantLock 之类，这是为什么呢**？现代 JDK 中，synchronized 已经被不断优化，可以不再过分担心性能差异，另外，相比于 ReentrantLock，它可以**减少内存消耗**，这是个非常大的优势。
 
-与此同时，更多细节实现通过使用 Unsafe 进行了优化，例如 tabAt 就是直接利用 getObjectAcquire，避免间接调用的开销。
+与此同时，更多细节实现通过使用 Unsafe 进行了优化，例如: **tabAt 就是直接利用 getObjectAcquire，避免间接调用的开销。**
 
 ```java
 static final <K,V> Node<K,V> tabAt(Node<K,V>[] tab, int i) {
@@ -173,6 +174,10 @@ static final <K,V> Node<K,V> tabAt(Node<K,V>[] tab, int i) {
 }
 
 ```
+
+#### size方法
+
+1.8中使用一个**volatile类型的变量baseCount记录元素的个数**，当插入新数据或则删除数据时，会通过addCount()方法更新baseCount，通过累加baseCount和CounterCell数组中的数量，即可得到元素的总个数；
 
 再看看，现在是如何实现 **size 操作**的。阅读代码你会发现，真正的逻辑是在 sumCount 方法中， 那么 sumCount 做了什么呢？
 
@@ -191,7 +196,7 @@ final long sumCount() {
 
 ```
 
-我们发现，虽然思路仍然和以前类似，都是分而治之的进行计数，然后求和处理，但实现却基于一个奇怪的 **CounterCell**。 难道它的数值，就更加准确吗？数据一致性是怎么保证的？
+我们发现，**虽然思路仍然和以前类似，都是分而治之的进行计数，然后求和处理**，但实现却基于一个奇怪的 **CounterCell**。 难道它的数值，就更加准确吗？数据一致性是怎么保证的？
 
 ```java
 static final class CounterCell {
@@ -202,33 +207,36 @@ static final class CounterCell {
 
 其实，对于 CounterCell 的操作，是基于 java.util.concurrent.atomic.LongAdder 进行的，是一种 JVM 利用空间换取更高效率的方法，利用了Striped64内部的复杂逻辑。这个东西非常小众，大多数情况下，建议还是使用 AtomicLong，足以满足绝大部分应用的性能需求。
 
-1.7
-put加锁
-通过分段加锁segment，一个hashmap里有若干个segment，每个segment里有若干个桶，桶里存放K-V形式的链表，put数据时通过key哈希得到该元素要添加到的segment，然后对segment进行加锁，然后在哈希，计算得到给元素要添加到的桶，然后遍历桶中的链表，替换或新增节点到桶中
+### 总结
 
-size
-分段计算两次，两次结果相同则返回，否则对所以段加锁重新计算
+#### 1.7
 
+- put加锁
+  - 通过分段加锁segment，一个hashmap里有若干个segment，每个segment里有若干个桶，桶里存放K-V形式的链表，put数据时通过key哈希得到该元素要添加到的segment，然后对segment进行加锁，然后在哈希，计算得到给元素要添加到的桶，然后遍历桶中的链表，替换或新增节点到桶中
+- size
+  - 分段计算两次，两次结果相同则返回，否则对所以段加锁重新计算
 
-1.8
-put CAS 加锁
-1.8中不依赖与segment加锁，segment数量与桶数量一致；
-首先判断容器是否为空，为空则进行初始化利用volatile的sizeCtl作为互斥手段，如果发现竞争性的初始化，就暂停在那里，等待条件恢复，否则利用CAS设置排他标志（U.compareAndSwapInt(this, SIZECTL, sc, -1)）;否则重试
-对key hash计算得到该key存放的桶位置，判断该桶是否为空，为空则利用CAS设置新节点
-否则使用synchronize加锁，遍历桶中数据，替换或新增加点到桶中
-最后判断是否需要转为红黑树，转换之前判断是否需要扩容
+#### 1.8
 
-size
-利用LongAdd累加计算
-
-CopyonwriteArrayList
-
-
-
-
+- put CAS 加锁
+  - 1.8中不依赖与segment加锁，segment数量与桶数量一致；
+  - 首先判断容器是否为空，为空则进行初始化利用volatile的sizeCtl作为互斥手段，如果发现竞争性的初始化，就暂停在那里，等待条件恢复，否则利用CAS设置排他标志（U.compareAndSwapInt(this, SIZECTL, sc, -1)）;否则重试
+  - 对key hash计算得到该key存放的桶位置，判断该桶是否为空，**为空则利用CAS设置新节点**
+  - 否则使用**synchronize加锁**，遍历桶中数据，替换或新增加点到桶中
+    最后判断是否需要转为红黑树，转换之前判断是否需要扩容
+- size
+  - 利用LongAdd累加计算
+  - 、
 
 ### 资料
 
 https://blog.csdn.net/dfsaggsd/article/details/50572958
 
 https://blog.csdn.net/hancoder/article/details/107829728
+
+## CopyonwriteArrayList
+
+
+
+
+
