@@ -352,33 +352,72 @@ HTTP 协议，超文本传输协议，是用于服务器传输超文本到本地
 
 URL和URN是URI的子集，
 
-URI的作用像身份证号一样，
-
-URL的作用像家庭住址一样
-
-动物住址协议://地球/中国/浙江省/杭州市/西湖区/某大学/14号宿舍楼/525号寝/张三.人
-
-
-
-URL和URN是URI的子集，
-
 ![img](https://upload-images.jianshu.io/upload_images/3028410-db917f3b89c2fd9c.png?imageMogr2/auto-orient/strip|imageView2/2/format/webp)
-
-URI可被视为定位符（URL），名称（URN）或两者兼备。
 
 - [统一资源名](https://link.zhihu.com/?target=https%3A//zh.wikipedia.org/wiki/%E7%BB%9F%E4%B8%80%E8%B5%84%E6%BA%90%E5%90%8D)（URN）如同一个人的名称，
 
-- [统一资源定位符](https://link.zhihu.com/?target=https%3A//zh.wikipedia.org/wiki/%E7%BB%9F%E4%B8%80%E8%B5%84%E6%BA%90%E5%AE%9A%E4%BD%8D%E7%AC%A6)（URL）代表一个人的住址。换言之，URN定义某事物的身份，而URL提供查找该事物的方法。
+- [统一资源定位符](https://link.zhihu.com/?target=https%3A//zh.wikipedia.org/wiki/%E7%BB%9F%E4%B8%80%E8%B5%84%E6%BA%90%E5%AE%9A%E4%BD%8D%E7%AC%A6)（URL）代表一个人的住址。
+- 换言之，URN定义某事物的身份，而URL提供查找该事物的方法。
 
+### HTTP 协议包括哪些请求？
 
+- GET: 对服务器资源的简单请求。
+- POST: 用于发送包含用户提交数据的请求。
+- HEAD：类似于 GET 请求，**不过返回的响应中没有具体内容，用于获取报头**。
+- PUT：传说中请求文档的一个版本。
+- DELETE：发出一个删除指定文档的请求。
+- TRACE：**发送一个请求副本，以跟踪其处理进程。**
+- OPTIONS：**返回所有可用的方法，检查服务器支持哪些方法。**
+- CONNECT：用于 SSL 隧道的基于代理的请求。
 
+#### GET 和 POST 的区别？
 
+| 请求方式 | 数据位置            | 明文密文 | 数据安全 | 长度限制          | 应用场景 |
+| :------- | :------------------ | :------- | :------- | :---------------- | :------- |
+| GET      | HTTP 请求的 path 中 | 明文     | 不安全   | 长度较小，一般 2k | 查询数据 |
+| POST     | HTTP 请求 body 中   | 可明可密 | 安全     | 支持较大数据传输  | 修改数据 |
 
+- **GET 请求可被缓存**；POST 请求不会被缓存。
+- **GET 请求可被收藏为书签**；POST 不能被收藏为书签。
 
+- 对于 GET 方式的请求，浏览器会把 HTTP header 和 data 一并发送出去，服务器响应 200（返回数据）。
+- 而对于 POST，浏览器先发送 header ，服务器响应 100 continue ，浏览器再发送 data ，服务器响应 200 ok（返回数据）。
 
+也就是说，GET 只需要汽车跑一趟就把货送到了，而 POS T得跑两趟，第一趟，先去和服务器打个招呼“**嗨，我等下要送一批货来，你们打开门迎接我**”，然后再回头把货送过去。
 
+ps1：不过要注意，POST 具体发几次，也和浏览器的实现有关系。例如：**Firefox 只发一次**。
+		ps2：据研究，在网络环境好的情况下，发一次包的时间和发两次包的时间差别基本可以无视。而在网络环境差的情况下，**两次包的 TCP 在验证数据包完整性上，有非常大的优点**。
 
+### HTTP 有哪些状态码？
 
+- 1×× : 请求处理中，请求已被接受，正在处理
+- 2×× : 请求成功，请求被成功处理
+  - 200 OK // 客户端请求成功
+- **3×× : 重定向**，要完成请求必须进行进一步处理
+  - **301 Moved Permanently // 永久重定向,使用域名跳转**
+  - **302 Found // 临时重定向,**未登陆的用户访问用户中心重定向到登录页面
+- **4×× : 客户端错误，请求不合法**
+  - 400 Bad Request // 客户端请求有语法错误，不能被服务器所理解
+  - 401 Unauthorized // 请求未经授权，这个状态代码必须和 WWW-Authenticate 报头域一起使用
+  - 403 Forbidden // 服务器收到请求，但是拒绝提供服务
+  - 404 Not Found // 请求资源不存在，eg：输入了错误的 URL
+- **5×× : 服务器端错误**，服务器不能处理合法请求
+  - 500 Internal Server Error // 服务器发生不可预期的错误
+  - 503 Server Unavailable // 服务器当前不能处理客户端的请求，一段时间后可能恢复正常
+
+#### forward 和 redirect 的区别？
+
+- **直接转发方式（Forward），客户端和浏览器只发出一次请求**，Servlet、HTML、JSP 或其它信息资源，由第二个信息资源响应该请求，在请求对象 request 中，保存的对象对于每个信息资源是共享的。
+- **间接转发方式（重定向 Redirect），实际是两次 HTTP 请求**，服务器端在响应第一次请求的时候，让浏览器再向另外一个 URL 发出请求，从而达到转发的目的。
+
+详细的，请看 [《请求转发（Forward）和重定向（Redirect）的区别》](https://www.cnblogs.com/Qian123/p/5345527.html) 。
+
+🦅 **HTTP 返回码中 301 与 302 的区别？**
+
+301，302 都是 HTTP 状态的编码，都代表着某个 URL 发生了转移，不同之处在于：
+
+- 301 redirect: 301 代表永久性转移(Permanently Moved)。
+- 302 redirect: 302 代表暂时性转移(Temporarily Moved)。
 
 ## 资料
 
