@@ -9,27 +9,26 @@
 - 分离锁：
   - 也就是将内部进行分段（Segment），即Segment[] segments，
   - `Segment`里面则是 `HashEntry` 的数组，即`HashEntry[] table`，和 HashMap 类似，哈希相同的条目也是以链表形式存放。
-    - Segment 的数量由所谓的 concurrentcyLevel 决定，默认是 16
-    - 
+    - Segment 的数量由所谓的 concurrentcyLevel 决定，默认是 `16`
+    - Segment 类**继承于 ReentrantLock 类**，从而使得 Segment 对象能充当锁的角色
+    - 每一个 Segment 对象都有一个 `volatile count` 对象来表示本 Segment 中**包含的 HashEntry 对象的总数**
+      - 之所以在每个 Segment 对象中包含一个计数器，而不是在 ConcurrentHashMap 中使用全局的计数器，是为了**避免出现“热点域”**而影响 ConcurrentHashMap 的并发性。
 - HashEntry 内部
   - 使用 volatile 的 value 字段来保证可见性，`final（key，hash）、volatile（value）`。
   - 由于 HashEntry 的 **next 域为 final 型**，所以新节点只能在链表的**表头处插入**。
   - 类似于HashMap的Node
   - 也利用了不可变对象的机制以改进利用 Unsafe 提供的底层能力，比如 volatile access，去直接完成部分操作，以最优化性能，毕竟 Unsafe 中的很多操作都是 JVM intrinsic 优化过的。
 
+### put方法
 
+在进行并发写操作时：
 
-所以，从上面的源码清晰的看出，在进行并发写操作时：
-
-- ConcurrentHashMap 会获取再入锁，以保证数据一致性，Segment 本身就是基于 ReentrantLock 的扩展实现，所以，在并发修改期间，相应 Segment 是被锁定的。
-- 在最初阶段，进行**重复性的扫描**，以确定相应 key 值是否已经在数组里面，进而决定是更新还是放置操作，你可以在代码里看到相应的注释。重复扫描、检测冲突是 ConcurrentHashMap 的常见技巧。
+- 在最初阶段，进行**重复性的扫描**，以确定相应 key 值是否已经在数组里面，进而决定是更新还是放置操作，你可以在代码里看到相应的注释。**重复扫描、检测冲突**是 ConcurrentHashMap 的常见技巧。
 - 我在专栏上一讲介绍 HashMap 时，提到了可能发生的扩容问题，在 ConcurrentHashMap 中同样存在。不过有**一个明显区别，就是它进行的不是整体的扩容，而是单独对 Segment 进行扩容，**细节就不介绍了。
 
+### size 方法
 
-
-另外一个 Map 的 size 方法同样需要关注，它的实现涉及分离锁的一个副作用。
-
-另外一个 Map 的 size 方法同样需要关注，它的实现涉及分离锁的一个副作用。
+另外一个 Map 的 size 方法同样需要关注，它的实现涉及**分离锁的一个副作用**。
 
 试想，如果不进行同步，简单的计算所有 Segment 的总值，可能会因为并发 put，导致结果不准确，但是直接锁定所有 Segment 进行计算，就会变得非常昂贵。
 
