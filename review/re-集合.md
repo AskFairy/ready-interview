@@ -7,18 +7,17 @@
 早期 ConcurrentHashMap，其实现是基于：
 
 - 分离锁：
-  - 也就是将内部进行分段（Segment），里面则是 HashEntry 的数组，和 HashMap 类似，哈希相同的条目也是以链表形式存放。
-- HashEntry 内部使用 volatile 的 value 字段来保证可见性，也利用了不可变对象的机制以改进利用 Unsafe 提供的底层能力，比如 volatile access，去直接完成部分操作，以最优化性能，毕竟 Unsafe 中的很多操作都是 JVM intrinsic 优化过的。
+  - 也就是将内部进行分段（Segment），即Segment[] segments，
+  - `Segment`里面则是 `HashEntry` 的数组，即`HashEntry[] table`，和 HashMap 类似，哈希相同的条目也是以链表形式存放。
+    - Segment 的数量由所谓的 concurrentcyLevel 决定，默认是 16
+    - 
+- HashEntry 内部
+  - 使用 volatile 的 value 字段来保证可见性，`final（key，hash）、volatile（value）`。
+  - 由于 HashEntry 的 **next 域为 final 型**，所以新节点只能在链表的**表头处插入**。
+  - 类似于HashMap的Node
+  - 也利用了不可变对象的机制以改进利用 Unsafe 提供的底层能力，比如 volatile access，去直接完成部分操作，以最优化性能，毕竟 Unsafe 中的很多操作都是 JVM intrinsic 优化过的。
 
-##### Segments[] segments
 
-ConcurrentHashMap有个`Segment[] segments;`
-
-每个segment[i]维护一个`HashEntry[] table`
-
-
-
-Segment 的数量由所谓的 concurrentcyLevel 决定，默认是 16，也可以在相应构造函数直接指定。注意，Java 需要它是 2 的幂数值，如果输入是类似 15 这种非幂值，会被自动调整到 16 之类 2 的幂数值。
 
 所以，从上面的源码清晰的看出，在进行并发写操作时：
 
@@ -199,3 +198,13 @@ size
 利用LongAdd累加计算
 
 CopyonwriteArrayList
+
+
+
+
+
+### 资料
+
+https://blog.csdn.net/dfsaggsd/article/details/50572958
+
+https://blog.csdn.net/hancoder/article/details/107829728
