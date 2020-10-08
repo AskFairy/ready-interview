@@ -329,24 +329,46 @@ HTTP 协议，超文本传输协议，是用于服务器传输超文本到本地
 - **请求行**：用来说明**请求类型**，要访问的**资源路径**以及所使用的 **HTTP 版本**。
 - **请求头**：紧接着请求行（即第一行）之后的部分，用来说明服务器要使用的附加信息从第二行起为请求头部。
   - `Accept`：告诉服务端,客户端接收什么类型的响应
-  - HOST ，将指出请求的目的地。
+  - HOST：将指出请求的目的地。
   - Referer：表示这是请求是**从哪个URL进来的**
-  - User-Agent ，服务器端和客户端脚本都能访问它,它是浏览器类型检测逻辑的重要基础。该信息由你的浏览器来定义，并且在每个请求中自动发送等等
+  - User-Agent ：告诉服务器，客户端使用的**操作系统、浏览器版本和名称**
   - …
 - **空行**：请求头部后面的空行是必须的。
 - **请求数据**：也叫主体，可以添加任意的其他数据。
 
+#### HTTP 响应格式
+
+[![HTTP 响应格式](http://static2.iocoder.cn/da1ada597b5feedcd7d6c17d1989629d)](http://static2.iocoder.cn/da1ada597b5feedcd7d6c17d1989629d)HTTP 响应格式
+
+- 状态行：由 **HTTP 协议版本号**、**状态码**、**状态消息**三部分组成。
+- 消息报头：用来说明客户端要使用的一些附加信息。
+- 空行：消息报头后面的空行是必须的。
+- 响应正文：服务器返回给客户端的文本信息。
+
+#### URI 和 URL 的区别
+
+- **URI：**Uniform Resource Identifier，统一资源标识符，能把一个资源独一无二地标识出来。
+- **URL：**Uniform Resource Location统一资源定位符
+
+URL和URN是URI的子集，
+
+URI的作用像身份证号一样，
+
+URL的作用像家庭住址一样
+
+动物住址协议://地球/中国/浙江省/杭州市/西湖区/某大学/14号宿舍楼/525号寝/张三.人
 
 
 
+URL和URN是URI的子集，
 
+![img](https://upload-images.jianshu.io/upload_images/3028410-db917f3b89c2fd9c.png?imageMogr2/auto-orient/strip|imageView2/2/format/webp)
 
+URI可被视为定位符（URL），名称（URN）或两者兼备。
 
+- [统一资源名](https://link.zhihu.com/?target=https%3A//zh.wikipedia.org/wiki/%E7%BB%9F%E4%B8%80%E8%B5%84%E6%BA%90%E5%90%8D)（URN）如同一个人的名称，
 
-
-
-
-
+- [统一资源定位符](https://link.zhihu.com/?target=https%3A//zh.wikipedia.org/wiki/%E7%BB%9F%E4%B8%80%E8%B5%84%E6%BA%90%E5%AE%9A%E4%BD%8D%E7%AC%A6)（URL）代表一个人的住址。换言之，URN定义某事物的身份，而URL提供查找该事物的方法。
 
 
 
