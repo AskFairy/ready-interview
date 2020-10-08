@@ -7,46 +7,62 @@
 早期 ConcurrentHashMap，其实现是基于：
 
 - 分离锁：
+
   - 也就是将内部进行分段（Segment），即Segment[] segments，
   - `Segment`里面则是 `HashEntry` 的数组，即`HashEntry[] table`，和 HashMap 类似，哈希相同的条目也是以链表形式存放。
     - Segment 的数量由所谓的 concurrentcyLevel 决定，默认是 `16`
     - Segment 类**继承于 ReentrantLock 类**，从而使得 Segment 对象能充当锁的角色
     - 每一个 Segment 对象都有一个 `volatile count` 对象来表示本 Segment 中**包含的 HashEntry 对象的总数**
       - 之所以在每个 Segment 对象中包含一个计数器，而不是在 ConcurrentHashMap 中使用全局的计数器，是为了**避免出现“热点域”**而影响 ConcurrentHashMap 的并发性。
+
 - HashEntry 内部
+
   - 使用 volatile 的 value 字段来保证可见性，`final（key，hash）、volatile（value）`。
   - 由于 HashEntry 的 **next 域为 final 型**，所以新节点只能在链表的**表头处插入**。
   - 类似于HashMap的Node
   - 也利用了不可变对象的机制以改进利用 Unsafe 提供的底层能力，比如 volatile access，去直接完成部分操作，以最优化性能，毕竟 Unsafe 中的很多操作都是 JVM intrinsic 优化过的。
 
-### put方法
+  ```java
+  final int hash;
+  final K key;
+  volatile V val;
+  final Node<K,V> next;
+  ```
+
+  
+
+#### put方法
 
 在进行并发写操作时：
 
 - 在最初阶段，进行**重复性的扫描**，以确定相应 key 值是否已经在数组里面，进而决定是更新还是放置操作，你可以在代码里看到相应的注释。**重复扫描、检测冲突**是 ConcurrentHashMap 的常见技巧。
 - 我在专栏上一讲介绍 HashMap 时，提到了可能发生的扩容问题，在 ConcurrentHashMap 中同样存在。不过有**一个明显区别，就是它进行的不是整体的扩容，而是单独对 Segment 进行扩容，**细节就不介绍了。
 
-### size 方法
+#### size 方法
 
 另外一个 Map 的 size 方法同样需要关注，它的实现涉及**分离锁的一个副作用**。
 
 试想，如果不进行同步，简单的计算所有 Segment 的总值，可能会因为并发 put，导致结果不准确，但是直接锁定所有 Segment 进行计算，就会变得非常昂贵。
 
-其实，分离锁也限制了 Map 的初始化等操作。所以，**ConcurrentHashMap 的实现是通过重试机制（RETRIES_BEFORE_LOCK，指定重试次数 2）**，来试图获得可靠值。如果没有监控到发生变化（通过对比 Segment.modCount），就直接返回，否则获取锁进行操作。
+其实，分离锁也限制了 Map 的初始化等操作。
 
+先不加锁：所以，**ConcurrentHashMap 的实现是通过重试机制（RETRIES_BEFORE_LOCK，指定重试次数 2）**，来试图获得可靠值。如果没有监控到发生变化（通过对比 Segment.modCount），就直接返回，否则获取锁进行操作，**所以最多3次**。
 
+#### 扩容
 
+解释：即resize()，只不过是resize的`HashEntry[] table`。在jdk7里没有resize这个函数
 
+### JDK 1.8
 
 下面我来对比一下，在 Java 8 和之后的版本中，ConcurrentHashMap 发生了哪些变化呢？
 
-- 总体结构上，它的内部存储变得和我在专栏上一讲介绍的 HashMap 结构非常相似，同样是大的桶（bucket）数组，然后内部也是一个个所谓的链表结构（bin），同步的粒度要更细致一些。
+- 总体结构上，它的内部存储变得和我在专栏上一讲介绍的 **HashMap 结构非常相似**，同样是大的桶（bucket）数组，然后内部也是一个个所谓的链表结构（bin），同步的粒度要更细致一些。
 
-- 其内部仍然有 Segment 定义，但仅仅是为了保证序列化时的兼容性而已，不再有任何结构上的用处。
+- 其内部**仍然有 Segment 定义**，但仅仅是为了保证序列化时的兼容性而已，不再有任何结构上的用处。
 
-- 因为不再使用 Segment，初始化操作大大简化，修改为 lazy-load 形式，这样可以有效避免初始开销，解决了老版本很多人抱怨的这一点。
+- 因为不再使用 Segment，**初始化操作大大简化，修改为 lazy-load 形式**，这样可以有效避免初始开销，解决了老版本很多人抱怨的这一点。
 
-- 数据存储利用 volatile 来保证可见性。
+- 数据存储利用 volatile 来保证可见性：**next指针域由 1.7 的final改为volatile** 
 
 - 使用 CAS 等操作，在特定场景进行无锁并发操作。
 
@@ -64,8 +80,15 @@
     }
 ```
 
+
+
+#### put方法
+
+1.8中放弃了Segment臃肿的设计，取而代之的是采用`Node + CAS + Synchronized`来保证并发安全进行实现，1.8中使用一个**volatile类型的变量baseCount记录元素的个数**，当插入新数据或则删除数据时，会通过addCount()方法更新baseCount，通过累加baseCount和CounterCell数组中的数量，即可得到元素的总个数；
+
 ```java
-final V putVal(K key, V value, boolean onlyIfAbsent) { if (key == null || value == null) throw new NullPointerException();
+final V putVal(K key, V value, boolean onlyIfAbsent) { 
+    if (key == null || value == null) throw new NullPointerException();
     int hash = spread(key.hashCode());
     int binCount = 0;
     for (Node<K,V>[] tab = table;;) {
@@ -106,7 +129,9 @@ final V putVal(K key, V value, boolean onlyIfAbsent) { if (key == null || value 
 
 ```
 
-初始化操作实现在 initTable 里面，这是一个典型的 CAS 使用场景，利用 volatile 的 sizeCtl 作为互斥手段：如果发现竞争性的初始化，就 spin 在那里（`while（Thread.yield(); ）`），等待条件恢复；否则利用 CAS 设置排他标志。如果成功则进行初始化；否则重试。
+#### 初始化
+
+初始化操作实现在 initTable 里面，这是一个典型的 **CAS 使用场景**，利用 volatile 的 sizeCtl 作为互斥手段：如果发现竞争性的初始化，就 spin 在那里（`while（Thread.yield(); ）`），等待条件恢复；否则利用 CAS 设置排他标志。如果成功则进行初始化；否则重试。
 
 ```java
 private final Node<K,V>[] initTable() {
