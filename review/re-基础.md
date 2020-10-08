@@ -79,3 +79,23 @@ for循环会被会被JVM编译期优化成 `StringBuilder` ，但所有的字符
 - 字符串常量池：
   - *有点像HashMap的哈希桶+链表的数据结构*，用来存放字符串
   - `StringTable` 是一个固定长度的数组 `1009` 个大小
+
+#### StringBuilder 源码分析
+
+##### 初始化
+
+默认16、str.length() + 16
+
+##### 添加元素
+
+容量检测、 扩容为当前 容积 * 2 + 2、元素拷贝
+
+- 添加元素的方式是基于 `System.arraycopy` 拷贝操作进行的，这是一个本地方法。
+
+##### toString()
+
+ `String` 的构造函数传递数组进行转换的，copy个新的String字符串返回
+
+#### StringBuffer 源码分析
+
+`StringBuffer` 与 `StringBuilder`，API的使用和底层实现上基本一致，维度不同的是 `StringBuffer`方法上加了 `synchronized` 🔒锁，所以它是线程安全的。
