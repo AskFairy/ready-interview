@@ -65,7 +65,7 @@ MVC框架是一个全功能的构建Web应用程序的MVC实现。
 - 把很多 JavaEE 的东西封装了，在满足快速开发高质量程序的同时，**隐藏了实现细节**。
 
 
-## Spring 框架中都用到了哪些设计模式？
+## （重点）Spring 框架中都用到了哪些设计模式？
 
 Spring 框架中使用到了大量的设计模式，下面列举了比较有代表性的：
 
@@ -90,46 +90,17 @@ Spring 框架中使用到了大量的设计模式，下面列举了比较有代�
 
 Spring 框架的核心是 Spring IoC 容器。容器过读取提供的**配置元数据** Bean Definition **创建** Bean 对象，并使用**依赖注入**来管理管理的**完整生命周期**。
 
-- Spring 容器使用**依赖注入**来管理组成应用程序的 Bean 对象。
-- 容器通过读取提供的**配置元数据** Bean Definition 来接收对象进行实例化，配置和组装的指令。
-- 该配置元数据 Bean Definition 可以通过 XML，Java 注解或 Java Config 代码**提供**。
-
-
-
-[![Spring IoC](http://static2.iocoder.cn/images/Spring/2018-12-24/02.jpg)](http://static2.iocoder.cn/images/Spring/2018-12-24/02.jpg)Spring IoC
+- 该配置元数据 Bean Definition 可以通过 `XML`，Java `注解`或 `Java Config 代码`**提供**。
 
 ## 什么是依赖注入？
 
-在依赖注入中，你不必主动、手动创建对象，但必须描述如何创建它们。
-
-- 你不是直接在代码中将组件和服务连接在一起，而是描述配置文件中哪些组件需要哪些服务。
-- 然后，再由 IoC 容器将它们装配在一起。
-
-另外，依赖注入的英文缩写是 Dependency Injection ，简称 DI 。
+就是一种将调用者与被调用者分离的思想，在依赖注入中，你**不必主动**、手动创建对象，但**必须描述**如何创建它们。然后，再由 IoC 容器将它们装配在一起。
 
 ## IoC 和 DI 有什么区别？
 
-> 艿艿的吐槽，最怕这种概念题。下面引用知乎上的一个讨论：[《IoC 和DI 有什么区别？》](https://www.zhihu.com/question/25392984)
 
-IoC 是个更宽泛的概念，DI 是更具体的。引用郑烨的一篇博客，引用郑烨的一篇博客，[我眼中的Spring](https://link.zhihu.com/?target=http%3A//dreamhead.blogbus.com/logs/125334.html)
 
-> **Dependency Injection**
-> 原来，它叫 IoC 。
-> Martin Flower 发话了，是个框架都有 IoC ，这不足以新生容器反转的“如何定位插件的具体实现”，于是，它有了个新名字，Dependency Injection 。
->
-> 其实，它就是一种将调用者与被调用者分离的思想，Uncle Bob 管它叫DIP（Dependency Inversion Principle），并把它归入OO设计原则。
-> 同 Spring 相比，它更早进入我的大脑。一切都是那么朦胧，直至 Spring 出现。
->
-> 慢慢的，我知道了它还分为三种：
->
-> - Interface Injection（type 1）
-> - Setter Injection（type 2）
-> - Constructor Injection（type 3）。
->
-> Martin Flower那篇为它更名的大作让我心目关于它的一切趋于完整。
->
-> 在 Spring 中，它是一切的基础。Spring 的种种优势随之而来。
-> 于我而言，它为我带来更多的是思维方式的转变，恐怕以后我再也无法写出那种一大块的全功能程序了。
+IoC是目的，DI是手段。IoC是指让生成类的方式由传统方式（new）反过来，既程序员不调用new,需要类的时候由框架注入（DI）
 
 ## 可以通过多少种方式完成依赖注入？
 
@@ -138,12 +109,8 @@ IoC 是个更宽泛的概念，DI 是更具体的。引用郑烨的一篇博客�
 > 上面一个问题的三种方式的英文，下面是三种方式的中文。
 
 - 接口注入
-- 构造函数注入
-- setter 注入
-
-目前，在 Spring Framework 中，仅使用构造函数和 setter 注入这**两种**方式。
-
-那么这两种方式各有什么优缺点呢？胖友可以简单阅读 [《Spring两种依赖注入方式的比较》](https://my.oschina.net/itblog/blog/203746)，不用太较真。综述来说：
+- **构造函数注入**
+- **setter 注入**
 
 | 构造函数注入               | setter 注入                |
 | :------------------------- | :------------------------- |
