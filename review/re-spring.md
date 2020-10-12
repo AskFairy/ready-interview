@@ -123,19 +123,19 @@ IoC是目的，DI是手段。IoC是指让生成类的方式由传统方式（new
 
 ## Spring 中有多少种 IoC 容器？
 
-Spring 提供了两种( 不是“个” ) IoC 容器，分别是 BeanFactory、ApplicationContext 。
+Spring 提供了**两种( 不是“个” ) IoC 容器**，分别是 `BeanFactory`、`ApplicationContext` 。
 
 **BeanFactory**
 
 > BeanFactory 在 `spring-beans` 项目提供。
 
-BeanFactory ，就像一个包含 Bean 集合的工厂类。它会在客户端要求时实例化 Bean 对象。
+BeanFactory ，就像一个包含 Bean 集合的工厂类。它会在客户端要求时**实例化 Bean 对象**。
 
 **ApplicationContext**
 
 > ApplicationContext 在 `spring-context` 项目提供。
 
-ApplicationContext 接口扩展了 BeanFactory 接口，它在 BeanFactory 基础上提供了一些额外的功能。内置如下功能：
+ApplicationContext 接口**扩展**了 BeanFactory 接口，它在 BeanFactory 基础上提供了一些额外的功能。内置如下功能：
 
 - MessageSource ：管理 message ，实现国际化等功能。
 - ApplicationEventPublisher ：事件发布。
@@ -145,12 +145,6 @@ ApplicationContext 接口扩展了 BeanFactory 接口，它在 BeanFactory 基�
 - Closable ：关闭，释放资源
 - InitializingBean：自定义初始化。
 - BeanNameAware：设置 beanName 的 Aware 接口。
-
-另外，ApplicationContext 会自动初始化非懒加载的 Bean 对象们。
-
-详细的内容，感兴趣的胖友，可以看看 [《【死磕 Spring】—— ApplicationContext 相关接口架构分析》](http://svip.iocoder.cn/Spring/ApplicationContext/) 一文。源码之前无秘密。简单总结下 BeanFactory 与 ApplicationContext 两者的差异：
-
-> 艿艿：可能很多胖友没看过源码，所以会比较难。
 
 | BeanFactory                | ApplicationContext       |
 | :------------------------- | :----------------------- |
@@ -163,7 +157,7 @@ ApplicationContext 接口扩展了 BeanFactory 接口，它在 BeanFactory 基�
 
 ## 请介绍下常用的 BeanFactory 容器？
 
-BeanFactory 最常用的是 XmlBeanFactory 。它可以根据 XML 文件中定义的内容，创建相应的 Bean。
+BeanFactory 最常用的是 `XmlBeanFactory` 。它可以根据 XML 文件中定义的内容，创建相应的 Bean。
 
 ## 请介绍下常用的 ApplicationContext 容器？
 
@@ -171,30 +165,30 @@ BeanFactory 最常用的是 XmlBeanFactory 。它可以根据 XML 文件中定�
 
 - 1、ClassPathXmlApplicationContext ：从 ClassPath 的 XML 配置文件中读取上下文，并生成上下文定义。应用程序上下文从程序环境变量中取得。示例代码如下：
 
-  ```
+  ```java
   ApplicationContext context = new ClassPathXmlApplicationContext(“bean.xml”);
   ```
 
 - 2、FileSystemXmlApplicationContext ：由文件系统中的XML配置文件读取上下文。示例代码如下：
 
-  ```
+  ```java
   ApplicationContext context = new FileSystemXmlApplicationContext(“bean.xml”);
   ```
 
 - 3、XmlWebApplicationContext ：由 Web 应用的XML文件读取上下文。例如我们在 Spring MVC 使用的情况。
 
-当然，目前我们更多的是使用 Spring Boot 为主，所以使用的是第四种 ApplicationContext 容器，ConfigServletWebServerApplicationContext 。
+当然，目前我们更多的是使用 Spring Boot 为主，所以使用的是第四种 ApplicationContext 容器，`ConfigServletWebServerApplicationContext` 。
 
 ## 列举一些 IoC 的一些好处？
 
-- 它将最小化应用程序中的代码量。
-- 它以最小的影响和最少的侵入机制促进松耦合。
-- 它支持即时的实例化和延迟加载 Bean 对象。
+- 它将**最小化应用程序中的代码量**。
+- 它以最小的影响和最少的侵入机制促进**松耦合**。
+- 它**支持即时的实例化和延迟加载 Bean 对象**。
 - 它将使您的应用程序易于测试，因为它不需要单元测试用例中的任何单例或 JNDI 查找机制。
 
 ## 简述 Spring IoC 的实现机制？
 
-简单来说，Spring 中的 IoC 的实现原理，就是**工厂模式**加**反射机制**。代码如下：
+简单来说，Spring 中的 IoC 的实现原理，就是**工厂模式**，通过**反射机制**。代码如下：
 
 ```
 interface Fruit {
