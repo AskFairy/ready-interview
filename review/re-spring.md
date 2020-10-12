@@ -53,7 +53,7 @@ MVC框架是一个全功能的构建Web应用程序的MVC实现。
 
 
 - **DI** ：**[Dependency Injection(DI)](http://howtodoinjava.com/2013/03/19/inversion-of-control-ioc-and-dependency-injection-di-patterns-in-spring-framework-and-related-interview-questions/)** 方法，使得构造器和 JavaBean、properties 文件中的依赖关系一目了然。
-- **轻量级**：与 EJB 容器相比较，IoC 容器更加趋向于**轻量级**。这样一来 IoC 容器在有限的内存和 CPU 资源的情况下，进行应用程序的开发和发布就变得十分有利。
+- **轻量级**：与 EJB 容器相比较，**IoC 容器更加趋向于轻量级**。这样一来 IoC 容器在有限的内存和 CPU 资源的情况下，进行应用程序的开发和发布就变得十分有利。
 - **面向切面编程(AOP)**： Spring 支持面向**切面编程**，同时把应用的业务逻辑与系统的服务分离开来。
 - **集成主流框架**：
 - **Web 框架**：Spring 的 **Web 框架**亦是一个精心设计的 Web MVC 框架
@@ -84,22 +84,17 @@ Spring 框架中使用到了大量的设计模式，下面列举了比较有代�
 
 # Spring IoC
 
-> 下面，我们会将分成 IoC 和 Bean 两部分来分享 Spring 容器的内容。
->
-> - IoC ，侧重在于容器。
-> - Bean ，侧重在于被容器管理的 Bean 。
-
 ## 什么是 Spring IoC 容器？
 
-> 注意，正确的拼写是 IoC 。
 
-Spring 框架的核心是 Spring IoC 容器。容器创建 Bean 对象，将它们装配在一起，配置它们并管理它们的完整生命周期。
+
+Spring 框架的核心是 Spring IoC 容器。容器过读取提供的**配置元数据** Bean Definition **创建** Bean 对象，并使用**依赖注入**来管理管理的**完整生命周期**。
 
 - Spring 容器使用**依赖注入**来管理组成应用程序的 Bean 对象。
 - 容器通过读取提供的**配置元数据** Bean Definition 来接收对象进行实例化，配置和组装的指令。
 - 该配置元数据 Bean Definition 可以通过 XML，Java 注解或 Java Config 代码**提供**。
 
-> 艿艿，注意上面三段段话的**加粗**部分的内容。
+
 
 [![Spring IoC](http://static2.iocoder.cn/images/Spring/2018-12-24/02.jpg)](http://static2.iocoder.cn/images/Spring/2018-12-24/02.jpg)Spring IoC
 
@@ -1299,108 +1294,6 @@ Spring 提供了 Spring JDBC 框架，方便我们使用 JDBC 。
 > 艿艿：不过我记得，12 年我用过 Spring JPA 的方式，操作 Hibernate 。具体可参考 [《一起来学 SpringBoot 2.x | 第六篇：整合 Spring Data JPA》](http://www.iocoder.cn/Spring-Boot/battcn/v2-orm-jpa/) 。
 
 当然，我们可以再来看一道 [《JPA 规范与 ORM 框架之间的关系是怎样的呢？》](https://www.cnblogs.com/xiaoheike/p/5150553.html) 。这个问题，我倒是问过面试的候选人，哈哈哈哈。
-
-# 666. 彩蛋
-
-整理 Spring 面试题的过程中，又把 Spring 的知识点又复习了一遍。我突然有点想念，那本被我翻烂的 [《Spring 实战》](https://book.douban.com/subject/26767354/) 。😈 我要买一本原版的！！！
-
-参考与推荐如下文章：
-
-- Java 架构 [《Spring 面试题》](https://yq.aliyun.com/articles/669702)
-- 永顺 [《彻底征服 Spring AOP 之理论篇》](https://segmentfault.com/a/1190000007469968)
-- 陌上桑花开花 [《Java 面试题集（七）– Spring常见面试问题》](https://blog.csdn.net/u014079773/article/details/52453002)
-- 一人浅醉 [《Spring 的 @Transactional 注解详细用法》](https://www.cnblogs.com/yepei/p/4716112.html)
-- dalaoyang [《Spring 面试题》](https://juejin.im/post/5b065000f265da0de45235e6)
-
-**文章目录**
-
-1. Spring 整体
-   1. [什么是 Spring Framework？](http://svip.iocoder.cn/Spring/Interview/#什么是-Spring-Framework？)
-   2. [Spring Framework 中有多少个模块，它们分别是什么？](http://svip.iocoder.cn/Spring/Interview/#Spring-Framework-中有多少个模块，它们分别是什么？)
-   3. [使用 Spring 框架能带来哪些好处？](http://svip.iocoder.cn/Spring/Interview/#使用-Spring-框架能带来哪些好处？)
-   4. [Spring 框架中都用到了哪些设计模式？](http://svip.iocoder.cn/Spring/Interview/#Spring-框架中都用到了哪些设计模式？)
-2. Spring IoC
-   1. [什么是 Spring IoC 容器？](http://svip.iocoder.cn/Spring/Interview/#什么是-Spring-IoC-容器？)
-   2. [什么是依赖注入？](http://svip.iocoder.cn/Spring/Interview/#什么是依赖注入？)
-   3. [IoC 和 DI 有什么区别？](http://svip.iocoder.cn/Spring/Interview/#IoC-和-DI-有什么区别？)
-   4. [可以通过多少种方式完成依赖注入？](http://svip.iocoder.cn/Spring/Interview/#可以通过多少种方式完成依赖注入？)
-   5. [Spring 中有多少种 IoC 容器？](http://svip.iocoder.cn/Spring/Interview/#Spring-中有多少种-IoC-容器？)
-   6. [请介绍下常用的 BeanFactory 容器？](http://svip.iocoder.cn/Spring/Interview/#请介绍下常用的-BeanFactory-容器？)
-   7. [请介绍下常用的 ApplicationContext 容器？](http://svip.iocoder.cn/Spring/Interview/#请介绍下常用的-ApplicationContext-容器？)
-   8. [列举一些 IoC 的一些好处？](http://svip.iocoder.cn/Spring/Interview/#列举一些-IoC-的一些好处？)
-   9. [简述 Spring IoC 的实现机制？](http://svip.iocoder.cn/Spring/Interview/#简述-Spring-IoC-的实现机制？)
-   10. [Spring 框架中有哪些不同类型的事件？](http://svip.iocoder.cn/Spring/Interview/#Spring-框架中有哪些不同类型的事件？)
-3. Spring Bean
-   1. [什么是 Spring Bean ？](http://svip.iocoder.cn/Spring/Interview/#什么是-Spring-Bean-？)
-   2. [Spring 有哪些配置方式](http://svip.iocoder.cn/Spring/Interview/#Spring-有哪些配置方式)
-   3. [Spring 支持几种 Bean Scope ？](http://svip.iocoder.cn/Spring/Interview/#Spring-支持几种-Bean-Scope-？)
-   4. [Spring Bean 在容器的生命周期是什么样的？](http://svip.iocoder.cn/Spring/Interview/#Spring-Bean-在容器的生命周期是什么样的？)
-   5. [什么是 Spring 的内部 bean？](http://svip.iocoder.cn/Spring/Interview/#什么是-Spring-的内部-bean？)
-   6. [什么是 Spring 装配？](http://svip.iocoder.cn/Spring/Interview/#什么是-Spring-装配？)
-   7. [解释什么叫延迟加载？](http://svip.iocoder.cn/Spring/Interview/#解释什么叫延迟加载？)
-   8. [Spring 框架中的单例 Bean 是线程安全的么？](http://svip.iocoder.cn/Spring/Interview/#Spring-框架中的单例-Bean-是线程安全的么？)
-   9. [Spring Bean 怎么解决循环依赖的问题？](http://svip.iocoder.cn/Spring/Interview/#Spring-Bean-怎么解决循环依赖的问题？)
-4. Spring 注解
-   1. [什么是基于注解的容器配置？](http://svip.iocoder.cn/Spring/Interview/#什么是基于注解的容器配置？)
-   2. [如何在 Spring 中启动注解装配？](http://svip.iocoder.cn/Spring/Interview/#如何在-Spring-中启动注解装配？)
-   3. [@Component, @Controller, @Repository, @Service 有何区别？](http://svip.iocoder.cn/Spring/Interview/#Component-Controller-Repository-Service-有何区别？)
-   4. [@Required 注解有什么用？](http://svip.iocoder.cn/Spring/Interview/#Required-注解有什么用？)
-   5. [@Autowired 注解有什么用？](http://svip.iocoder.cn/Spring/Interview/#Autowired-注解有什么用？)
-   6. [@Qualifier 注解有什么用？](http://svip.iocoder.cn/Spring/Interview/#Qualifier-注解有什么用？)
-5. Spring AOP
-   1. [什么是 AOP ？](http://svip.iocoder.cn/Spring/Interview/#什么是-AOP-？)
-   2. [什么是 Aspect ？](http://svip.iocoder.cn/Spring/Interview/#什么是-Aspect-？)
-   3. [什么是 JoinPoint ?](http://svip.iocoder.cn/Spring/Interview/#什么是-JoinPoint)
-   4. [什么是 PointCut ？](http://svip.iocoder.cn/Spring/Interview/#什么是-PointCut-？)
-   5. [关于 JoinPoint 和 PointCut 的区别](http://svip.iocoder.cn/Spring/Interview/#关于-JoinPoint-和-PointCut-的区别)
-   6. [什么是 Advice ？](http://svip.iocoder.cn/Spring/Interview/#什么是-Advice-？)
-   7. [什么是 Target ？](http://svip.iocoder.cn/Spring/Interview/#什么是-Target-？)
-   8. [AOP 有哪些实现方式？](http://svip.iocoder.cn/Spring/Interview/#AOP-有哪些实现方式？)
-   9. [Spring AOP and AspectJ AOP 有什么区别？](http://svip.iocoder.cn/Spring/Interview/#Spring-AOP-and-AspectJ-AOP-有什么区别？)
-   10. [什么是编织（Weaving）？](http://svip.iocoder.cn/Spring/Interview/#什么是编织（Weaving）？)
-   11. [Spring 如何使用 AOP 切面？](http://svip.iocoder.cn/Spring/Interview/#Spring-如何使用-AOP-切面？)
-6. Spring Transaction
-   1. [什么是事务？](http://svip.iocoder.cn/Spring/Interview/#什么是事务？)
-   2. [事务的特性指的是？](http://svip.iocoder.cn/Spring/Interview/#事务的特性指的是？)
-   3. [列举 Spring 支持的事务管理类型？](http://svip.iocoder.cn/Spring/Interview/#列举-Spring-支持的事务管理类型？)
-   4. [Spring 事务如何和不同的数据持久层框架做集成？](http://svip.iocoder.cn/Spring/Interview/#Spring-事务如何和不同的数据持久层框架做集成？)
-   5. [为什么在 Spring 事务中不能切换数据源？](http://svip.iocoder.cn/Spring/Interview/#为什么在-Spring-事务中不能切换数据源？)
-   6. [@Transactional 注解有哪些属性？如何使用？](http://svip.iocoder.cn/Spring/Interview/#Transactional-注解有哪些属性？如何使用？)
-   7. [什么是事务的隔离级别？分成哪些隔离级别？](http://svip.iocoder.cn/Spring/Interview/#什么是事务的隔离级别？分成哪些隔离级别？)
-   8. [什么是事务的传播级别？分成哪些传播级别？](http://svip.iocoder.cn/Spring/Interview/#什么是事务的传播级别？分成哪些传播级别？)
-   9. [什么是事务的超时属性？](http://svip.iocoder.cn/Spring/Interview/#什么是事务的超时属性？)
-   10. [什么是事务的只读属性？](http://svip.iocoder.cn/Spring/Interview/#什么是事务的只读属性？)
-   11. [什么是事务的回滚规则？](http://svip.iocoder.cn/Spring/Interview/#什么是事务的回滚规则？)
-   12. [简单介绍 TransactionStatus ？](http://svip.iocoder.cn/Spring/Interview/#简单介绍-TransactionStatus-？)
-   13. [使用 Spring 事务有什么优点？](http://svip.iocoder.cn/Spring/Interview/#使用-Spring-事务有什么优点？)
-7. Spring Data Access
-   1. [Spring 支持哪些 ORM 框架？](http://svip.iocoder.cn/Spring/Interview/#Spring-支持哪些-ORM-框架？)
-   2. [在 Spring 框架中如何更有效地使用 JDBC ？](http://svip.iocoder.cn/Spring/Interview/#在-Spring-框架中如何更有效地使用-JDBC-？)
-   3. [Spring 数据数据访问层有哪些异常？](http://svip.iocoder.cn/Spring/Interview/#Spring-数据数据访问层有哪些异常？)
-   4. [使用 Spring 访问 Hibernate 的方法有哪些？](http://svip.iocoder.cn/Spring/Interview/#使用-Spring-访问-Hibernate-的方法有哪些？)
-8. [666. 彩蛋](http://svip.iocoder.cn/Spring/Interview/#666-彩蛋)
-
-© 2014 - 2020 芋道源码 | 
-
-总访客数 828871 次 && 总访问量 3961083 次
-
-[回到首页](http://svip.iocoder.cn/index)
-
-![img](http://svip.iocoder.cn/images/fly-to-top.png)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
