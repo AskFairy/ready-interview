@@ -560,7 +560,7 @@ Weaving ，**编织**。
 
 ## 什么是事务？
 
-事务就是对一系列的数据库操作（比如插入多条数据）进行统一的提交或回滚操作，如果插入成功，那么一起成功，如果中间有一条出现异常，那么回滚之前的所有操作。
+事务就是对一系列的数据库操作（比如插入多条数据）进行**统一的提交**回滚操作，如果插入成功，那么**一起成功**，如果中间有一条出现异常，那么**回滚**之前的所有操作。
 
 这样可以防止出现脏数据，防止数据库数据出现问题。
 
@@ -572,7 +572,7 @@ Weaving ，**编织**。
 
 1. **原子性** Atomicity ：一个事务（transaction）中的所有操作，或者全部完成，或者全部不完成，不会结束在中间某个环节。事务在执行过程中发生错误，会被恢复（Rollback）到事务开始前的状态，就像这个事务从来没有执行过一样。即，事务不可分割、不可约简。
 2. **一致性** Consistency ：在事务开始之前和事务结束以后，数据库的完整性没有被破坏。这表示写入的资料必须完全符合所有的预设[约束](https://zh.wikipedia.org/wiki/数据完整性)、[触发器](https://zh.wikipedia.org/wiki/触发器_(数据库))、[级联回滚](https://zh.wikipedia.org/w/index.php?title=级联回滚&action=edit&redlink=1)等。
-3. **隔离性** Isolation ：数据库允许多个并发事务同时对其数据进行读写和修改的能力，隔离性可以防止多个事务并发执行时由于交叉执行而导致数据的不一致。事务隔离分为不同级别，包括读未提交（Read uncommitted）、读提交（read committed）、可重复读（repeatable read）和串行化（Serializable）。
+3. **隔离性** Isolation ：数据库允许**多个并发事务**同时对其数据进行读写和修改的能力，隔离性**可以防止多个事务并发执行时由于交叉执行而导致数据的不一致**。事务隔离分为不同级别，包括读未提交（Read uncommitted）、读提交（read committed）、可重复读（repeatable read）和串行化（Serializable）。
 4. **持久性** Durability ：事务处理结束后，对数据的修改就是永久的，即便系统故障也不会丢失。
 
 ## 列举 Spring 支持的事务管理类型？
@@ -580,6 +580,7 @@ Weaving ，**编织**。
 目前 Spring 提供两种类型的事务管理：
 
 - **声明式**事务：通过使用注解或基于 XML 的配置事务，从而事务管理与业务代码分离。
+  - Spring Boot + 注解的**声明式**事务
 - **编程式**事务：通过编码的方式实现事务管理，需要在代码中显式的调用事务的获得、提交、回滚。它为您提供极大的灵活性，但维护起来非常困难。
 
 实际场景下，我们一般使用 Spring Boot + 注解的**声明式**事务。具体的示例，胖友可以看看 [《Spring Boot 事务注解详解》](https://www.jianshu.com/p/cddeca2c9245) 。
@@ -611,58 +612,16 @@ public interface PlatformTransactionManager {
 
 - PlatformTransactionManager 是负责事务管理的接口，一共有三个接口方法，分别负责事务的获得、提交、回滚。
 
-- ```
-  #getTransaction(TransactionDefinition definition)
-  ```
-
-   
-
-  方法，根据事务定义 TransactionDefinition ，获得 TransactionStatus 。
-
-  - 为什么不是创建事务呢？因为如果当前如果已经有事务，则不会进行创建，一般来说会跟当前线程进行绑定。如果不存在事务，则进行创建。
+- `#getTransaction(TransactionDefinition definition)`方法，根据事务定义 TransactionDefinition ，获得 TransactionStatus 。
+  - 一般来说会跟当前线程进行绑定。如果不存在事务，则进行创建。
   - 为什么返回的是 TransactionStatus 对象？在 TransactionStatus 中，不仅仅包含事务属性，还包含事务的其它信息，例如是否只读、是否为新创建的事务等等。😈 下面，也会详细解析 TransactionStatus 。
-  - 事务 TransactionDefinition 是什么？😈 下面，也会详细解析 TransactionStatus 。
+- 事务 TransactionDefinition 是什么？😈 下面，也会详细解析 TransactionStatus 。
+  
+- `#commit(TransactionStatus status)`方法，根据 TransactionStatus 情况，提交事务。
+  - 为什么根据 TransactionStatus 情况，进行提交？例如说，带@Transactional注解的的 A 方法，会调用@Transactional注解的的 B 方法。
 
-- ```
-  #commit(TransactionStatus status)
-  ```
-
-   
-
-  方法，根据 TransactionStatus 情况，提交事务。
-
-  - 为什么根据 TransactionStatus 情况，进行提交？例如说，带
-
-    ```
-    @Transactional
-    ```
-
-     
-
-    注解的的 A 方法，会调用
-
-     
-
-    ```
-    @Transactional
-    ```
-
-     
-
-    注解的的 B 方法。
-
-    - 在 B 方法结束调用后，会执行 `PlatformTransactionManager#commit(TransactionStatus status)` 方法，此处事务**是不能**、**也不会**提交的。
-    - 而是在 A 方法结束调用后，执行 `PlatformTransactionManager#commit(TransactionStatus status)` 方法，提交事务。
-
-- ```
-  #rollback(TransactionStatus status)
-  ```
-
-   
-
-  方法，根据 TransactionStatus 情况，回滚事务。
-
-  - 为什么根据 TransactionStatus 情况，进行回滚？原因同 `#commit(TransactionStatus status)` 方法。
+- `#rollback(TransactionStatus status)`方法，根据 TransactionStatus 情况，回滚事务。
+  - 为什么根据 TransactionStatus 情况，进行回滚？原因同上。
 
 ③ 再之后，PlatformTransactionManager 有**抽象子**类 `org.springframework.transaction.support.AbstractPlatformTransactionManager` ，基于 [模板方法模式](https://blog.csdn.net/carson_ho/article/details/54910518) ，实现事务整体逻辑的骨架，而抽象 `#doCommit(DefaultTransactionStatus status)`、`#doRollback(DefaultTransactionStatus status)` 等等方法，交由子类类来实现。
 
