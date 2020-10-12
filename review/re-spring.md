@@ -330,9 +330,21 @@ https://blog.csdn.net/u010853261/article/details/77940767
 
 Spring 的 Java 配置是通过使用 `@Bean` 和 `@Configuration` 来实现。
 
+## [@Configuration和@Component区别](https://blog.csdn.net/ctwy291314/article/details/104428533)
+
+`@Configuration`注解中是包含`@Component`注解的
+
+`@Configuration`就相当于Spring配置文件中的``标签，里面可以配置bean
+
+概括就是 @Configuration 中所有带 @Bean 注解的方法都会被动态代理，因此调用该方法返回的都是**同一个实例**。
+
+其工作原理是：如果方式是首次被调用那么原始的方法体会被执行并且结果对象会被注册到Spring上下文中，之后所有的对该方法的调用仅仅只是从Spring上下文中取回该对象返回给调用者。
+
+@Component，只是纯JAVA方式的调用，多次调用该方法返回的是不同的对象实例。
+
 ## 如何在 Spring 中启动注解装配？
 
-默认情况下，Spring 容器中未打开注解装配。通过配置 `` 元素在 Spring 配置文件中启用它。使用 Spring Boot ，默认情况下已经开启。
+默认情况下，Spring 容器中未打开注解装配。使用 Spring Boot ，默认情况下已经开启。
 
 ## @Component, @Controller, @Repository, @Service 有何区别？
 
@@ -371,37 +383,20 @@ public class Employee {
 
 ## @Autowired 注解有什么用？
 
-`@Autowired` 注解，可以更准确地控制应该在何处以及如何进行自动装配。
+`@Autowired` 注解，可以更准确地控制应该在何处以及**如何进行自动装配bean**。
 
 - 此注解用于在 setter 方法，构造函数，具有任意名称或多个参数的属性或方法上自动装配 Bean。
 - 默认情况下，它是类型驱动的注入。
 
-示例代码如下：
+## @Autowired 与@Resource的区别
 
-```
-public class EmpAccount {
-    
-    @Autowired
-    private Employee emp;
-    
-}
-```
+@Autowired默认按类型装配（这个注解是属业spring的）
+
+@Resource（这个注解属于J2EE的），默认按照名称进行装配，名称可以通过name属性进行指定。当找不到与名称匹配的bean时才按照类型进行装配。
 
 ## @Qualifier 注解有什么用？
 
 当你创建多个**相同类型**的 Bean ，并希望仅使用属性装配**其中一个** Bean 时，您可以使用 `@Qualifier` 注解和 `@Autowired` 通过指定 ID 应该装配哪个**确切的** Bean 来消除歧义。
-
-例如，应用中有两个类型为 Employee 的 Bean ID 为 `"emp1"` 和 `"emp2"` ，此处，我们希望 EmployeeAccount Bean 注入 `"emp1"` 对应的 Bean 对象。代码如下：
-
-```
-public class EmployeeAccount {
-
-    @Autowired
-    @Qualifier(emp1)
-    private Employee emp;
-
-}
-```
 
 # Spring AOP
 
