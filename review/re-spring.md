@@ -10,25 +10,17 @@ Spring 是一个**轻量级**的**开源**应用框架，**降低应用程序开
 
 **1、Spring core：核心容器**
 
-核心容器提供spring框架的**基本功能**。Spring以bean的方式组织和管理Java应用中的各个组件及其关系。Spring使用BeanFactory来产生和管理Bean，它是工厂模式的实现。BeanFactory使用控制反转(IoC)模式将应用的配置和依赖性规范与实际的应用程序代码分开。BeanFactory使用依赖注入的方式提供给组件依赖。主要实现控制反转IoC和依赖注入DI、Bean配置以及加载。
+核心容器提供spring框架的**基本功能**。主要实现控制反转IoC和依赖注入DI、Bean配置以及加载。
 
 **2、Spring AOP：Spring面向切面编程**
 
 通过配置管理特性，Spring AOP 模块直接将面向方面的编程功能集成到了Spring框架中。所以，可以很容易地使 Spring框架管理的任何对象支持 AOP。Spring AOP 模块为基于 Spring 的应用程序中的对象提供了事务管理服务。通过使用 Spring AOP，不用依赖 EJB 组件，就可以将声明性事务管理集成到应用程序中。AOP把一个业务流程分成几部分，例如权限检查、业务处理、日志记录，每个部分单独处理，然后把它们组装成完整的业务流程。每个部分被称为切面或关注点。
 
-AOP的实现原理为动态代理技术，一共有两种代理模式：
 
-（1）ProxyFactoryBean代理工厂对象
-
-Spring内置代理类，引入一个中间层，能够创建不同类型的对象，利用它可以实现任何形式的AOP。
-
-（2）TransactionProxyFactoryBean事务代理工厂对象
-
-常用在数据库编程上，Spring利用TransactionProxyFactoryBean对事务进行管理，在指定方法前利用AOP连接数据库并开启事务，然后在指定方法返回后利用AOP提交事务并断开数据库。
 
 **3、Spring context：Spring上下文**
 
-Spring上下文是一个配置文件，向Spring框架提供上下文信息。Spring上下文包括企业服务，如JNDI、EJB、电子邮件、国际化、校验和调度功能。提供框架式Bean访问方式，其他程序可以通过Context访问Spring的Bean资源。
+Spring上下文是一个配置文件，向Spring框架提供上下文信息。
 
 **4、Spring DAO**
 
@@ -813,6 +805,16 @@ AOP(Aspect-Oriented Programming)，即**面向切面编程**, 它与 OOP( Object
 
 - 在 OOP 中，以类( Class )作为基本单元
 - 在 AOP 中，以**切面( Aspect )**作为基本单元。
+
+AOP的实现原理为动态代理技术，一共有两种代理模式：
+
+（1）ProxyFactoryBean代理工厂对象
+
+Spring内置代理类，引入一个中间层，能够创建不同类型的对象，利用它可以实现任何形式的AOP。
+
+（2）TransactionProxyFactoryBean事务代理工厂对象
+
+常用在数据库编程上，Spring利用TransactionProxyFactoryBean对事务进行管理，在指定方法前利用AOP连接数据库并开启事务，然后在指定方法返回后利用AOP提交事务并断开数据库。
 
 ## 什么是 Aspect ？
 
