@@ -784,14 +784,11 @@ int PROPAGATION_NESTED = 6;
 
 事务的只读属性是指，对事务性资源进行只读操作或者是读写操作。
 
-- 所谓事务性资源就是指那些被事务管理的资源，比如数据源、JMS 资源，以及自定义的事务性资源等等。
-- 如果确定只对事务性资源进行只读操作，那么我们可以将事务标志为只读的，以提高事务处理的性能。感兴趣的胖友，可以看看 [《不使用事务和使用只读事务的区别 》](https://my.oschina.net/uniquejava/blog/80954) 。
-
-在 TransactionDefinition 中以 `boolean` 类型来表示该事务是否只读。
+- 只读事务来保证读记录的数据一致性。
 
 ## 什么是事务的回滚规则？
 
-回滚规则，定义了哪些异常会导致事务回滚而哪些不会。
+回滚规则，定义了哪些异常会**导致事务回滚**而哪些不会。
 
 - 默认情况下，事务只有遇到运行期异常时才会回滚，而在遇到检查型异常时不会回滚（这一行为与EJB的回滚行为是一致的）。
 - 但是你可以声明事务在遇到特定的检查型异常时像遇到运行期异常那样回滚。同样，你还可以声明事务遇到特定的异常不回滚，即使这些异常是运行期异常。
@@ -802,98 +799,25 @@ int PROPAGATION_NESTED = 6;
 
 > 艿艿：这个可能不是一个面试题，主要满足下大家的好奇心。
 
-TransactionStatus 接口，记录事务的状态，不仅仅包含事务本身，还包含事务的其它信息。代码如下：
-
-```
-// TransactionStatus.java
-
-public interface TransactionStatus extends SavepointManager, Flushable {
-
-    /**
-     * 是否是新创建的事务
-     */
-    boolean isNewTransaction();
-
-    /**
-     * 是否有 Savepoint
-     *
-     * 在 {@link TransactionDefinition#PROPAGATION_NESTED} 传播级别使用。
-     */
-    boolean hasSavepoint();
-
-    /**
-     * 设置为只回滚
-     */
-    void setRollbackOnly();
-    /**
-     * 是否为只回滚
-     */
-    boolean isRollbackOnly();
-
-    /**
-     * 执行 flush 操作
-     */
-    @Override
-    void flush();
-
-    /**
-     * 是否事务已经完成
-     */
-    boolean isCompleted();
-
-}
-```
-
-- 为什么没有事务对象呢？在 TransactionStatus 的实现类 DefaultTransactionStatus 中，有个 `Object transaction` 属性，表示事务对象。
-- `#isNewTransaction()` 方法，表示是否是新创建的事务。有什么用呢？答案结合 [「Spring 事务如何和不同的数据持久层框架做集成？」](http://svip.iocoder.cn/Spring/Interview/#) 问题，我们对 `#commit(TransactionStatus status)` 方法的解释。通过该方法，我们可以判断，当前事务是否当前方法所创建的，只有创建事务的方法，**才能且应该真正的提交事务**。
+TransactionStatus 接口，记录事务的状态，不仅仅包含事务本身，还包含事务的其它信息。
 
 ## 使用 Spring 事务有什么优点？
 
-1. 通过 PlatformTransactionManager ，为不同的数据层持久框架提供统一的 API ，无需关心到底是原生 JDBC、Spring JDBC、JPA、Hibernate 还是 MyBatis 。
-2. 通过使用声明式事务，使业务代码和事务管理的逻辑分离，更加清晰。
+1. 通过 PlatformTransactionManager ，**为不同的数据层持久框架提供统一的 API** ，无需关心到底是原生 JDBC、Spring JDBC、JPA、Hibernate 还是 MyBatis 。
+2. 通过使用**声明式事务，使业务代码和事务管理的逻辑分离**，更加清晰。
 
 从倾向上来说，艿艿比较喜欢**注解** + 声明式事务。
-
-# Spring Data Access
-
-> 艿艿：这块的问题，感觉面试问的不多，至少我很少问。哈哈哈。就当做下了解，万一问了呢。
 
 ## Spring 支持哪些 ORM 框架？
 
 - Hibernate
 - JPA
+  - JPA规范本质上就是一种ORM规范，注意不是ORM框架——因为JPA并未提供ORM实现，它只是制订了一些规范，提供了一些编程的API接口，但具体实现则由服务厂商来提供实现
 - MyBatis
-- [JDO](https://docs.spring.io/spring/docs/3.0.0.M4/reference/html/ch13s04.html)
-- [OJB](https://db.apache.org/ojb/docu/howtos/howto-use-spring.html)
 
 可能会有胖友说，不是应该还有 Spring JDBC 吗。注意，Spring JDBC 不是 ORM 框架。
 
-## 在 Spring 框架中如何更有效地使用 JDBC ？
 
-Spring 提供了 Spring JDBC 框架，方便我们使用 JDBC 。
-
-对于开发者，只需要使用 JdbcTemplate 类，它提供了很多便利的方法解决诸如把数据库数据转变成基本数据类型或对象，执行写好的或可调用的数据库操作语句，提供自定义的数据错误处理。
-
-没有使用过的胖友，可以看看 [《Spring JDBC 访问关系型数据库》](https://www.tianmaying.com/tutorial/spring-jdbc-data-accessing) 文章。
-
-## Spring 数据数据访问层有哪些异常？
-
-通过使用 Spring 数据数据访问层，它统一了各个数据持久层框架的不同异常，统一进行提供 `org.springframework.dao.DataAccessException` 异常及其子类。如下图所示：
-
-[![流程图](http://static2.iocoder.cn/images/Spring/2018-12-24/09.jpg)](http://static2.iocoder.cn/images/Spring/2018-12-24/09.jpg)流程图
-
-## 使用 Spring 访问 Hibernate 的方法有哪些？
-
-> 艿艿：这个问题很灵异，因为艿艿已经好久不使用 Hibernate 了，所以答案是直接复制的。
-
-我们可以通过两种方式使用 Spring 访问 Hibernate：
-
-- 使用 Hibernate 模板和回调进行控制反转。
-- 扩展 HibernateDAOSupport 并应用 AOP 拦截器节点。
-
-> 艿艿：不过我记得，12 年我用过 Spring JPA 的方式，操作 Hibernate 。具体可参考 [《一起来学 SpringBoot 2.x | 第六篇：整合 Spring Data JPA》](http://www.iocoder.cn/Spring-Boot/battcn/v2-orm-jpa/) 。
-
-当然，我们可以再来看一道 [《JPA 规范与 ORM 框架之间的关系是怎样的呢？》](https://www.cnblogs.com/xiaoheike/p/5150553.html) 。这个问题，我倒是问过面试的候选人，哈哈哈哈。
 
 
 
