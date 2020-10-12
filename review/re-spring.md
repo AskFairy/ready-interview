@@ -402,7 +402,7 @@ public class Employee {
 
 > Spring AOP 的面试题中，大多数都是概念题，主要是对切面的理解。概念点主要有：
 >
-> - AOP
+> - AOP：切面、动态代理
 > - Aspect
 > - JoinPoint
 > - PointCut
@@ -427,13 +427,13 @@ AOP(Aspect-Oriented Programming)，即**面向切面编程**, 它与 OOP( Object
 
 AOP的实现原理为动态代理技术，一共有两种代理模式：
 
-（1）ProxyFactoryBean代理工厂对象
+（1）`ProxyFactoryBean`代理工厂对象
 
 Spring内置代理类，引入一个中间层，能够创建不同类型的对象，利用它可以实现任何形式的AOP。
 
-（2）TransactionProxyFactoryBean事务代理工厂对象
+（2）`TransactionProxyFactoryBean`事务代理工厂对象
 
-常用在数据库编程上，Spring利用TransactionProxyFactoryBean对事务进行管理，在指定方法前利用AOP连接数据库并开启事务，然后在指定方法返回后利用AOP提交事务并断开数据库。
+常用在数据库编程上，Spring利用TransactionProxyFactoryBean对事务进行管理，在**指定方法前利用AOP连接数据库并开启事务，然后在指定方法返回后利用AOP提交事务并断开数据库**。
 
 ## 什么是 Aspect ？
 
@@ -442,7 +442,7 @@ Aspect 由 **PointCut** 和 **Advice** 组成。
 - 它既包含了横切逻辑的定义，也包括了连接点的定义。
 - Spring AOP 就是负责实施切面的框架，它将切面所定义的横切逻辑编织到切面所指定的连接点中。
 
-AOP 的工作重心在于如何将增强编织目标对象的连接点上, 这里包含两个工作:
+AOP 的工作重心在于**如何将增强编织目标对象的连接点上**, 这里包含两个工作:
 
 1. 如何通过 PointCut 和 Advice 定位到特定的 **JoinPoint** 上。
 2. 如何在 Advice 中编写切面代码。
@@ -462,33 +462,21 @@ JoinPoint ，**切点**，程序运行中的一些时间点, 例如：
 
 ## 什么是 PointCut ？
 
-PointCut ，**匹配** JoinPoint 的谓词(a predicate that matches join points)。
-
-> 简单来说，PointCut 是匹配 JoinPoint 的条件。
+PointCut ，**PointCut 是匹配 JoinPoint 的条件**。
 
 - Advice 是和特定的 PointCut 关联的，并且在 PointCut 相匹配的 JoinPoint 中执行。即 `Advice => PointCut => JoinPoint` 。
 - 在 Spring 中, 所有的方法都可以认为是 JoinPoint ，但是我们并不希望在所有的方法上都添加 Advice 。**而 PointCut 的作用**，就是提供一组规则(使用 AspectJ PointCut expression language 来描述) 来匹配 JoinPoint ，给满足规则的 JoinPoint 添加 Advice 。
 
-😈 是不是觉得有点绕，实际场景下，其实也不会弄的这么清楚~~
-
 ## 关于 JoinPoint 和 PointCut 的区别
 
-JoinPoint 和 PointCut 本质上就是**两个不同纬度上**的东西。
-
-- 在 Spring AOP 中，所有的方法执行都是 JoinPoint 。而 PointCut 是一个描述信息，它修饰的是 JoinPoint ，通过 PointCut ，我们就可以确定哪些 JoinPoint 可以被织入 Advice 。
-- Advice 是在 JoinPoint 上执行的，而 PointCut 规定了哪些 JoinPoint 可以执行哪些 Advice 。
-
-或者，我们在换一种说法：
-
 1. 首先，Advice 通过 PointCut 查询需要被织入的 JoinPoint 。
-2. 然后，Advice 在查询到 JoinPoint 上执行逻辑。
+2. 然后，Advice 在查询到 JoinPoint **上**执行逻辑。
 
 ## 什么是 Advice ？
 
 Advice ，**通知**。
 
-- 特定 JoinPoint 处的 Aspect 所采取的动作称为 Advice 。
-- Spring AOP 使用一个 Advice 作为拦截器，在 JoinPoint “周围”维护一系列的**拦截器**。
+- 特定 JoinPoint 处的 Aspect 所**采取的动作称为 Advice** 。
 
 **有哪些类型的 Advice？**
 
@@ -497,8 +485,6 @@ Advice ，**通知**。
 - After Throwing - 这些类型的 Advice 仅在 JoinPoint 方法通过抛出异常退出并使用 `@AfterThrowing` 注解标记配置时执行。
 - After Finally - 这些类型的 Advice 在连接点方法之后执行，无论方法退出是正常还是异常返回，并使用 `@After` 注解标记进行配置。
 - Around - 这些类型的 Advice 在连接点之前和之后执行，并使用 `@Around` 注解标记进行配置。
-
-😈 看起来，是不是和拦截器的执行时间，有几分相似。实际上，用于拦截效果的各种实现，大体都是类似的。
 
 ## 什么是 Target ？
 
