@@ -231,21 +231,17 @@ Spring 的 ApplicationContext 提供了**支持事件和代码中监听器的功
 
   - Spring Boot 使用的就是
 
-
-
-## Spring 支持几种 Bean Scope ？
+## Spring 支持几种 Bean Scope（作用域） ？
 
 > 艿艿，这个是一个比较小众的题目，简单了解即可。
 
 Spring Bean 支持 5 种 Scope ，分别如下：
 
 - Singleton - 每个 Spring IoC 容器仅有一个单 Bean 实例。**默认**
-- Prototype - 每次请求都会产生一个新的实例。
+- Prototype - 线程每次请求都会产生一个新的实例。
 - Request - 每一次 HTTP 请求都会产生一个新的 Bean 实例，并且该 Bean 仅在当前 HTTP 请求内有效。
 - Session - 每一个的 Session 都会产生一个新的 Bean 实例，同时该 Bean 仅在当前 HTTP Session 内有效。
 - Application - 每一个 Web Application 都会产生一个新的 Bean ，同时该 Bean 仅在当前 Web Application 内有效。
-
-> 另外，网络上很多文章说有 Global-session 级别，它是 Portlet 模块独有，目前已经废弃，在 Spring5 中是找不到的。
 
 仅当用户使用支持 Web 的 ApplicationContext 时，**最后三个才可用**。
 
