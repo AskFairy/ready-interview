@@ -308,47 +308,21 @@ Spring 容器能够自动装配 Bean 。
 - 构造函数
 - autodetect - 首先容器尝试通过构造函数使用 autowire 装配，如果不能，则尝试通过 byType 自动装配。
 
-**自动装配有什么局限？**
-
-> 艿艿：这个题目，了解下即可，也不是很准确。
-
-- 覆盖的可能性 - 您始终可以使用 `` 和 `` 设置指定依赖项，这将覆盖自动装配。
-
-- 基本元数据类型 - 简单属性（如原数据类型，字符串和类）无法自动装配。
-
-  > 这种，严格来说，也不能称为局限。因为可以通过配置文件来解决。
-
-- 令人困惑的性质 - 总是喜欢使用明确的装配，因为自动装配不太精确。
-
 ## 解释什么叫延迟加载？
 
 默认情况下，容器启动之后会将所有作用域为**单例**的 Bean 都创建好，但是有的业务场景我们并不需要它提前都创建好。此时，我们可以在Bean 中设置 `lzay-init = "true"` 。
 
-- 这样，当容器启动之后，作用域为单例的 Bean ，就不在创建。
-- 而是在获得该 Bean 时，才真正在创建加载。
-
 ## Spring 框架中的单例 Bean 是线程安全的么？
 
-Spring 框架并没有对[单例](http://howtodoinjava.com/2012/10/22/singleton-design-pattern-in-java/) Bean 进行任何多线程的封装处理。
-
-- 关于单例 Bean 的[线程安全](http://howtodoinjava.com/2014/06/02/what-is-thread-safety/)和并发问题，需要开发者自行去搞定。
-- 并且，单例的线程安全问题，也不是 Spring 应该去关心的。Spring 应该做的是，提供根据配置，创建单例 Bean 或多例 Bean 的功能。
-
-当然，但实际上，大部分的 Spring Bean 并没有可变的状态(比如Serview 类和 DAO 类)，所以在某种程度上说 Spring 的单例 Bean 是线程安全的。
+不是线程安全的，Spring 框架并没有对[单例](http://howtodoinjava.com/2012/10/22/singleton-design-pattern-in-java/) Bean 进行任何多线程的封装处理。仅提供根据配置，创建单例 Bean 或多例 Bean 的功能。但实际上，大部分的 Spring Bean 并没有可变的状态(比如Serview 类和 DAO 类)，所以在某种程度上说 Spring 的单例 Bean 是线程安全的。
 
 如果你的 Bean 有多种状态的话，就需要自行保证线程安全。最浅显的解决办法，就是将多态 Bean 的作用域( Scope )由 Singleton 变更为 Prototype 。
 
-## Spring Bean 怎么解决循环依赖的问题？
+## （重点）Spring Bean 怎么解决循环依赖的问题？
 
-> 艿艿说：能回答出这个问题的，一般是比较厉害的。
-
-这是个比较复杂的问题，有能力的胖友，建议看下 [《【死磕 Spring】—— IoC 之加载 Bean：创建 Bean（五）之循环依赖处理》](http://svip.iocoder.cn/Spring/IoC-get-Bean-createBean-5/)
-
-感觉，不通过源码，很难解释清楚这个问题。如果看不懂的胖友，可以在认真看完，在星球里，我们一起多交流下。好玩的。
+https://blog.csdn.net/u010853261/article/details/77940767
 
 # Spring 注解
-
-这块内容，实际写在 [「Spring Bean」](http://svip.iocoder.cn/Spring/Interview/#) 中比较合适，考虑到后续的问题，都是关于注解的，所以单独起一个大的章节。
 
 ## 什么是基于注解的容器配置？
 
@@ -356,28 +330,9 @@ Spring 框架并没有对[单例](http://howtodoinjava.com/2012/10/22/singleton-
 
 Spring 的 Java 配置是通过使用 `@Bean` 和 `@Configuration` 来实现。
 
-- `@Bean` 注解，扮演与 `` 元素相同的角色。
-- `@Configuration` 注解的类，允许通过简单地调用同一个类中的其他 `@Bean` 方法来定义 Bean 间依赖关系。
-
-示例如下：
-
-```
-@Configuration
-public class StudentConfig {
-
-    @Bean
-    public StudentBean myStudent() {
-        return new StudentBean();
-    }
-    
-}
-```
-
 ## 如何在 Spring 中启动注解装配？
 
-默认情况下，Spring 容器中未打开注解装配。因此，要使用基于注解装配，我们必须通过配置 `` 元素在 Spring 配置文件中启用它。
-
-当然，如果胖友是使用 Spring Boot ，默认情况下已经开启。
+默认情况下，Spring 容器中未打开注解装配。通过配置 `` 元素在 Spring 配置文件中启用它。使用 Spring Boot ，默认情况下已经开启。
 
 ## @Component, @Controller, @Repository, @Service 有何区别？
 
