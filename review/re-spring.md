@@ -237,19 +237,14 @@ Spring 的 ApplicationContext 提供了**支持事件和代码中监听器的功
 
 Spring Bean 支持 5 种 Scope ，分别如下：
 
-- Singleton - 每个 Spring IoC 容器仅有一个单 Bean 实例。**默认**
-- Prototype - 线程每次请求都会产生一个新的实例。
-- Request - 每一次 HTTP 请求都会产生一个新的 Bean 实例，并且该 Bean 仅在当前 HTTP 请求内有效。
-- Session - 每一个的 Session 都会产生一个新的 Bean 实例，同时该 Bean 仅在当前 HTTP Session 内有效。
-- Application - 每一个 Web Application 都会产生一个新的 Bean ，同时该 Bean 仅在当前 Web Application 内有效。
+- `Singleton` - 每个 Spring IoC 容器仅有一个单 Bean 实例。**默认**
+- `Prototype` - 线程每次请求都会产生一个新的实例。
+- `Request` - 每一次 HTTP 请求都会产生一个新的 Bean 实例，并且该 Bean 仅在当前 HTTP 请求内有效。
+- `Session` - 每一个的 Session 都会产生一个新的 Bean 实例，同时该 Bean 仅在当前 HTTP Session 内有效。
+- `Application` - 每一个 Web Application 都会产生一个新的 Bean ，同时该 Bean 仅在当前 Web Application 内有效。
+- 自定义 Bean Scope
 
-仅当用户使用支持 Web 的 ApplicationContext 时，**最后三个才可用**。
-
-再补充一点，开发者是可以**自定义** Bean Scope ，具体可参见 [《Spring（10）—— Bean 作用范围（二）—— 自定义 Scope》](https://blog.csdn.net/elim168/article/details/75581670) 。
-
-不错呢，还是那句话，这个题目简单了解下即可，实际常用的只有 Singleton 和 Prototype 两种级别，甚至说，只有 Singleton 级别。😈
-
-## Spring Bean 在容器的生命周期是什么样的？
+## （重点）Spring Bean 在容器的生命周期是什么样的？
 
 > 艿艿说：这是一个比较高级的 Spring 的面试题，非常常见，并且答对比较加分。当然，如果实际真正弄懂，需要对 Spring Bean 的源码，有比较好的理解，所以 [《精尽 Spring 源码》](http://svip.iocoder.cn/categories/Spring/) 系列，该读还是读吧。
 
@@ -295,56 +290,22 @@ Spring Bean 的**销毁**流程如下：
 - 为了定义 Bean，Spring 提供基于 XML 的配置元数据在 ``或 `` 中提供了 ``元素的使用。
 - 内部 Bean 总是**匿名**的，并且它们总是作为**原型 Prototype** 。
 
-例如，假设我们有一个 Student 类，其中引用了 Person 类。这里我们将只创建一个 Person 类实例并在 Student 中使用它。示例代码如下：
-
-```
-// Student.java
-
-public class Student {
-
-    private Person person;
-    
-    // ... Setters and Getters
-}
-
-// Person.java
-
-public class Person {
-
-    private String name;
-    private String address;
-    
-    // ... Setters and Getters
-}
-<!-- bean.xml -->
-
-<bean id=“StudentBean" class="com.edureka.Student">
-    <property name="person">
-        <!--This is inner bean -->
-        <bean class="com.edureka.Person">
-            <property name="name" value=“Scott"></property>
-            <property name="address" value=“Bangalore"></property>
-        </bean>
-    </property>
-</bean>
-```
-
 ## 什么是 Spring 装配？
 
-当 Bean 在 Spring 容器中组合在一起时，它被称为**装配**或 **Bean 装配**。Spring 容器需要知道需要什么 Bean 以及容器应该如何使用依赖注入来将 Bean 绑定在一起，同时装配 Bean 。
+当 Bean 在 Spring 容器中组合在一起时，它被称为**装配**或 **Bean 装配**。
 
 > 装配，和上文提到的 DI 依赖注入，实际是一个东西。
 
 **自动装配有哪些方式？**
 
-Spring 容器能够自动装配 Bean 。也就是说，可以通过检查 BeanFactory 的内容让 Spring 自动解析 Bean 的协作者。
+Spring 容器能够自动装配 Bean 。
 
 自动装配的不同模式：
 
-- no - 这是默认设置，表示没有自动装配。应使用显式 Bean 引用进行装配。
-- byName - 它根据 Bean 的名称注入对象依赖项。它匹配并装配其属性与 XML 文件中由相同名称定义的 Bean 。
+- **no** - 这是默认设置，表示没有自动装配。应使用显式 Bean 引用进行装配。
+- **byName** - 它根据 Bean 的名称注入对象依赖项。它匹配并装配其属性与 XML 文件中由相同名称定义的 Bean 。
 - 【最常用】**byType** - 它根据类型注入对象依赖项。如果属性的类型与 XML 文件中的一个 Bean 类型匹配，则匹配并装配属性。
-- 构造函数 - 它通过调用类的构造函数来注入依赖项。它有大量的参数。
+- 构造函数
 - autodetect - 首先容器尝试通过构造函数使用 autowire 装配，如果不能，则尝试通过 byType 自动装配。
 
 **自动装配有什么局限？**
