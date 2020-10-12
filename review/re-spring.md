@@ -498,37 +498,23 @@ Target ，织入 Advice 的**目标对象**。目标对象也被称为 **Advised
 
 实现 AOP 的技术，主要分为两大类：
 
-- ① **静态代理** - 指使用 AOP 框架提供的命令进行编译，从而在编译阶段就可生成 AOP 代理类，因此也称为编译时增强。
+- ① **静态代理** - 指使用 AOP 框架提供的命令进行编译，从而**在编译阶段**就可生成 AOP 代理类，因此也称为编译时增强。
 
   - 编译时编织（特殊编译器实现）
 
   - 类加载时编织（特殊的类加载器实现）。
 
-    > 例如，SkyWalking 基于 Java Agent 机制，配置上 ByteBuddy 库，实现类加载时编织时增强，从而实现链路追踪的透明埋点。
-    >
-    > 感兴趣的胖友，可以看看 [《SkyWalking 源码分析之 JavaAgent 工具 ByteBuddy 的应用》](http://www.kailing.pub/article/index/arcid/178.html) 。
-
-- ② **动态代理** - 在运行时在内存中“临时”生成 AOP 动态代理类，因此也被称为运行时增强。目前 Spring 中使用了两种动态代理库：
+- ② **动态代理** - 在**运行时在内存中“临时”生成 AOP 动态代理类**，因此也被称为运行时增强。目前 Spring 中使用了两种动态代理库：
 
   - JDK 动态代理
   - CGLIB
 
 那么 Spring 什么时候使用 JDK 动态代理，什么时候使用 CGLIB 呢？
 
-```
-// From 《Spring 源码深度解析》P172
-// Spring AOP 部分使用 JDK 动态代理或者 CGLIB 来为目标对象创建代理。（建议尽量使用 JDK 的动态代理）
-// 如果被代理的目标对象实现了至少一个接口，则会使用 JDK 动态代理。所有该目标类型实现的接口都讲被代理。
-// 若该目标对象没有实现任何接口，则创建一个 CGLIB 代理。
-// 如果你希望强制使用 CGLIB 代理，（例如希望代理目标对象的所有方法，而不只是实现自接口的方法）那也可以。但是需要考虑以下两个方法：
-//      1> 无法通知(advise) Final 方法，因为它们不能被覆盖。
-//      2> 你需要将 CGLIB 二进制发型包放在 classpath 下面。
-// 为什么 Spring 默认使用 JDK 的动态代理呢？笔者猜测原因如下：
-//      1> 使用 JDK 原生支持，减少三方依赖
-//      2> JDK8 开始后，JDK 代理的性能差距 CGLIB 的性能不会太多。可参见：https://www.cnblogs.com/haiq/p/4304615.html
-```
 
-- 实际上，Spring AOP 的代码量不大，与其在窗户外面不清不楚，不如捅破它！感兴趣的胖友，可以撸一撸 [《精尽 Spring 源码分析 —— AOP 源码简单导读》](http://svip.iocoder.cn/Spring/aop-simple-intro/) 。
+
+- 如果被代理的目标对象实现了至少一个接口，则会使用 JDK 动态代理。所有该目标类型实现的接口都讲被代理。
+- 若该目标对象没有实现任何接口，则创建一个 CGLIB 代理。
 
 或者，我们来换一个解答答案：
 
@@ -536,12 +522,12 @@ Spring AOP 中的动态代理主要有两种方式，
 
 - JDK 动态代理
 
-  JDK 动态代理通过反射来接收被代理的类，并且要求被代理的类必须实现一个接口。JDK动态代理的核心是 InvocationHandler 接口和 Proxy 类。
+  JDK 动态代理通过**反射**来接收被代理的类，并且要求被代理的类**必须实现一个接口**。JDK动态代理的核心是 InvocationHandler 接口和 Proxy 类。
 
 - CGLIB 动态代理
 
-  如果目标类没有实现接口，那么 Spring AOP 会选择使用 CGLIB 来动态代理目标类。当然，Spring 也支持配置，**强制**使用 CGLIB 动态代理。
-  CGLIB（Code Generation Library），是一个代码生成的类库，可以在运行时动态的生成某个类的子类，注意，CGLIB 是通过继承的方式做的动态代理，因此如果某个类被标记为 `final` ，那么它是无法使用 CGLIB 做动态代理的。
+  **如果目标类没有实现接口**，那么 Spring AOP 会选择使用 CGLIB 来动态代理目标类。
+  CGLIB（Code Generation Library），是一个代码生成的类库，可以在**运行时动态的生成某个类的子类**，注意，CGLIB 是通过**继承的方式做的动态代理**，因此如果某个类被标记为 `final` ，那么它是无法使用 CGLIB 做动态代理的。
 
 ## Spring AOP and AspectJ AOP 有什么区别？
 
@@ -557,7 +543,7 @@ Spring AOP 中的动态代理主要有两种方式，
 Weaving ，**编织**。
 
 - 为了创建一个 Advice 对象而链接一个 Aspect 和其它应用类型或对象，称为编织（Weaving）。
-- 在 Spring AOP 中，编织在运行时执行，即动态代理。请参考下图：[![Proxy](http://static2.iocoder.cn/images/Spring/2018-12-24/05.jpg)](http://static2.iocoder.cn/images/Spring/2018-12-24/05.jpg)Proxy
+- 在 Spring AOP 中，编织在**运行时执行，即动态代理**。请参考下图：[![Proxy](http://static2.iocoder.cn/images/Spring/2018-12-24/05.jpg)](http://static2.iocoder.cn/images/Spring/2018-12-24/05.jpg)Proxy
 
 ## Spring 如何使用 AOP 切面？
 
@@ -565,8 +551,6 @@ Weaving ，**编织**。
 
 - 基于 **XML** 方式的切面实现。
 - 基于 **注解** 方式的切面实现。
-
-目前，主流喜欢使用 **注解** 方式。胖友可以看看 [《彻底征服 Spring AOP 之实战篇》](https://segmentfault.com/a/1190000007469982) 。
 
 # Spring Transaction
 
