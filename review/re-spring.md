@@ -199,28 +199,15 @@ BeanFactory 最常用的是 `XmlBeanFactory` 。它可以根据 XML 文件中定
 
 ## Spring 框架中有哪些不同类型的事件？
 
-Spring 的 ApplicationContext 提供了支持事件和代码中监听器的功能。
+Spring 的 ApplicationContext 提供了**支持事件和代码中监听器的功能**。
 
-我们可以创建 Bean 用来监听在 ApplicationContext 中发布的事件。如果一个 Bean 实现了 ApplicationListener 接口，当一个ApplicationEvent 被发布以后，Bean 会自动被通知。示例代码如下：
+我们可以创建 Bean 用来监听在 ApplicationContext 中发布的事件。如果一个 Bean 实现了 ApplicationListener 接口，当一个ApplicationEvent 被发布以后，Bean 会自动被通知。
 
-```
-public class AllApplicationEventListener implements ApplicationListener<ApplicationEvent> {  
-    
-    @Override  
-    public void onApplicationEvent(ApplicationEvent applicationEvent) {  
-        // process event  
-    }
-    
-}
-```
-
-Spring 提供了以下五种标准的事件：
-
-1. 上下文更新事件（ContextRefreshedEvent）：该事件会在ApplicationContext 被初始化或者更新时发布。也可以在调用ConfigurableApplicationContext 接口中的 `#refresh()` 方法时被触发。
-2. 上下文开始事件（ContextStartedEvent）：当容器调用ConfigurableApplicationContext 的 `#start()` 方法开始/重新开始容器时触发该事件。
-3. 上下文停止事件（ContextStoppedEvent）：当容器调用 ConfigurableApplicationContext 的 `#stop()` 方法停止容器时触发该事件。
-4. 上下文关闭事件（ContextClosedEvent）：当ApplicationContext 被关闭时触发该事件。容器被关闭时，其管理的所有单例 Bean 都被销毁。
-5. 请求处理事件（RequestHandledEvent）：在 We b应用中，当一个HTTP 请求（request）结束触发该事件。
+1. **上下文更新事件**（ContextRefreshedEvent）：该事件会在ApplicationContext 被初始化或者更新时发布。也可以在调用ConfigurableApplicationContext 接口中的 `#refresh()` 方法时被触发。
+2. **上下文开始事件**（ContextStartedEvent）：当容器调用ConfigurableApplicationContext 的 `#start()` 方法开始/重新开始容器时触发该事件。
+3. **上下文停止事件**（ContextStoppedEvent）：当容器调用 ConfigurableApplicationContext 的 `#stop()` 方法停止容器时触发该事件。
+4. **上下文关闭事件**（ContextClosedEvent）：当ApplicationContext 被关闭时触发该事件。容器被关闭时，其管理的所有单例 Bean 都被销毁。
+5. **请求处理事件**（RequestHandledEvent）：在 We b应用中，当一个HTTP **请求（request）结束触发**该事件。
 6. 通过扩展 ApplicationEvent 类来开发**自定义**的事件。
 
 # Spring Bean
@@ -230,66 +217,21 @@ Spring 提供了以下五种标准的事件：
 - Bean 由 Spring IoC 容器实例化，配置，装配和管理。
 - Bean 是基于用户提供给 IoC 容器的配置元数据 Bean Definition 创建。
 
-这个问题，胖友可以在回过头看 [「什么是 Spring IoC 容器？」](http://svip.iocoder.cn/Spring/Interview/#) 问题，相互对照。
-
 ## Spring 有哪些配置方式
 
 单纯从 Spring Framework 提供的方式，一共有三种：
 
 - 1、XML 配置文件。
 
-  Bean 所需的依赖项和服务在 XML 格式的配置文件中指定。这些配置文件通常包含许多 bean 定义和特定于应用程序的配置选项。它们通常以 bean 标签开头。例如：
-
-  ```
-  <bean id="studentBean" class="org.edureka.firstSpring.StudentBean">
-      <property name="name" value="Edureka"></property>
-  </bean>
-  ```
-
 - 2、注解配置。
-
-  您可以通过在相关的类，方法或字段声明上使用注解，将 Bean 配置为组件类本身，而不是使用 XML 来描述 Bean 装配。默认情况下，Spring 容器中未打开注解装配。因此，您需要在使用它之前在 Spring 配置文件中启用它。例如：
-
-  ```
-  <beans>
-  <context:annotation-config/>
-  <!-- bean definitions go here -->
-  </beans>
-  ```
 
 - 3、Java Config 配置。
 
   Spring 的 Java 配置是通过使用 @Bean 和 @Configuration 来实现。
 
-  - `@Bean` 注解扮演与 `` 元素相同的角色。
+  - Spring Boot 使用的就是
 
-  - `@Configuration` 类允许通过简单地调用同一个类中的其他 `@Bean` 方法来定义 Bean 间依赖关系。
 
-  - 例如：
-
-    ```
-    @Configuration
-    public class StudentConfig {
-        
-        @Bean
-        public StudentBean myStudent() {
-            return new StudentBean();
-        }
-        
-    }
-    ```
-
-    - 是不是很熟悉 😈
-
-目前主要使用 **Java Config** 配置为主。当然，三种配置方式是可以混合使用的。例如说：
-
-- Dubbo 服务的配置，艿艿喜欢使用 XML 。
-- Spring MVC 请求的配置，艿艿喜欢使用 `@RequestMapping` 注解。
-- Spring MVC 拦截器的配置，艿艿喜欢 Java Config 配置。
-
-------
-
-另外，现在已经是 Spring Boot 的天下，所以更加是 **Java Config** 配置为主。
 
 ## Spring 支持几种 Bean Scope ？
 
