@@ -14,9 +14,7 @@ Spring 是一个**轻量级**的**开源**应用框架，**降低应用程序开
 
 **2、Spring AOP：Spring面向切面编程**
 
-通过配置管理特性，Spring AOP 模块直接将面向方面的编程功能集成到了Spring框架中。所以，可以很容易地使 Spring框架管理的任何对象支持 AOP。Spring AOP 模块为基于 Spring 的应用程序中的对象提供了事务管理服务。通过使用 Spring AOP，不用依赖 EJB 组件，就可以将声明性事务管理集成到应用程序中。AOP把一个业务流程分成几部分，例如权限检查、业务处理、日志记录，每个部分单独处理，然后把它们组装成完整的业务流程。每个部分被称为切面或关注点。
-
-
+通过配置管理特性，Spring AOP 模块直接将面向切面面的编程功能集成到了Spring框架中。
 
 **3、Spring context：Spring上下文**
 
@@ -24,26 +22,21 @@ Spring上下文是一个配置文件，向Spring框架提供上下文信息。
 
 **4、Spring DAO**
 
-DAO模块主要目的是将持久层相关问题与一般的的业务规则和工作流隔离开来。Spring 中的DAO提供一致的方式访问数据库，不管采用何种持久化技术，Spring都提供一致的编程模型。Spring还对不同的持久层技术提供一致的DAO方式的异常层次结构。Spring的DAO模块对JDBC进行了再封装，隐藏了Connection、Statement、ResultSet等JDBC API，使DAO模块直接继承JdbcDaoSupport类。
+DAO模块主要目的是将持久层相关问题与一般的的业务规则和工作流隔离开来。Spring 中的DAO提供一致的方式访问数据库，不管采用何种持久化技术，Spring都提供一致的编程模型。
 
 **5、Spring ORM（Object Relation Mapper）对象关系映射模块**
 
-Spring 与所有的主要的ORM框架都集成的很好，包括hibernate、JDO实现、TopLink和IBatis SQL Map等。Spring为所有的这些框架提供了模板之类的辅助类，达成了一致的编程风格。
-Spring的ORM模块对ORM框架如Hibernate等进行了封装，Spring能够管理、维护Hibernate，使用时可直接继承HibernateDaoSupport类，该类内置一个HibernateTemplate。Hibernate的配置也转移到Spring配置文件中。
-
-（注：ORM是通过使用描述对象和数据库之间映射的元数据，ORM框架采用元数据来描述对象--关系映射细节，元数据一般采用xml格式，并且存放在专门的对象--映射文件中）
+ORM是通过使用描述对象和数据库之间映射的元数据，ORM框架采用元数据来描述对象--关系映射细节，元数据一般采用xml格式，并且存放在专门的对象--映射文件中
 
 **6、Spring Web模块**
 
-Web模块建立在应用程序上下文模块之上，为基于Web的应用程序提供了上下文。Web层使用Web层框架，可选的，可以是Spring自己的MVC框架，或者提供的Web框架，如Struts、Webwork、tapestry和jsf。
-
-Web模块用于整合Web框架，将Web框架也纳入Spring的管理之中。如Spring提供继承方式与代理方式整合Struts，继承方式不需要更改任何配置文件，只把Action继承自ActionSupport即可，但会对Spring产生依赖。代理方式需要在struts-config.xml中配置<controller>，由Spring全盘代理，因此可以使用Spring的各种资源、拦截器等。
+Web模块建立在应用程序上下文模块之上，为基于Web的应用程序提供了上下文。Web层使用Web层框架，可选的，可以是Spring自己的MVC框架，或者提供的Web框架，如Struts等。
 
 **7、Spring MVC**
 
-MVC框架是一个全功能的构建Web应用程序的MVC实现。通过策略接口，MVC框架变成为高度可配置的。Spring的MVC框架提供清晰的角色划分：控制器、验证器、命令对象、表单对象和模型对象、分发器、处理器映射和视图解析器。Spring支持多种视图技术。
+MVC框架是一个全功能的构建Web应用程序的MVC实现。
 
-Spring MVC 的工作流程：
+### Spring MVC 的工作流程
 
 （1） 客户端发送请求，请求到达 DispatcherServlet 主控制器。
 （2） DispatcherServlet 控制器调用 HandlerMapping 处理。
@@ -55,116 +48,22 @@ Spring MVC 的工作流程：
 
 
 
-**数据访问**
-
-> 对应图中，Data Access 。
-
-该层提供与数据库交互的支持。它包含以下模块：
-
-- JDBC (Java DataBase Connectivity)
-
-  > Spring 对 JDBC 的封装模块，提供了对关系数据库的访问。
-
-- ORM (Object Relational Mapping)
-
-  > Spring ORM 模块，提供了对 hibernate5 和 JPA 的集成。
-  >
-  > - hibernate5 是一个 ORM 框架。
-  > - JPA 是一个 Java 持久化 API 。
-
-- OXM (Object XML Mappers)
-
-  > Spring 提供了一套类似 ORM 的映射机制，用来将 Java 对象和 XML 文件进行映射。这就是 Spring 的对象 XML 映射功能，有时候也成为 XML 的序列化和反序列化。
-  >
-  > 用的比较少，胖友了解下即可。
-
-- Transaction
-
-  > Spring 简单而强大的事务管理功能，包括声明式事务和编程式事务。
-
-**Web**
-
-该层提供了创建 Web 应用程序的支持。它包含以下模块：
-
-- WebMVC
-
-  > MVC 框架是一个全功能的构建 Web 应用程序的 MVC 实现。通过策略接口，MVC 框架变成为高度可配置的，MVC 容纳了大量视图技术，其中包括 JSP、Velocity、Tiles、iText 和 POI。
-
-- WebFlux
-
-  > 基于 Reactive 库的响应式的 Web 开发框架
-  >
-  > 不了解的胖友，可以看看 [《使用 Spring 5 的 WebFlux 开发反应式 Web 应用》](https://www.ibm.com/developerworks/cn/java/spring5-webflux-reactive/index.html)
-
-- WebSocket
-
-  > Spring 4.0 的一个最大更新是增加了对 Websocket 的支持。
-  >
-  > Websocket 提供了一个在 Web 应用中实现高效、双向通讯，需考虑客户端(浏览器)和服务端之间高频和低延时消息交换的机制。
-  >
-  > 一般的应用场景有：在线交易、网页聊天、游戏、协作、数据可视化等。
-
-- ~~Portlet~~ 已经废弃
-
-**AOP**
-
-该层支持面向切面编程。它包含以下模块：
-
-- AOP
-
-  > 通过配置管理特性，Spring AOP 模块直接将面向方面的编程功能集成到了 Spring 框架中。所以，可以很容易地使 Spring 框架管理的任何对象支持 AOP。
-  >
-  > Spring AOP 模块为基于 Spring 的应用程序中的对象提供了事务管理服务。通过使用 Spring AOP，不用依赖 EJB 组件，就可以将声明性事务管理集成到应用程序中。
-
-- Aspects
-
-  > 该模块为与 AspectJ 的集成提供支持。
-
-- Instrumentation
-
-  > 该层为类检测和类加载器实现提供支持。
-  >
-  > 用的比较少，胖友了解下即可。
-
-**其它**
-
-- JMS (Java Messaging Service)
-
-  > 提供了一个 JMS 集成框架，简化了 JMS API 的使用。
-  >
-  > 可能有胖友不太了解 JMS ，可以看看 [《JMS(Java消息服务)入门教程》](https://www.cnblogs.com/chenpi/p/5559349.html) 。
-
-- Test
-
-  > 该模块为使用 JUnit 和 TestNG 进行测试提供支持。
-
-- Messaging
-
-  > 该模块为 STOMP 提供支持。它还支持注解编程模型，该模型用于从 WebSocket 客户端路由和处理 STOMP 消息。
-
 ## 使用 Spring 框架能带来哪些好处？
 
-下面列举了一些使用 Spring 框架带来的主要好处：
 
-> 艿艿：注意，下文中加粗的内容，这是本句话的关键。
 
 - **DI** ：**[Dependency Injection(DI)](http://howtodoinjava.com/2013/03/19/inversion-of-control-ioc-and-dependency-injection-di-patterns-in-spring-framework-and-related-interview-questions/)** 方法，使得构造器和 JavaBean、properties 文件中的依赖关系一目了然。
 - **轻量级**：与 EJB 容器相比较，IoC 容器更加趋向于**轻量级**。这样一来 IoC 容器在有限的内存和 CPU 资源的情况下，进行应用程序的开发和发布就变得十分有利。
 - **面向切面编程(AOP)**： Spring 支持面向**切面编程**，同时把应用的业务逻辑与系统的服务分离开来。
-- **集成主流框架**：Spring 并没有闭门造车，Spring **集成**了已有的技术栈，比如 ORM 框架、Logging 日期框架、J2EE、Quartz 和 JDK Timer ，以及其他视图技术。
-- 模块化：Spring 框架是按照**模块**的形式来组织的。由包和类的命名，就可以看出其所属的模块，开发者仅仅需要选用他们需要的模块即可。
-- **便捷的测试**：要 [测试一项用Spring开发的应用程序](http://howtodoinjava.com/2013/04/19/how-to-unit-test-spring-security-authentication-with-junit/) 十分简单，因为**测试**相关的环境代码都已经囊括在框架中了。更加简单的是，利用 JavaBean 形式的 POJO 类，可以很方便的利用依赖注入来写入测试数据。
-- **Web 框架**：Spring 的 **Web 框架**亦是一个精心设计的 Web MVC 框架，为开发者们在 Web 框架的选择上提供了一个除了主流框架比如 Struts 、过度设计的、不流行 Web 框架的以外的有力选项。
-- **事务管理**：Spring 提供了一个便捷的**事务管理**接口，适用于小型的本地事物处理（比如在单 DB 的环境下）和复杂的共同事物处理（比如利用 JTA 的复杂 DB 环境）。
-- **异常处理**：Spring 提供一个方便的 API ，将特定技术的异常(由JDBC, Hibernate, 或 JDO 抛出)转化为一致的、Unchecked 异常。
+- **集成主流框架**：
+- **Web 框架**：Spring 的 **Web 框架**亦是一个精心设计的 Web MVC 框架
+- **事务管理**：适用于小型的本地事物处理（比如在单 DB 的环境下）
+- **异常处理**
 
-当然，Spring 代码优点的同时，一定会带来相应的缺点：
+带来相应的缺点：
 
-- 每个框架都有的问题，调试阶段不直观，后期的 bug 对应阶段，不容易判断问题所在。要花一定的时间去理解它。
+- 把很多 JavaEE 的东西封装了，在满足快速开发高质量程序的同时，**隐藏了实现细节**。
 
-- 把很多 JavaEE 的东西封装了，在满足快速开发高质量程序的同时，隐藏了实现细节。
-
-  > 这就导致，很多工程师，离开了 Spring 之后，就不知道怎么工作了。从 Java 工程师，变成了 Spring 工程师。对于有追求的我们，还是需要知其然，知其所以然。
 
 ## Spring 框架中都用到了哪些设计模式？
 
