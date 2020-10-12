@@ -131,7 +131,7 @@ Spring 提供了**两种( 不是“个” ) IoC 容器**，分别是 `BeanFactor
 
 BeanFactory ，就像一个包含 Bean 集合的工厂类。它会在客户端要求时**实例化 Bean 对象**。
 
-**ApplicationContext**
+**ApplicationContext（应用上下文）**
 
 > ApplicationContext 在 `spring-context` 项目提供。
 
@@ -154,6 +154,11 @@ ApplicationContext 接口**扩展**了 BeanFactory 接口，它在 BeanFactory �
 | 不支持基于依赖的注解       | 支持基于依赖的注解       |
 
 另外，BeanFactory 也被称为**低级**容器，而 ApplicationContext 被称为**高级**容器。
+
+1. **低级容器 加载配置文件（从 XML，数据库，Applet）**，并解析成 BeanDefinition 到低级容器中。getBean 的操作都是在低级容器里操作的
+   -  加载配置文件，解析成 BeanDefinition 放在 Map 里。
+   - 调用 getBean 的时候，从 BeanDefinition 所属的 Map 里，拿出 Class 对象进行实例化，同时，如果有依赖关系，将递归调用 getBean 方法 —— 完成依赖注入。
+2. 加载成功后，高级容器启动高级功能，例如接口回调，监听器，自动实例化单例，发布事件等等功能。
 
 ## 请介绍下常用的 BeanFactory 容器？
 
@@ -188,57 +193,7 @@ BeanFactory 最常用的是 `XmlBeanFactory` 。它可以根据 XML 文件中定
 
 ## 简述 Spring IoC 的实现机制？
 
-简单来说，Spring 中的 IoC 的实现原理，就是**工厂模式**，通过**反射机制**。代码如下：
-
-```
-interface Fruit {
-
-     public abstract void eat();
-     
-}
-class Apple implements Fruit {
-
-    public void eat(){
-        System.out.println("Apple");
-    }
-    
-}
-class Orange implements Fruit {
-    public void eat(){
-        System.out.println("Orange");
-    }
-}
-
-class Factory {
-
-    public static Fruit getInstance(String className) {
-        Fruit f = null;
-        try {
-            f = (Fruit) Class.forName(className).newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return f;
-    }
-    
-}
-
-class Client {
-
-    public static void main(String[] args) {
-        Fruit f = Factory.getInstance("io.github.dunwu.spring.Apple");
-        if(f != null){
-            f.eat();
-        }
-    }
-    
-}
-```
-
-- Fruit 接口，有 Apple 和 Orange 两个实现类。
-- Factory 工厂，通过反射机制，创建 `className` 对应的 Fruit 对象。
-- Client 通过 Factory 工厂，获得对应的 Fruit 对象。
-- 😈 实际情况下，Spring IoC 比这个复杂很多很多，例如单例 Bean 对象，Bean 的属性注入，相互依赖的 Bean 的处理，以及等等。
+简单来说，Spring 中的 IoC 的实现原理，就是**工厂模式**，通过**反射机制**创建对象。代码如下：
 
 在基友 [《面试问烂的 Spring IoC 过程》](http://www.iocoder.cn/Fight/Interview-poorly-asked-Spring-IOC-process-1/) 的文章中，把 Spring IoC 相关的内容，讲的非常不错。
 
@@ -266,44 +221,7 @@ Spring 提供了以下五种标准的事件：
 3. 上下文停止事件（ContextStoppedEvent）：当容器调用 ConfigurableApplicationContext 的 `#stop()` 方法停止容器时触发该事件。
 4. 上下文关闭事件（ContextClosedEvent）：当ApplicationContext 被关闭时触发该事件。容器被关闭时，其管理的所有单例 Bean 都被销毁。
 5. 请求处理事件（RequestHandledEvent）：在 We b应用中，当一个HTTP 请求（request）结束触发该事件。
-
-------
-
-除了上面介绍的事件以外，还可以通过扩展 ApplicationEvent 类来开发**自定义**的事件。
-
-① 示例自定义的事件的类，代码如下：
-
-```
-public class CustomApplicationEvent extends ApplicationEvent{  
-
-    public CustomApplicationEvent(Object source, final String msg) {  
-        super(source);
-    }  
-
-}
-```
-
-② 为了监听这个事件，还需要创建一个监听器。示例代码如下：
-
-```
-public class CustomEventListener implements ApplicationListener<CustomApplicationEvent> {
-
-    @Override  
-    public void onApplicationEvent(CustomApplicationEvent applicationEvent) {  
-        // handle event  
-    }
-    
-}
-```
-
-③ 之后通过 ApplicationContext 接口的 `#publishEvent(Object event)` 方法，来发布自定义事件。示例代码如下：
-
-```
-// 创建 CustomApplicationEvent 事件
-CustomApplicationEvent customEvent = new CustomApplicationEvent(applicationContext, "Test message");
-// 发布事件
-applicationContext.publishEvent(customEvent);
-```
+6. 通过扩展 ApplicationEvent 类来开发**自定义**的事件。
 
 # Spring Bean
 
