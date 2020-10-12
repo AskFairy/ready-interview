@@ -36,19 +36,19 @@ Web模块建立在应用程序上下文模块之上，为基于Web的应用程�
 
 MVC框架是一个全功能的构建Web应用程序的MVC实现。
 
-### Spring MVC 的工作流程
+### （重点）Spring MVC 的工作流程
 
-（1） 客户端发送请求，请求到达 DispatcherServlet 主控制器。
-（2） DispatcherServlet 控制器调用 HandlerMapping 处理。
-（3） HandlerMapping 负责维护请求和 Controller 组件对应关系。 HandlerMapping 根据请求调用对应的 Controller 组件处理。
-（4） 执行 Controller 组件的业务处理，需要访问数据库，可以调用 DAO 等组件。
-（5）Controller 业务方法处理完毕后，会返回一个 ModelAndView 对象。该组件封装了模型数据和视图标识。
-（6）Servlet 主控制器调用 ViewResolver 组件，根据 ModelAndView 信息处理。定位视图资源，生成视图响应信息。
-（7）控制器将响应信息给用户输出。
+- （1） 客户端发送请求，请求到达 DispatcherServlet 主控制器。
+  （2） DispatcherServlet 控制器调用 HandlerMapping 处理。
+  （3） HandlerMapping 负责维护请求和 Controller 组件对应关系。 HandlerMapping 根据请求调用对应的 Controller 组件处理。
+  （4） 执行 Controller 组件的业务处理，需要访问数据库，可以调用 DAO 等组件。
+  （5）Controller 业务方法处理完毕后，会返回一个 ModelAndView 对象。该组件封装了模型数据和视图标识。
+  （6）Servlet 主控制器调用 ViewResolver 组件，根据 ModelAndView 信息处理。定位视图资源，生成视图响应信息。
+  （7）控制器将响应信息给用户输出。
 
 
 
-## 使用 Spring 框架能带来哪些好处？
+## （重点）使用 Spring 框架能带来哪些好处？
 
 
 
@@ -69,13 +69,10 @@ MVC框架是一个全功能的构建Web应用程序的MVC实现。
 
 Spring 框架中使用到了大量的设计模式，下面列举了比较有代表性的：
 
-- 代理模式 — 在 AOP 和 remoting 中被用的比较多。
-- 单例模式 — 在 Spring 配置文件中定义的 Bean 默认为单例模式。
-- 模板方法 — 用来解决代码重复的问题。比如 [RestTemplate](http://howtodoinjava.com/2015/02/20/spring-restful-client-resttemplate-example/)、JmsTemplate、JdbcTemplate 。
-- 前端控制器 — Spring提供了 DispatcherServlet 来对请求进行分发。
-- 视图帮助(View Helper) — Spring 提供了一系列的 JSP 标签，高效宏来辅助将分散的代码整合在视图里。
-- 依赖注入 — 贯穿于 BeanFactory / ApplicationContext 接口的核心理念。
-- 工厂模式 — BeanFactory 用来创建对象的实例。
+- **代理模式** — 在 `AOP` 中被用的比较多。
+- **单例模式** — 在 Spring 配置文件中定义的 **Bean 默认为单例模式**。
+- **模板方法** — 用来解决代码重复的问题。比如 [RestTemplate](http://howtodoinjava.com/2015/02/20/spring-restful-client-resttemplate-example/)、JmsTemplate、JdbcTemplate 。
+- **工厂模式、抽象工厂模式** — BeanFactory 用来创建对象的实例。
 
 当然，感兴趣的胖友，觉得不过瘾，可以看看艿艿基友知秋写的几篇文章：
 
