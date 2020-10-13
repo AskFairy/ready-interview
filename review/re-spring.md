@@ -6,11 +6,9 @@ Spring 是一个**轻量级**的**开源**应用框架，**降低应用程序开
 
 ## Spring Framework 中有多少个模块，它们分别是什么？
 
-[![Spring Framework](http://static2.iocoder.cn/images/Spring/2018-12-24/01.jpg)](http://static2.iocoder.cn/images/Spring/2018-12-24/01.jpg)
-
 **1、Spring core：核心容器**
 
-核心容器提供spring框架的**基本功能**。主要实现**控制反转IoC和依赖注入DI、Bean配置以及加载**。
+主要实现**控制反转IoC和依赖注入DI、Bean配置以及加载**。
 
 **2、Spring AOP：Spring面向切面编程**
 
@@ -23,8 +21,6 @@ Spring上下文是一个配置文件，向Spring框架提供上下文信息。
 Spring 中的DAO提供一致的方式访问数据库
 
 **5、Spring ORM（Object Relation Mapper）对象关系映射模块**
-
-ORM是通过使用描述对象和数据库之间映射的元数据，ORM框架采用元数据来描述对象--关系映射细节
 
 **6、Spring Web模块**
 
@@ -48,12 +44,12 @@ MVC框架是一个全功能的构建Web应用程序的MVC实现。
 
 
 
-- **DI** 依赖注入
+- **DI 依赖注入**
 - **轻量级**
 - **面向切面编程(AOP)**
 - **集成主流框架**
 - **Web MVC 框架**
-- **事务管理**：适用于小型的本地事物处理（比如在单 DB 的环境下）
+- **事务管理**
 
 带来相应的缺点：
 
@@ -120,22 +116,11 @@ Spring 提供了**两种( 不是“个” ) IoC 容器**，分别是 `BeanFactor
 
 **BeanFactory**
 
-> BeanFactory 在 `spring-beans` 项目提供。
-
 BeanFactory ，就像一个包含 Bean 集合的工厂类。它会在客户端要求时**实例化 Bean 对象**。
 
 **ApplicationContext（应用上下文）**
 
-> ApplicationContext 在 `spring-context` 项目提供。
-
-ApplicationContext 接口**扩展**了 BeanFactory 接口，它在 BeanFactory 基础上提供了一些额外的功能，管理生命周期，自定义初始化等。
-
-| BeanFactory                | ApplicationContext       |
-| :------------------------- | :----------------------- |
-| 它使用**懒加载**           | 它使用**即时加载**       |
-| 它使用语法显式提供资源对象 | 它自己创建和管理资源对象 |
-| 不支持国际化               | 支持国际化               |
-| 不支持基于依赖的注解       | 支持基于依赖的注解       |
+ApplicationContext 接口**扩展**了 BeanFactory 接口，它在 BeanFactory 基础上提供了一些额外的功能，**管理生命周期，自定义初始化**等。
 
 另外，BeanFactory 也被称为**低级**容器，而 ApplicationContext 被称为**高级**容器。
 
