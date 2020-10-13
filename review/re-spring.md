@@ -128,20 +128,11 @@ BeanFactory ，就像一个包含 Bean 集合的工厂类。它会在客户端�
 
 > ApplicationContext 在 `spring-context` 项目提供。
 
-ApplicationContext 接口**扩展**了 BeanFactory 接口，它在 BeanFactory 基础上提供了一些额外的功能。内置如下功能：
-
-- MessageSource ：管理 message ，实现国际化等功能。
-- ApplicationEventPublisher ：事件发布。
-- ResourcePatternResolver ：多资源加载。
-- EnvironmentCapable ：系统 Environment（profile + Properties）相关。
-- Lifecycle ：管理生命周期。
-- Closable ：关闭，释放资源
-- InitializingBean：自定义初始化。
-- BeanNameAware：设置 beanName 的 Aware 接口。
+ApplicationContext 接口**扩展**了 BeanFactory 接口，它在 BeanFactory 基础上提供了一些额外的功能，管理生命周期，自定义初始化等。
 
 | BeanFactory                | ApplicationContext       |
 | :------------------------- | :----------------------- |
-| 它使用懒加载               | 它使用即时加载           |
+| 它使用**懒加载**           | 它使用**即时加载**       |
 | 它使用语法显式提供资源对象 | 它自己创建和管理资源对象 |
 | 不支持国际化               | 支持国际化               |
 | 不支持基于依赖的注解       | 支持基于依赖的注解       |
@@ -151,7 +142,7 @@ ApplicationContext 接口**扩展**了 BeanFactory 接口，它在 BeanFactory �
 1. **低级容器 加载配置文件（从 XML，数据库，Applet）**，并解析成 BeanDefinition 到低级容器中。getBean 的操作都是在低级容器里操作的
    -  加载配置文件，解析成 BeanDefinition 放在 Map 里。
    - 调用 getBean 的时候，从 BeanDefinition 所属的 Map 里，拿出 Class 对象进行实例化，同时，如果有依赖关系，将递归调用 getBean 方法 —— 完成依赖注入。
-2. 加载成功后，高级容器启动高级功能，例如接口回调，监听器，自动实例化单例，发布事件等等功能。
+2. 加载成功后，高级容器启动高级功能，例如**接口回调，监听器，自动实例化单例**，发布事件等等功能。
 
 ## 请介绍下常用的 BeanFactory 容器？
 
