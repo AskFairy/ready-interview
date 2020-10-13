@@ -10,11 +10,9 @@ Spring 是一个**轻量级**的**开源**应用框架，**降低应用程序开
 
 **1、Spring core：核心容器**
 
-核心容器提供spring框架的**基本功能**。主要实现控制反转IoC和依赖注入DI、Bean配置以及加载。
+核心容器提供spring框架的**基本功能**。主要实现**控制反转IoC和依赖注入DI、Bean配置以及加载**。
 
 **2、Spring AOP：Spring面向切面编程**
-
-通过配置管理特性，Spring AOP 模块直接将面向切面面的编程功能集成到了Spring框架中。
 
 **3、Spring context：Spring上下文**
 
@@ -22,11 +20,11 @@ Spring上下文是一个配置文件，向Spring框架提供上下文信息。
 
 **4、Spring DAO**
 
-DAO模块主要目的是将持久层相关问题与一般的的业务规则和工作流隔离开来。Spring 中的DAO提供一致的方式访问数据库，不管采用何种持久化技术，Spring都提供一致的编程模型。
+Spring 中的DAO提供一致的方式访问数据库
 
 **5、Spring ORM（Object Relation Mapper）对象关系映射模块**
 
-ORM是通过使用描述对象和数据库之间映射的元数据，ORM框架采用元数据来描述对象--关系映射细节，元数据一般采用xml格式，并且存放在专门的对象--映射文件中
+ORM是通过使用描述对象和数据库之间映射的元数据，ORM框架采用元数据来描述对象--关系映射细节
 
 **6、Spring Web模块**
 
@@ -46,13 +44,11 @@ MVC框架是一个全功能的构建Web应用程序的MVC实现。
   （6）Servlet 主控制器调用 ViewResolver 组件，根据 ModelAndView 信息处理。定位视图资源，生成视图响应信息。
   （7）控制器将响应信息给用户输出。
 
-
-
 ## （重点）使用 Spring 框架能带来哪些好处？
 
 
 
-- **DI** ：**[Dependency Injection(DI)](http://howtodoinjava.com/2013/03/19/inversion-of-control-ioc-and-dependency-injection-di-patterns-in-spring-framework-and-related-interview-questions/)** 方法，使得构造器和 JavaBean、properties 文件中的依赖关系一目了然。
+- **DI** 依赖注入：**[Dependency Injection(DI)](http://howtodoinjava.com/2013/03/19/inversion-of-control-ioc-and-dependency-injection-di-patterns-in-spring-framework-and-related-interview-questions/)** 方法，使得构造器和 JavaBean、properties 文件中的依赖关系一目了然。
 - **轻量级**：与 EJB 容器相比较，**IoC 容器更加趋向于轻量级**。这样一来 IoC 容器在有限的内存和 CPU 资源的情况下，进行应用程序的开发和发布就变得十分有利。
 - **面向切面编程(AOP)**： Spring 支持面向**切面编程**，同时把应用的业务逻辑与系统的服务分离开来。
 - **集成主流框架**：
