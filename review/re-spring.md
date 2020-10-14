@@ -1464,10 +1464,8 @@ Hystrix 有两种隔离策略：
 
 Hystrix 提供缓存功能，作用是：
 
-- 减少重复的请求数。
+- **减少重复的请求数**。
 - 在同一个用户请求的上下文中，相同依赖服务的返回数据始终保持一致。
-
-详细的，可以看看 [《Hystrix 缓存功能的使用》](https://blog.csdn.net/zhuchuangang/article/details/74566185) 文章。
 
 ### 什么是 Hystrix 断路器？
 
@@ -1477,64 +1475,13 @@ HystrixCircuitBreaker 有三种状态 ：
 
 - `CLOSED` ：关闭
 - `OPEN` ：打开
-- `HALF_OPEN` ：半开
+- `HALF_OPEN` ：半开：过一段时间后，**尝试**调用**正常**逻辑，根据执行是否成功，**打开或关闭**
 
 其中，断路器处于 `OPEN` 状态时，链路处于**非健康**状态，命令执行时，直接调用**回退**逻辑，跳过**正常**逻辑。
 
-HystrixCircuitBreaker 状态变迁如下图 ：
-
-[![HystrixCircuitBreaker 状态](http://static2.iocoder.cn/images/Hystrix/2018_11_08/01.png)](http://static2.iocoder.cn/images/Hystrix/2018_11_08/01.png)HystrixCircuitBreaker 状态
-
-- 红线
-
-   
-
-  ：初始时，断路器处于
-
-   
-
-  ```
-  CLOSED
-  ```
-
-   
-
-  状态，链路处于
-
-  健康
-
-  状态。当满足如下条件，断路器从
-
-   
-
-  ```
-  CLOSED
-  ```
-
-   
-
-  变成
-
-   
-
-  ```
-  OPEN
-  ```
-
-   
-
-  状态：
-
-  - **周期**( 可配，`HystrixCommandProperties.default_metricsRollingStatisticalWindow = 10000 ms` )内，总请求数超过一定**量**( 可配，`HystrixCommandProperties.circuitBreakerRequestVolumeThreshold = 20` ) 。
-  - **错误**请求占总请求数超过一定**比例**( 可配，`HystrixCommandProperties.circuitBreakerErrorThresholdPercentage = 50%` ) 。
-
-- **绿线** ：断路器处于 `OPEN` 状态，命令执行时，若当前时间超过断路器**开启**时间一定时间( `HystrixCommandProperties.circuitBreakerSleepWindowInMilliseconds = 5000 ms` )，断路器变成 `HALF_OPEN` 状态，**尝试**调用**正常**逻辑，根据执行是否成功，**打开或关闭**熔断器【**蓝线**】。
-
 ### 什么是 Hystrix 服务降级？
 
-在 Hystrix 断路器熔断时，可以调用一个降级方法，返回相应的结果。当然，降级方法需要配置和编码，如果胖友不需要，也可以不写，也就是不会有服务降级的功能。
-
-具体的使用方式，可以看看 [《通过 Hystrix 理解熔断和降级》](https://blog.csdn.net/jiaobuchong/article/details/78232920) 。
+在 Hystrix **断路器熔断时，可以调用一个降级方法**，返回相应的结果。
 
 # 网关服务
 
@@ -1546,19 +1493,17 @@ HystrixCircuitBreaker 状态变迁如下图 ：
 
 - [`spring-cloud-gateway`](https://github.com/spring-cloud/spring-cloud-gateway) ，基于 Spring Webflux 实现。
 
-  > 艿艿：比较大的可能性，是未来 Spring Cloud 网关的主流选择。考虑到目前资料的情况，建议使用 Zuul1 可能是更稳妥的选择，因为 Zuul1 已经能满足绝大数性能要求，实在不行也可以集群。
-
 ## 为什么要网关服务？
 
 使用网关服务，我们实现统一的功能：
 
-- 动态路由
-- 灰度发布
-- 健康检查
-- 限流
-- 熔断
-- 认证: 如数支持 HMAC, JWT, Basic, OAuth 2.0 等常用协议
-- 鉴权: 权限控制，IP 黑白名单，同样是 OpenResty 的特性
+- **动态路由**
+- **灰度发布**
+- **健康检查**
+- **限流**
+- **熔断**
+- **认证**: 如数支持 HMAC, JWT, Basic, OAuth 2.0 等常用协议
+- **鉴权:** 权限控制，IP 黑白名单，同样是 OpenResty 的特性
 - 可用性
 - 高性能
 
@@ -1568,17 +1513,24 @@ HystrixCircuitBreaker 状态变迁如下图 ：
 
 [![Zuul](http://static2.iocoder.cn/c1a8294fcaf03a88818e4194bb348f0b)](http://static2.iocoder.cn/c1a8294fcaf03a88818e4194bb348f0b)Zuul
 
-- 作用：API 网关，路由，负载均衡等多种作用。
+- 作用：API **网关，路由，负载均衡**等多种作用。
 - 简介：类似 Nginx ，反向代理的功能，不过 Netflix 自己增加了一些配合其他组件的特性。
-- 在微服务架构中，后端服务往往不直接开放给调用端，而是通过一个 API网关根据请求的 url ，路由到相应的服务。当添加API网关后，在第三方调用端和服务提供方之间就创建了一面墙，这面墙直接与调用方通信进行权限控制，后将请求均衡分发给后台服务端。
+- 在微服务架构中，**后端服务往往不直接开放给调用端，而是通过一个 API网关根据请求的 url ，路由到相应的服务**。当添加API网关后，在第三方调用端和服务提供方之间就创建了一面墙，这面墙直接与调用方通信进行权限控制，后将请求均衡分发给后台服务端。
 
-Zuul 原理，整体如下图：[![Zuul 原理](http://static2.iocoder.cn/20944a735d250d7d3338fe9deea179f8)](http://static2.iocoder.cn/20944a735d250d7d3338fe9deea179f8)Zuul 原理
+## 微服务网关Zuul、Gateway、nginx的区别
 
-关于 Zuul 的源码解析，可以看看艿艿整理的 [《Zuul 源码解析系列》](http://www.iocoder.cn/Zuul/good-collection/) 。
+- 两者均是web网关，处理的是http请求
 
-## Spring Cloud Gateway
+- gateway对比zuul**多依赖了spring-webflux**，在spring的支持下，**功能更强大**，内部实现了**限流、负载均衡**等，扩展性也更强，
 
-关于 Spring Cloud Gateway 的源码解析，可以看看艿艿写的 [《Spring Cloud Gateway 源码解析系列》](http://www.iocoder.cn/categories/Spring-Cloud-Gateway/) 。
+  - 但同时也限制了仅适合于Spring Cloud套件，而zuul则可以扩展至其他微服务框架中，其内部没有实现限流、负载均衡等
+
+  
+
+  作者：keyuan0214
+  链接：https://www.jianshu.com/p/8d82c6c2e5ee
+  来源：简书
+  著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
 
 # 配置中心
 
