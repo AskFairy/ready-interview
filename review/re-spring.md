@@ -1517,7 +1517,7 @@ HystrixCircuitBreaker 有三种状态 ：
 - 简介：类似 Nginx ，反向代理的功能，不过 Netflix 自己增加了一些配合其他组件的特性。
 - 在微服务架构中，**后端服务往往不直接开放给调用端，而是通过一个 API网关根据请求的 url ，路由到相应的服务**。当添加API网关后，在第三方调用端和服务提供方之间就创建了一面墙，这面墙直接与调用方通信进行权限控制，后将请求均衡分发给后台服务端。
 
-## 微服务网关Zuul、Gateway、nginx的区别
+## [微服务网关Zuul、Gateway、nginx的区别](https://www.jianshu.com/p/8d82c6c2e5ee)
 
 - 两者均是web网关，处理的是http请求
 
@@ -1525,24 +1525,27 @@ HystrixCircuitBreaker 有三种状态 ：
 
   - 但同时也限制了仅适合于Spring Cloud套件，而zuul则可以扩展至其他微服务框架中，其内部没有实现限流、负载均衡等
 
-  
+- **gateway很好的支持异步**，而zuul仅支持同步
 
-  作者：keyuan0214
-  链接：https://www.jianshu.com/p/8d82c6c2e5ee
-  来源：简书
-  著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
+而**对于小型微服务架构或是复杂架构**（不仅包括微服务应用还有其他非Spring Cloud服务节点），zuul也是一个不错的选择，当然，这种场景下**一般会选择nginx**，因为nginx从各个方面都会表现的更好。
+
+  ## [Spring cloud gateway限流](https://www.cnblogs.com/csts/p/10286378.html)
+
+
+
+
+
+
 
 # 配置中心
 
 在 Spring Cloud 中，能够使用的配置中心，如下：
 
-- [`spring-cloud-config`](https://github.com/spring-cloud/spring-cloud-config) ，基于 Git、SVN 作为存储。
+- [`spring-cloud-config`](https://github.com/spring-cloud/spring-cloud-config) ，基于 **Git、SVN 作为存储**。
 
 - [`spring-cloud-alibaba-nacos-config`](https://github.com/spring-cloud-incubator/spring-cloud-alibaba/tree/master/spring-cloud-alibaba-nacos-config) ，基于 Nacos 实现。
 
-- [Apollo](https://github.com/ctripcorp/apollo) ，携程开源的配置中心。
-
-  > 艿艿：目前 Spring Cloud 最成熟的配置中心的选择。
+- [Apollo](https://github.com/ctripcorp/apollo) ，**携程开源的配置中心**。
 
 ## Spring Cloud Config
 
@@ -1550,13 +1553,9 @@ HystrixCircuitBreaker 有三种状态 ：
 
 - 作用：配置管理
 - 简介：Spring Cloud Config 提供服务器端和客户端。服务器存储后端的默认实现使用 Git ，因此它轻松支持标签版本的配置环境，以及可以访问用于管理内容的各种工具。
-- 这个还是静态的，得配合 Spring Cloud Bus 实现动态的配置更新。
+- 这个还是静态的，得配合 **Spring Cloud Bus 实现动态的配置更新**。
 
-虽然 Spring Cloud Config 官方并未推出管理平台，我们可以考虑看看 [《为 Spring Cloud Config 插上管理的翅膀》](http://www.iocoder.cn/Spring-Cloud-Config/didi/spring-cloud-config-admin-1-0-0-release/) 。
 
-## Apollo
-
-关于 Apollo 的源码解析，可以看看艿艿写的 [《Spring Cloud Apollo 源码解析系列》](http://www.iocoder.cn/categories/Apollo/) 。
 
 # 链路追踪
 
@@ -1573,72 +1572,10 @@ HystrixCircuitBreaker 有三种状态 ：
 
 Spring Cloud Sleuth 原理，整体如下图：[![Spring Cloud Sleuth 原理](http://static2.iocoder.cn/43f306a2aa7bc27015d3baa7832d13b6)](http://static2.iocoder.cn/43f306a2aa7bc27015d3baa7832d13b6)Spring Cloud Sleuth 原理
 
-# TODO 消息队列
-
-# 彩蛋
+# 微服务整合图
 
 第一个版本的 Spring Cloud 面试题，主要把整个文章的大体结构定了，后续在慢慢完善补充~
 
 如下是 Eureka + Ribbon + Feign + Hystrix + Zuul 整合后的图：[![Eureka + Ribbon + Feign + Hystrix + Zuul](http://static2.iocoder.cn/64e9a7827c76d38f899160da6f736ea2)](http://static2.iocoder.cn/64e9a7827c76d38f899160da6f736ea2)Eureka + Ribbon + Feign + Hystrix + Zuul
 
-参考与推荐如下文章：
-
-- [《微服务框架之 Spring Cloud 面试题汇总》](http://www.3da4.com/thread-4948-1-1.html)
-- [《Spring Boot 和 Spring Cloud 面试题》](https://yiweifen.com/v-1-339414.html)
-- [《Spring Cloud 简介与 5 大常用组件》](https://www.toutiao.com/a6642286207961137671/)
-- [《面试必问的 Spring Cloud 实现原理图》](https://www.youdingyi.com/thread-2500-1-1.html)
-- [《拜托！面试请不要再问我 Spring Cloud 底层原理》](https://juejin.im/post/5be13b83f265da6116393fc7)
-
-**文章目录**
-
-1. 什么是 Spring Cloud ？
-   1. [Spring Cloud 核心功能是什么？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-   2. [Spring Cloud 有哪些组件？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-   3. [Spring Cloud 和 Spring Boot 的区别和关系？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-   4. [Spring Cloud 和 Dubbo 的区别？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-2. 什么是微服务？
-   1. [微服务的优缺点分别是什么？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-3. 注册中心
-   1. [为什么要使用服务发现？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-   2. Eureka
-      1. [Eureka 如何实现集群？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-      2. [聊聊 Eureka 缓存机制？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-      3. [什么是 Eureka 自我保护机制？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-4. 负载均衡
-   1. [为什么要负载均衡？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-   2. Ribbon
-      1. [Ribbon 有哪些负载均衡算法？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-      2. [聊聊 Ribbon 缓存机制？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-      3. [聊聊 Ribbon 重试机制？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-      4. [Ribbon 是怎么和 Eureka 整合的？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-5. 声明式调用
-   1. Feign
-      1. [Feign 实现原理？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-      2. [Feign 和 Ribbon 的区别？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-      3. [Feign 是怎么和 Ribbon、Eureka 整合的？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-      4. [聊聊 Feign 重试机制？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-6. 服务保障
-   1. [为什么要使用服务保障？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-   2. Hystrix
-      1. [Hystrix 隔离策略？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-      2. [聊聊 Hystrix 缓存机制？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-      3. [什么是 Hystrix 断路器？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-      4. [什么是 Hystrix 服务降级？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-7. 网关服务
-   1. [为什么要网关服务？](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-   2. [Zuul](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-   3. [Spring Cloud Gateway](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-8. 配置中心
-   1. [Spring Cloud Config](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-   2. [Apollo](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-9. 链路追踪
-   1. [SkyWalking](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-   2. [Spring Cloud Sleuth](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-10. [TODO 消息队列](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-11. [彩蛋](http://svip.iocoder.cn/Spring-Cloud/Interview/#undefined)
-
-© 2014 - 2020 芋道源码 | 
-
-总访客数 839959 次 && 总访问量 3972800 次
-
-[回到首页](http://svip.iocoder.cn/index)
+http://svip.iocoder.cn/index)
