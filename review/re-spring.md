@@ -364,14 +364,25 @@ public class Employee {
 
 # Spring AOP
 
+AOP 的工作重心在于**如何将增强编织目标对象的连接点上**, 这里包含两个工作:
+
+1. 如何通过 PointCut 和 Advice 定位到特定的 **JoinPoint** 上。
+2. 如何在 Advice 中编写切面代码。
+
 > Spring AOP 的面试题中，大多数都是概念题，主要是对切面的理解。概念点主要有：
 >
-> - AOP：切面、动态代理
-> - Aspect
-> - JoinPoint
-> - PointCut
-> - Advice
-> - Target
+> - AOP：面向切面编程，切面、动态代理
+>   - `ProxyFactoryBean`代理工厂对象
+>   - `TransactionProxyFactoryBean`事务代理工厂对象
+> - Aspect：
+>   - 用 @Aspect 注解的类就是切面
+>   - Aspect 由 **PointCut** 和 **Advice** 组成。
+> - JoinPoint：切点
+>   - 一个方法的执行。
+>   - 或者是一个异常的处理。
+> - PointCut：**PointCut 是匹配 JoinPoint 的条件**。
+> - Advice：特定 JoinPoint 处的 Aspect 所**采取的动作称为 Advice** 。
+> - Target：织入 Advice 的**目标对象**。
 > - AOP Proxy
 > - Weaving
 
@@ -382,54 +393,9 @@ public class Employee {
 - [《彻底征服 Spring AOP 之理论篇》](https://segmentfault.com/a/1190000007469968)
 - [《彻底征服 Spring AOP 之实战篇》](https://segmentfault.com/a/1190000007469982)
 
-## 什么是 AOP ？
-
-AOP(Aspect-Oriented Programming)，即**面向切面编程**, 它与 OOP( Object-Oriented Programming, 面向对象编程) 相辅相成， 提供了与 OOP 不同的抽象软件结构的视角。
-
-- 在 OOP 中，以类( Class )作为基本单元
-- 在 AOP 中，以**切面( Aspect )**作为基本单元。
-
-AOP的实现原理为动态代理技术，一共有两种代理模式：
-
-（1）`ProxyFactoryBean`代理工厂对象
-
-Spring内置代理类，引入一个中间层，能够创建不同类型的对象，利用它可以实现任何形式的AOP。
-
-（2）`TransactionProxyFactoryBean`事务代理工厂对象
-
-常用在数据库编程上，Spring利用TransactionProxyFactoryBean对事务进行管理，在**指定方法前利用AOP连接数据库并开启事务，然后在指定方法返回后利用AOP提交事务并断开数据库**。
-
-## 什么是 Aspect ？
-
-Aspect 由 **PointCut** 和 **Advice** 组成。
-
-- 它既包含了横切逻辑的定义，也包括了连接点的定义。
-- Spring AOP 就是负责实施切面的框架，它将切面所定义的横切逻辑编织到切面所指定的连接点中。
-
-AOP 的工作重心在于**如何将增强编织目标对象的连接点上**, 这里包含两个工作:
-
-1. 如何通过 PointCut 和 Advice 定位到特定的 **JoinPoint** 上。
-2. 如何在 Advice 中编写切面代码。
-
-**可以简单地认为, 使用 @Aspect 注解的类就是切面**
-
 [![流程图](http://static2.iocoder.cn/images/Spring/2018-12-24/04.jpg)](http://static2.iocoder.cn/images/Spring/2018-12-24/04.jpg)流程图
 
-## 什么是 JoinPoint ?
 
-JoinPoint ，**切点**，程序运行中的一些时间点, 例如：
-
-- 一个方法的执行。
-- 或者是一个异常的处理。
-
-在 Spring AOP 中，JoinPoint 总是方法的执行点。
-
-## 什么是 PointCut ？
-
-PointCut ，**PointCut 是匹配 JoinPoint 的条件**。
-
-- Advice 是和特定的 PointCut 关联的，并且在 PointCut 相匹配的 JoinPoint 中执行。即 `Advice => PointCut => JoinPoint` 。
-- 在 Spring 中, 所有的方法都可以认为是 JoinPoint ，但是我们并不希望在所有的方法上都添加 Advice 。**而 PointCut 的作用**，就是提供一组规则(使用 AspectJ PointCut expression language 来描述) 来匹配 JoinPoint ，给满足规则的 JoinPoint 添加 Advice 。
 
 ## 关于 JoinPoint 和 PointCut 的区别
 
@@ -470,12 +436,10 @@ Target ，织入 Advice 的**目标对象**。目标对象也被称为 **Advised
 
 - ② **动态代理** - 在**运行时在内存中“临时”生成 AOP 动态代理类**，因此也被称为运行时增强。目前 Spring 中使用了两种动态代理库：
 
-  - JDK 动态代理
-  - CGLIB
+  - JDK 动态代理：反射+接口
+  - CGLIB：继承，子类覆盖
 
 那么 Spring 什么时候使用 JDK 动态代理，什么时候使用 CGLIB 呢？
-
-
 
 - 如果被代理的目标对象实现了至少一个接口，则会使用 JDK 动态代理。所有该目标类型实现的接口都讲被代理。
 - 若该目标对象没有实现任何接口，则创建一个 CGLIB 代理。
@@ -493,20 +457,8 @@ Spring AOP 中的动态代理主要有两种方式，
   **如果目标类没有实现接口**，那么 Spring AOP 会选择使用 CGLIB 来动态代理目标类。
   CGLIB（Code Generation Library），是一个代码生成的类库，可以在**运行时动态的生成某个类的子类**，注意，CGLIB 是通过**继承的方式做的动态代理**，因此如果某个类被标记为 `final` ，那么它是无法使用 CGLIB 做动态代理的。
 
-## Spring AOP and AspectJ AOP 有什么区别？
-
-- 代理方式不同
-  - Spring AOP 基于动态代理方式实现。
-  - AspectJ AOP 基于静态代理方式实现。
-- PointCut 支持力度不同
-  - Spring AOP **仅**支持方法级别的 PointCut 。
-  - AspectJ AOP 提供了完全的 AOP 支持，它还支持属性级别的 PointCut 。
-
 ## 什么是编织（Weaving）？
 
-Weaving ，**编织**。
-
-- 为了创建一个 Advice 对象而链接一个 Aspect 和其它应用类型或对象，称为编织（Weaving）。
 - 在 Spring AOP 中，编织在**运行时执行，即动态代理**。请参考下图：[![Proxy](http://static2.iocoder.cn/images/Spring/2018-12-24/05.jpg)](http://static2.iocoder.cn/images/Spring/2018-12-24/05.jpg)Proxy
 
 ## Spring 如何使用 AOP 切面？
@@ -526,7 +478,7 @@ Weaving ，**编织**。
 
 事务就是对一系列的数据库操作（比如插入多条数据）进行**统一的提交**回滚操作，如果插入成功，那么**一起成功**，如果中间有一条出现异常，那么**回滚**之前的所有操作。
 
-这样可以防止出现脏数据，防止数据库数据出现问题。
+这样可以**防止出现脏数据，防止数据库数据出现问题**。
 
 ## 事务的特性指的是？
 
@@ -534,8 +486,8 @@ Weaving ，**编织**。
 
 [![事务的特性](http://static2.iocoder.cn/images/Spring/2018-12-24/06.png)](http://static2.iocoder.cn/images/Spring/2018-12-24/06.png)事务的特性
 
-1. **原子性** Atomicity ：一个事务（transaction）中的所有操作，或者全部完成，或者全部不完成，不会结束在中间某个环节。事务在执行过程中发生错误，会被恢复（Rollback）到事务开始前的状态，就像这个事务从来没有执行过一样。即，事务不可分割、不可约简。
-2. **一致性** Consistency ：在事务开始之前和事务结束以后，数据库的完整性没有被破坏。这表示写入的资料必须完全符合所有的预设[约束](https://zh.wikipedia.org/wiki/数据完整性)、[触发器](https://zh.wikipedia.org/wiki/触发器_(数据库))、[级联回滚](https://zh.wikipedia.org/w/index.php?title=级联回滚&action=edit&redlink=1)等。
+1. **原子性** Atomicity ：
+2. **一致性** Consistency ：在事务开始之前和事务结束以后，**数据库的完整性没有被破坏**。这表示写入的资料必须完全符合所有的预设[约束](https://zh.wikipedia.org/wiki/数据完整性)、[触发器](https://zh.wikipedia.org/wiki/触发器_(数据库))、[级联回滚](https://zh.wikipedia.org/w/index.php?title=级联回滚&action=edit&redlink=1)等。
 3. **隔离性** Isolation ：数据库允许**多个并发事务**同时对其数据进行读写和修改的能力，隔离性**可以防止多个事务并发执行时由于交叉执行而导致数据的不一致**。事务隔离分为不同级别，包括读未提交（Read uncommitted）、读提交（read committed）、可重复读（repeatable read）和串行化（Serializable）。
 4. **持久性** Durability ：事务处理结束后，对数据的修改就是永久的，即便系统故障也不会丢失。
 
@@ -547,15 +499,16 @@ Weaving ，**编织**。
   - Spring Boot + 注解的**声明式**事务
 - **编程式**事务：通过编码的方式实现事务管理，需要在代码中显式的调用事务的获得、提交、回滚。它为您提供极大的灵活性，但维护起来非常困难。
 
-实际场景下，我们一般使用 Spring Boot + 注解的**声明式**事务。具体的示例，胖友可以看看 [《Spring Boot 事务注解详解》](https://www.jianshu.com/p/cddeca2c9245) 。
-
-另外，也推荐看看 [《Spring 事务管理 － 编程式事务、声明式事务》](https://blog.csdn.net/xktxoo/article/details/77919508) 一文。
+实际场景下，我们一般使用 Spring Boot + 注解的**声明式**事务。
 
 ## Spring 事务如何和不同的数据持久层框架做集成？
 
-① 首先，我们先明确下，这里数据持久层框架，指的是 Spring JDBC、Hibernate、Spring JPA、MyBatis 等等。
+1. 定义责事务管理的接口PlatformTransactionManager
+   - 返回的是 TransactionStatus 对象方法
+   - 提交事务方法`#commit(TransactionStatus status)`
+   - 回滚事务方法
 
-② 然后，Spring 事务的管理，是通过 `org.springframework.transaction.PlatformTransactionManager` 进行管理，定义如下：
+② 然后，Spring 事PlatformTransactionManager` 务的管理，是通过 `org.springframework.transaction.PlatformTransactionManager` 进行管理，定义如下：
 
 ```
 // PlatformTransactionManager.java
