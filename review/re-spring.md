@@ -209,14 +209,10 @@ Spring Bean 支持 5 种 Scope ，分别如下：
 - `Prototype` - 线程每次请求都会产生一个新的实例。
 - `Request` - 每一次 HTTP 请求都会产生一个新的 Bean 实例，并且该 Bean 仅在当前 HTTP 请求内有效。
 - `Session` - 每一个的 Session 都会产生一个新的 Bean 实例，同时该 Bean 仅在当前 HTTP Session 内有效。
-- `Application` - 每一个 Web Application 都会产生一个新的 Bean ，同时该 Bean 仅在当前 Web Application 内有效。
+- `global session/Application` - 每一个 Web Application 都会产生一个新的 Bean ，同时该 Bean 仅在当前 Web Application 内有效。
 - 自定义 Bean Scope
 
 ## （重点）Spring Bean 在容器的生命周期是什么样的？
-
-> 艿艿说：这是一个比较高级的 Spring 的面试题，非常常见，并且答对比较加分。当然，如果实际真正弄懂，需要对 Spring Bean 的源码，有比较好的理解，所以 [《精尽 Spring 源码》](http://svip.iocoder.cn/categories/Spring/) 系列，该读还是读吧。
-
-> 艿艿：要注意下面每段话，艿艿进行加粗的地方。
 
 Spring Bean 的**初始化**流程如下：
 
@@ -282,7 +278,7 @@ Spring 容器能够自动装配 Bean 。
 
 ## Spring 框架中的单例 Bean 是线程安全的么？
 
-不是线程安全的，Spring 框架并没有对[单例](http://howtodoinjava.com/2012/10/22/singleton-design-pattern-in-java/) Bean 进行任何多线程的封装处理。仅提供根据配置，创建单例 Bean 或多例 Bean 的功能。但实际上，大部分的 Spring Bean 并没有可变的状态(比如Serview 类和 DAO 类)，所以在某种程度上说 Spring 的单例 Bean 是线程安全的。
+**不是线程安全的，作用域，共享变量**：Spring 框架并没有对[单例](http://howtodoinjava.com/2012/10/22/singleton-design-pattern-in-java/) Bean 进行任何多线程的封装处理。仅提供根据配置，创建单例 Bean 或多例 Bean 的功能。但实际上，大部分的 Spring Bean 并没有可变的状态(比如Serview 类和 DAO 类)，所以在某种程度上说 Spring 的单例 Bean 是线程安全的。
 
 如果你的 Bean 有多种状态的话，就需要自行保证线程安全。最浅显的解决办法，就是将多态 Bean 的作用域( Scope )由 Singleton 变更为 Prototype 。
 
@@ -304,11 +300,11 @@ Spring 的 Java 配置是通过使用 `@Bean` 和 `@Configuration` 来实现。
 
 `@Configuration`就相当于Spring配置文件中的``标签，里面可以配置bean
 
-概括就是 @Configuration 中所有带 @Bean 注解的方法都会被动态代理，因此调用该方法返回的都是**同一个实例**。
+概括就是 @Configuration 中所有带 @Bean 注解的**方法都会被动态代理**，因此调用该方法返回的都是**同一个实例**。
 
-其工作原理是：如果方式是首次被调用那么原始的方法体会被执行并且结果对象会被注册到Spring上下文中，之后所有的对该方法的调用仅仅只是从Spring上下文中取回该对象返回给调用者。
+其工作原理是：如果方式是首次被调用那么原始的方法体会被执行并且结果对象会**被注册到Spring上下文中，之后所有的对该方法的调用仅仅只是从Spring上下文中取回该对象返回给调用者**。
 
-@Component，只是纯JAVA方式的调用，多次调用该方法返回的是不同的对象实例。
+@Component，只是纯JAVA方式的调用，多次调用该方法返回的是**不同的对象实例**。
 
 ## 如何在 Spring 中启动注解装配？
 
@@ -354,13 +350,13 @@ public class Employee {
 `@Autowired` 注解，可以更准确地控制应该在何处以及**如何进行自动装配bean**。
 
 - 此注解用于在 setter 方法，构造函数，具有任意名称或多个参数的属性或方法上自动装配 Bean。
-- 默认情况下，它是类型驱动的注入。
+- 默认情况下，它是**类型**驱动的注入。
 
 ## @Autowired 与@Resource的区别
 
-@Autowired默认按类型装配（这个注解是属业spring的）
+@Autowired默认按**类型装配**（这个注解是属业spring的）
 
-@Resource（这个注解属于J2EE的），默认按照名称进行装配，名称可以通过name属性进行指定。当找不到与名称匹配的bean时才按照类型进行装配。
+@Resource（这个注解属于J2EE的），默认**按照名称进行装配**，名称可以通过name属性进行指定。当**找不到与名称匹配的bean时才按照类型进行装配**。
 
 ## @Qualifier 注解有什么用？
 
