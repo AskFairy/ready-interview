@@ -1310,61 +1310,62 @@ Eureka内部的缓存分三级缓存，
 
 ### 什么是 Eureka 自我保护机制？
 
-[《[Spring Cloud\] Eureka 的自我保护模式及相关问题》](https://blog.csdn.net/t894690230/article/details/78207495)
+- 当 Eureka Server 节点在**短时间内丢失了过多实例的连接**时进入自我保护模式。
+
+- **不再删除服务注册表中的数据**（即不会注销任何微服务），当网络故障恢复后，该 Ereaka Server 节点就会自动退出自我保护模式（我的 Eureka Server 已经几个月了，至今未自动退出该模式）
+
+解决： 
+
+- **等待** Eureka Server 自动恢复
+- **重启** Eureka Server
+- **关闭** Eureka 的自我保护模式
 
 # 负载均衡
 
 在 Spring Cloud 中，能够使用的负载均衡，如下：
 
-- [`spring-cloud-netflix-ribbon`](https://github.com/spring-cloud/spring-cloud-netflix/tree/master/spring-cloud-netflix-ribbon) ，基于 Ribbon 实现。
-- [`spring-cloud-loadbalancer`](https://github.com/spring-cloud/spring-cloud-commons/tree/master/spring-cloud-loadbalancer) ，提供简单的负载均衡功能。
+- [`spring-cloud-netflix-ribbon`](https://github.com/spring-cloud/spring-cloud-netflix/tree/master/spring-cloud-netflix-ribbon) ，基于 **Ribbon 实现**。
+- [`spring-cloud-loadbalancer`](https://github.com/spring-cloud/spring-cloud-commons/tree/master/spring-cloud-loadbalancer) ，提**供简单的负载均**衡功能。
 
-以上的实现，都是基于 [`spring-cloud-commons`](https://github.com/spring-cloud/spring-cloud-commons) 的 [`loadbalancer`](https://github.com/spring-cloud/spring-cloud-commons/tree/master/spring-cloud-commons/src/main/java/org/springframework/cloud/client/loadbalancer) 的 [ServiceInstanceChooser](https://github.com/spring-cloud/spring-cloud-commons/blob/ecabe2bb8d9cb14aa6edcff41fdb79dc304ed004/spring-cloud-commons/src/main/java/org/springframework/cloud/client/loadbalancer/ServiceInstanceChooser.java) 接口，实现统一的服务的选择。并且，负载均衡组件在选择需要调用的服务之后，还提供调用该服务的功能，具体方法见 [LoadBalancerClient](https://github.com/spring-cloud/spring-cloud-commons/blob/master/spring-cloud-commons/src/main/java/org/springframework/cloud/client/loadbalancer/LoadBalancerClient.java) 接口的 `#execute(...)` 方法。
+以上的实现，都是基于 [`spring-cloud-commons`](https://github.com/spring-cloud/spring-cloud-commons) 的 [`loadbalancer`](https://github.com/spring-cloud/spring-cloud-commons/tree/master/spring-cloud-commons/src/main/java/org/springframework/cloud/client/loadbalancer) 的 [ServiceInstanceChooser](https://github.com/spring-cloud/spring-cloud-commons/blob/ecabe2bb8d9cb14aa6edcff41fdb79dc304ed004/spring-cloud-commons/src/main/java/org/springframework/cloud/client/loadbalancer/ServiceInstanceChooser.java) 接口，**实现统一的服务的选择**。并且，负载均衡组件在选择需要调用的服务之后，还提供调用该服务的功能，
 
 ## 为什么要负载均衡？
 
-简单来说，随着业务的发展，单台服务无法支撑访问的需要，于是搭建多个服务形成集群。那么随之要解决的是，每次请求，调用哪个服务，也就是需要进行负载均衡。
+服务形成集群。每次请求，调用哪个服务，也就是需要进行负载均衡。
 
 目前负载均衡有两种模式：
 
 1. 客户端模式
 2. 服务端模式
 
-在 Spring Cloud 中，我们使用前者，即客户端模式。
-
-详细的内容，可以看看 [《客户端负载均衡与服务端负载均衡》](https://blog.csdn.net/u014401141/article/details/78676296) 。
+在 Spring Cloud 中，我们使用前者，即**客户端模式**。
 
 🦅 **负载平衡的意义什么？**
 
-在计算中，负载平衡可以改善跨计算机，计算机集群，网络链接，中央处理单元或磁盘驱动器等多种计算资源的工作负载分布。负载平衡旨在优化资源使用，最大化吞吐量，最小化响应时间并避免任何单一资源的过载。使用多个组件进行负载平衡而不是单个组件可能会通过冗余来提高可靠性和可用性。负载平衡通常涉及专用软件或硬件，例如多层交换机或域名系统服务器进程。
+负载平衡旨在优化资源使用，最大化吞吐量，最小化响应时间并避免任何单一资源的过载。
 
 ## Ribbon
 
-[![Ribbon](http://static2.iocoder.cn/950702ef9d35f23b5081c341c1de329a)](http://static2.iocoder.cn/950702ef9d35f23b5081c341c1de329a)Ribbon
-
-- 作用：主要提供客户侧的软件负载均衡算法。
-- 简介：Spring Cloud Ribbon 是一个基于 HTTP 和 TCP 的客户端负载均衡工具，它基于 Netflix Ribbon 实现。通过 Spring Cloud 的封装，可以让我们轻松地将面向服务的 REST 模版请求自动转换成客户端负载均衡的服务调用。
+- 作用：主要**提供客户侧的软件负载均衡算法**。
+- 简介：Spring Cloud Ribbon 是一个基于 **HTTP 和 TCP** 的客户端负载均衡工具，可以让我们轻松地将**面向服务的 REST 模版请求自动转换成客户端负载均衡的服务调用**。
 - 注意看上图，关键点就是将外界的 rest 调用，根据负载均衡策略转换为微服务调用。
 
-Ribbon 原理，整体如下图：[![Ribbon 原理](http://static2.iocoder.cn/36465fd7d91b3a4aeb3b28c3777649e6)](http://static2.iocoder.cn/36465fd7d91b3a4aeb3b28c3777649e6)Ribbon 原理
+Ribbon 原理，整体如下图：
 
-关于 Ribbon 的源码解析，可以看看艿艿整理的 [《Ribbon 源码解析系列》](http://www.iocoder.cn/Ribbon/good-collection/?vip) 。
+[![Ribbon 原理](http://static2.iocoder.cn/36465fd7d91b3a4aeb3b28c3777649e6)
 
 ### Ribbon 有哪些负载均衡算法？
 
-[《Ribbon 负载均衡策略配置》](https://blog.csdn.net/rickiyeat/article/details/64918756)
 
-其中，默认的负载均衡算法是 Round Robin 算法，顺序向下轮询。
 
-### 聊聊 Ribbon 缓存机制？
+Ribbon作为后端负载均衡器，比Nginx更注重的是**承担并发**而不是请求分发，可以直接感知后台动态变化来指定分发策略。
 
-还是 [《Eureka 缓存细节以及生产环境的最佳配置》](http://bhsc881114.github.io/2018/04/01/eureka缓存细节以及生产环境的最佳配置/) 这篇文章，Ribbon 的缓存，可能也坑道蛮多人了。
+- 
 
 ### 聊聊 Ribbon 重试机制？
 
-[《Spring Cloud Ribbon 重试机制》](https://www.jianshu.com/p/cdb6fedcab70)
-
-除了重试次数，还有请求的超时可以配置。
+- ribbon.MaxAutoRetries 设置为1，请求某服务6s超时后准备重试，该重试策略会先尝试再访问该实例，如果失败1次之后才更换实例访问。
+- ribbon.MaxAutoRetriesNextServer 决定了尝试更换2次实例。
 
 ### Ribbon 是怎么和 Eureka 整合的？
 
