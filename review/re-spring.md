@@ -1215,37 +1215,29 @@ Spring Cloud的 组件相当繁杂，拥有诸多子项目。如下脑图所示�
 
 ## Spring Cloud 和 Dubbo 的区别？
 
-参见 [《精尽 Dubbo 面试题》](http://svip.iocoder.cn/Dubbo/Interview) 文章的 [「Spring Cloud 与 Dubbo 怎么选择？」](http://svip.iocoder.cn/Spring-Cloud/Interview/#) 问题的解答。
+实际上，并不然。我们现在所使用的 Spring Cloud 技术体系，实际上是 Spring Cloud Netflix 为主，例如说：
+
+- Netflix Eureka **注册中心**
+- Netflix Hystrix **熔断组件**
+- Netflix Ribbon **负载均衡**
+- Netflix Zuul 网关服务
+
+但是，开源的世界，总是这么有趣。目前 Alibaba 基于 Spring Cloud 的**接口**，对的是接口，实现了一套 [Spring Cloud Alibaba](https://github.com/spring-cloud-incubator/spring-cloud-alibaba) 技术体系，并且已经获得 Spring Cloud 的认可，处于孵化状态。组件如下：
+
+- Nacos 注册中心，对标 Eureka 。
+- Nacos 配置中心，集成到 Spring Cloud Config 。
+- Sentinel 服务保障，对标 Hystrix 。
+- Dubbo 服务调用( 包括负载均衡 )，对标 Ribbon + Feign 。
+- **缺失** 网关服务。
+- RocketMQ 队列服务，集成到 Spring Cloud Stream 。
+
+更多的讨论，胖友可以尾随知乎上的 [《请问哪位大神比较过 spring cloud 和 dubbo ，各自的优缺点是什么?》](https://www.zhihu.com/question/45413135) 。
+
+
 
 # 什么是微服务？
 
-直接看 [什么是微服务？](http://www.iocoder.cn/Geek/Learn-micro-services-from-zero/What-is-a-micro-service/) 文章。
-
 ## 微服务的优缺点分别是什么？
-
-**1）优点**
-
-- 每一个服务足够内聚,代码容易理解
-- 开发效率提高，一个服务只做一件事
-- 微服务能够被小团队单独开发
-- 微服务是松耦合的，是有功能意义的服务
-- 可以用不同的语言开发,面向接口编程
-- 易于与第三方集成
-- 微服务只是业务逻辑的代码，不会和 HTML、CSS 或者其他界面组合
-  - 开发中，两种开发模式
-    - 前后端分离
-    - 全栈工程师
-- 可以灵活搭配,连接公共库/连接独立库
-
-**2）缺点**
-
-- 分布式系统的负责性
-- 多服务运维难度，随着服务的增加，运维的压力也在增大
-- 系统部署依赖
-- 服务间通信成本
-- 数据一致性
-- 系统集成测试
-- 性能监控
 
 # 注册中心
 
@@ -1254,7 +1246,6 @@ Spring Cloud的 组件相当繁杂，拥有诸多子项目。如下脑图所示�
 - [`spring-cloud-netflix-eureka-server`](https://github.com/spring-cloud/spring-cloud-netflix/tree/master/spring-cloud-netflix-eureka-server) 和 [`spring-cloud-netflix-eureka-client`](https://github.com/spring-cloud/spring-cloud-netflix/tree/master/spring-cloud-netflix-eureka-server) ，基于 Eureka 实现。
 - [`spring-cloud-alibaba-nacos-discovery`](https://github.com/spring-cloud-incubator/spring-cloud-alibaba/tree/master/spring-cloud-alibaba-nacos-discovery) ，基于 Nacos 实现。
 - [`spring-cloud-zookeeper-discovery`](https://github.com/spring-cloud/spring-cloud-zookeeper/tree/master/spring-cloud-zookeeper-discovery) ，基于 Zookeeper 实现。
-- ... 等等
 
 以上的实现，都是基于 [`spring-cloud-commons`](https://github.com/spring-cloud/spring-cloud-commons) 的 [`discovery`](https://github.com/spring-cloud/spring-cloud-commons/blob/master/spring-cloud-commons/src/main/java/org/springframework/cloud/client/discovery/) 的 [DiscoveryClient](https://github.com/spring-cloud/spring-cloud-commons/blob/master/spring-cloud-commons/src/main/java/org/springframework/cloud/client/discovery/DiscoveryClient.java) 接口，实现统一的客户端的注册发现。
 
