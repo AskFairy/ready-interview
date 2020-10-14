@@ -137,21 +137,10 @@ BeanFactory 最常用的是 `XmlBeanFactory` 。它可以根据 XML 文件中定
 
 以下是三种较常见的 ApplicationContext 实现方式：
 
-- 1、ClassPathXmlApplicationContext ：从 ClassPath 的 XML 配置文件中读取上下文，并生成上下文定义。应用程序上下文从程序环境变量中取得。示例代码如下：
-
-  ```java
-  ApplicationContext context = new ClassPathXmlApplicationContext(“bean.xml”);
-  ```
-
-- 2、FileSystemXmlApplicationContext ：由文件系统中的XML配置文件读取上下文。示例代码如下：
-
-  ```java
-  ApplicationContext context = new FileSystemXmlApplicationContext(“bean.xml”);
-  ```
-
+- 1、ClassPathXmlApplicationContext ：从 ClassPath 的 XML 配置文件中读取上下文，并生成上下文定义。
+- 2、FileSystemXmlApplicationContext ：由文件系统中的XML配置文件读取上下文。ApplicationContext context = new FileSystemXmlApplicationContext(“bean.xml”);
 - 3、XmlWebApplicationContext ：由 Web 应用的XML文件读取上下文。例如我们在 Spring MVC 使用的情况。
-
-当然，目前我们更多的是使用 Spring Boot 为主，所以使用的是第四种 ApplicationContext 容器，`ConfigServletWebServerApplicationContext` 。
+- 目前我们更多的是使用 Spring Boot 为主，所以使用的是第四种 ApplicationContext 容器，`ConfigServletWebServerApplicationContext` 。
 
 ## 列举一些 IoC 的一些好处？
 
@@ -166,6 +155,16 @@ BeanFactory 最常用的是 `XmlBeanFactory` 。它可以根据 XML 文件中定
 
 在基友 [《面试问烂的 Spring IoC 过程》](http://www.iocoder.cn/Fight/Interview-poorly-asked-Spring-IOC-process-1/) 的文章中，把 Spring IoC 相关的内容，讲的非常不错。
 
+只需要低级容器就可以实现，2 个步骤：
+
+a. 加载配置文件，解析成 BeanDefinition 放在 Map 里。
+
+b. 调用 getBean 的时候，从 BeanDefinition 所属的 Map 里，拿出 Class 对象进行实例化，同时，如果有依赖关系，将递归调用 getBean 方法 —— 完成依赖注入。
+
+上面就是 Spring 低级容器（BeanFactory）的 IoC。
+
+至于高级容器 ApplicationContext，他包含了低级容器的功能，当句话，他不仅仅是 IoC。他支持不同信息源头，支持 BeanFactory 工具类，支持层级容器，支持访问文件资源，支持事件发布通知，支持接口回调等等。
+
 ## Spring 框架中有哪些不同类型的事件？
 
 Spring 的 ApplicationContext 提供了**支持事件和代码中监听器的功能**。
@@ -176,7 +175,7 @@ Spring 的 ApplicationContext 提供了**支持事件和代码中监听器的功
 2. **上下文开始事件**（ContextStartedEvent）：当容器调用ConfigurableApplicationContext 的 `#start()` 方法开始/重新开始容器时触发该事件。
 3. **上下文停止事件**（ContextStoppedEvent）：当容器调用 ConfigurableApplicationContext 的 `#stop()` 方法停止容器时触发该事件。
 4. **上下文关闭事件**（ContextClosedEvent）：当ApplicationContext 被关闭时触发该事件。容器被关闭时，其管理的所有单例 Bean 都被销毁。
-5. **请求处理事件**（RequestHandledEvent）：在 We b应用中，当一个HTTP **请求（request）结束触发**该事件。
+5. **请求处理事件**（RequestHandledEvent）：在 Web应用中，当一个HTTP **请求（request）结束触发**该事件。
 6. 通过扩展 ApplicationEvent 类来开发**自定义**的事件。
 
 # Spring Bean
@@ -184,7 +183,7 @@ Spring 的 ApplicationContext 提供了**支持事件和代码中监听器的功
 ## 什么是 Spring Bean ？
 
 - Bean 由 Spring IoC 容器实例化，配置，装配和管理。
-- Bean 是基于用户提供给 IoC 容器的配置元数据 Bean Definition 创建。
+- Bean 是基于用户提供给 IoC 容器的**配置元数据 Bean Definition 创建**。
 
 ## Spring 有哪些配置方式
 
