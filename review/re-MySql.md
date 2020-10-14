@@ -120,6 +120,40 @@ WHERE b = 1 ORDER BY time DESC
 
 详细看看 [《MySQL explain 执行计划详细解释》](http://www.jfox.info/2017/mysql-explain执行计划详细解释.html) 。
 
+![image-20201014205144535](https://gitee.com/chenchong0817/picture/raw/master/Aaron/image-20201014205144535.png)
+
+具体解释如下
+
+1. 执行id
+   包含一组数字，id如果相同，可以认为是一组，从上往下顺序执行；在所有组中，id值越大，优先级越高，越先执行
+2. **查询类型select_type**
+   type显示的是访问类型，是较为重要的一个指标，结果值从好到坏依次是： 
+   system > const > eq_ref > ref > fulltext > ref_or_null > index_merge > unique_subquery > index_subquery > range > index > ALL ，一般来说，得**保证查询至少达到range级别，最好能达到ref**。
+   - **ALL**: 扫描全表
+   - **index**: 扫描全部索引树
+   - **range**: 扫描部分索引，索引范围扫描，对索引的扫描开始于某一点，返回匹配值域的行，常见于between、<、>等的查询
+   - ref: **非唯一性索引扫描**，返回匹配某个单独值的所有行。常见于使用非唯一索引即唯一索引的非唯一前缀进行的查找
+   - eq_ref：**唯一性索引扫描**，对于每个索引键，表中只有一条记录与之匹配。常见于主键或唯一索引扫描
+3. possible_keys
+   指出MySQL能使用哪个索引在表中找到行，查询涉及到的字段上若存在索引，则该索引将被列出，但不一定被查询使用
+4. **key**：**显示MySQL在查询中实际使用的索引**，若没有使用索引，显示为NULL
+   TIPS：查询中若使用了覆盖索引，则该索引仅出现在key列表中
+5. key_len
+   表示索引中使用的字节数，可通过该列计算查询中使用的索引的长度
+6. ref
+   表示上述表的连接匹配条件，即哪些列或常量被用于查找索引列上的值
+7. **rows**：
+   表示MySQL根据表统计信息及索引选用情况，估算的找到所需的记录所需要读取的行
+8. Extra
+   包含不适合在其他列中显示但十分重要的额外信息
+
+二、关于MySQL执行计划的局限总结如下：
+1.EXPLAIN不会告诉你关于触发器、存储过程的信息或用户自定义函数对查询的影响情况
+2.EXPLAIN**不考虑各种Cache**
+3.EXPLAIN**不能显示MySQL在执行查询时所作的优化工作**
+4.**部分统计信息是估算的，并非精确值**
+5.EXPALIN只能解释SELECT操作，其他操作要重写为SELECT后查看执行计划 
+
 #### 索引原理
 
 [《MySQL索引背后的数据结构及算法原理》](http://blog.codinglabs.org/articles/theory-of-mysql-index.html)
