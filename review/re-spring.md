@@ -30,15 +30,7 @@ Web模块建立在应用程序上下文模块之上，为基于Web的应用程�
 
 MVC框架是一个全功能的构建Web应用程序的MVC实现。
 
-### （重点）Spring MVC 的工作流程
 
-- （1） 客户端发送请求，请求到达 DispatcherServlet 主控制器。
-  （2） DispatcherServlet 控制器调用 HandlerMapping 处理。
-  （3） HandlerMapping 负责维护请求和 Controller 组件对应关系。 HandlerMapping 根据请求调用对应的 Controller 组件处理。
-  （4） 执行 Controller 组件的业务处理，需要访问数据库，可以调用 DAO 等组件。
-  （5）Controller 业务方法处理完毕后，会返回一个 ModelAndView 对象。该组件封装了模型数据和视图标识。
-  （6）Servlet 主控制器调用 ViewResolver 组件，根据 ModelAndView 信息处理。定位视图资源，生成视图响应信息。
-  （7）控制器将响应信息给用户输出。
 
 ## （重点）使用 Spring 框架能带来哪些好处？
 
@@ -734,7 +726,7 @@ MVC 模式有助于分离应用程序的不同方面，如输入逻辑，业务�
 Spring MVC 一共有[九大核心组件](https://blog.csdn.net/qq_43716366/article/details/107308013)，分别是：
 
 - MultipartResolver：文件解析器，用于**处理上传请求**
-- LocaleResolver：LocaleResolver用于从request解析出Locale，Locale就是**zh-cn之类**，表示一个区域，有了这个就可以对不同区域的用户显示不同的结果
+- LocaleResolver：LocaleResolver用于从request解析出Locale，Locale就是**zh-cn之类**（国际化），表示一个区域，有了这个就可以对不同区域的用户显示不同的结果
 - ThemeResolver：用于**解析主题**。SpringMVC中一个主题对应一个properties文件，里面存放着跟当前主题相关的所有资源、如图片、css样式等。
 - HandlerMapping：处理映射器，根据需要干的活找到相应的工具
 - HandlerAdapter：处理适配器，使用工具干活的人
@@ -747,128 +739,31 @@ Spring MVC 一共有[九大核心组件](https://blog.csdn.net/qq_43716366/artic
 
 关于每个组件的说明，直接看 [《精尽 Spring MVC 源码分析 —— 组件一览》](http://svip.iocoder.cn/Spring-MVC/Components-intro/) 。
 
-## 描述一下 DispatcherServlet 的工作流程？
+## 描述一下  Spring MVC 的工作流程？
 
 DispatcherServlet 的工作流程可以用一幅图来说明：
 
-[![DispatcherServlet 的工作流程](https://blog-pictures.oss-cn-shanghai.aliyuncs.com/15300766829012.jpg)](https://blog-pictures.oss-cn-shanghai.aliyuncs.com/15300766829012.jpg)DispatcherServlet 的工作流程
+[![DispatcherServlet 的工作流程](https://blog-pictures.oss-cn-shanghai.aliyuncs.com/15300766829012.jpg)](https://blog-pictures.oss-cn-shanghai.aliyuncs.com/15300766829012.jpg)（1） 客户端发送请求，请求到达 `DispatcherServlet` 主控制器。
+（2） DispatcherServlet 控制器调用 `HandlerMapping` 处理。
+（3） HandlerMapping 负责维护请求和 Controller 组件对应关系。 HandlerMapping 根据请求调用对应的 Controller 组件处理。
+（4） 执行 Controller 组件的业务处理，需要访问数据库，可以调用 DAO 等组件。
+（5）Controller 业务方法处理完毕后，会返回一个 `ModelAndView` 对象。该组件封装了模型数据和视图标识。
+（6）Servlet 主控制器调用 `ViewResolver 组件`，根据 ModelAndView 信息处理。定位视图资源，生成视图响应信息。
+（7）控制器将响应信息给用户输出。
 
-① **发送请求**
 
-用户向服务器发送 HTTP 请求，请求被 Spring MVC 的调度控制器 DispatcherServlet 捕获。
-
-② **映射处理器**
-
-DispatcherServlet 根据请求 URL ，调用 HandlerMapping 获得该 Handler 配置的所有相关的对象（包括 **Handler** 对象以及 Handler 对象对应的**拦截器**），最后以 HandlerExecutionChain 对象的形式返回。
-
-- 即 HandlerExecutionChain 中，包含对应的 **Handler** 对象和**拦截器**们。
-
-> 此处，对应的方法如下：
->
-> ```
-> > // HandlerMapping.java
-> > 
-> > @Nullable
-> > HandlerExecutionChain getHandler(HttpServletRequest request) throws Exception;
-> >
-> ```
-
-③ **处理器适配**
-
-DispatcherServlet 根据获得的 Handler，选择一个合适的HandlerAdapter 。（附注：如果成功获得 HandlerAdapter 后，此时将开始执行拦截器的 `#preHandler(...)` 方法）。
-
-提取请求 Request 中的模型数据，填充 Handler 入参，开始执行Handler（Controller)。 在填充Handler的入参过程中，根据你的配置，Spring 将帮你做一些额外的工作：
-
-- HttpMessageConverter ：会将请求消息（如 JSON、XML 等数据）转换成一个对象。
-- 数据转换：对请求消息进行数据转换。如 String 转换成 Integer、Double 等。
-- 数据格式化：对请求消息进行数据格式化。如将字符串转换成格式化数字或格式化日期等。
-- 数据验证： 验证数据的有效性（长度、格式等），验证结果存储到 BindingResult 或 Error 中。
-
-Handler(Controller) 执行完成后，向 DispatcherServlet 返回一个 ModelAndView 对象。
-
-> 此处，对应的方法如下：
->
-> ```
-> > // HandlerAdapter.java
-> > 
-> > @Nullable
-> > ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception;
-> >
-> ```
-
-.
-
-> 图中没有 ④ 。
-
-⑤ **解析视图**
-
-根据返回的 ModelAndView ，选择一个适合的 ViewResolver（必须是已经注册到 Spring 容器中的 ViewResolver)，解析出 View 对象，然后返回给 DispatcherServlet。
-
-> 此处，对应的方法如下：
->
-> ```
-> > // ViewResolver.java
-> > 
-> > @Nullable
-> > View resolveViewName(String viewName, Locale locale) throws Exception;
-> >
-> ```
-
-⑥ ⑦ **渲染视图** + **响应请求**
-
-ViewResolver 结合 Model 和 View，来渲染视图，并写回给用户( 浏览器 )。
-
-> 此处，对应的方法如下：
->
-> ```
-> > // View.java
-> > 
-> > void render(@Nullable Map<String, ?> model, HttpServletRequest request, HttpServletResponse response) throws Exception;
-> >
-> ```
-
-------
-
-这样一看，胖友可能有点懵逼，所以还是推荐看看：
-
-- [《精尽 Spring MVC 源码分析 —— 组件一览》](http://svip.iocoder.cn/Spring-MVC/Components-intro/)
-- [《精尽 Spring MVC 源码分析 —— 请求处理一览》](http://svip.iocoder.cn/Spring-MVC/DispatcherServlet-process-request-intro/)
 
 **但是 Spring MVC 的流程真的一定是酱紫么**？
 
-既然这么问，答案当然不是。对于目前主流的架构，前后端已经进行分离了，所以 Spring MVC 只负责 **M**odel 和 **C**ontroller 两块，而将 **V**iew 移交给了前端。所以，在上图中的步骤 ⑤ 和 ⑥ 两步，已经不在需要。
+前后端已经进行分离了，所以 Spring MVC 只负责 **M**odel 和 **C**ontroller 两块，而将 **V**iew 移交给了前端。
 
-那么变成什么样了呢？在步骤 ③ 中，如果 Handler(Controller) 执行完后，如果判断方法有 `@ResponseBody` 注解，则直接将结果写回给用户( 浏览器 )。
+那么变成什么样了呢？在步骤 ③ 中，如果 Handler(Controller) 执行完后，如果判断方法有 `@ResponseBody` 注解，则直接将结果JSON写回给用户( 浏览器 )。
 
 但是 HTTP 是不支持返回 Java POJO 对象的，所以需要将结果使用 [HttpMessageConverter](http://svip.iocoder.cn/Spring-MVC/HandlerAdapter-5-HttpMessageConverter/) 进行转换后，才能返回。例如说，大家所熟悉的 [FastJsonHttpMessageConverter](https://github.com/alibaba/fastjson/wiki/在-Spring-中集成-Fastjson) ，将 POJO 转换成 JSON 字符串返回。
 
-😈 是不是略微有点复杂，还是那句话，撸下源码，捅破这个窗口。当然，如果胖友精力有限，只要看整体流程的几篇即可。
-
-------
-
-嘻嘻，再来补充两个图，这真的是 Spring MVC 非常关键的问题，所以要用心理解。
-
-> FROM [《SpringMVC - 运行流程图及原理分析》](https://blog.csdn.net/J080624/article/details/77990164)
->
-> **流程示意图**：
->
-> [![流程示意图](http://static2.iocoder.cn/images/Spring/2022-02-21/01.png)](http://static2.iocoder.cn/images/Spring/2022-02-21/01.png)流程示意图
->
-> **代码序列图**：
->
-> [![代码序列图](http://static2.iocoder.cn/images/Spring/2022-02-21/02.png)](http://static2.iocoder.cn/images/Spring/2022-02-21/02.png)代码序列图
->
-> ------
->
-> FROM [《看透 Spring MVC：源代码分析与实践》](https://item.jd.com/11807414.html) P123
->
-> **流程示意图**：
->
-> [![《流程示意图》](http://static2.iocoder.cn/images/Spring/2022-02-21/03.png)](http://static2.iocoder.cn/images/Spring/2022-02-21/03.png)《流程示意图》
-
 ## @Controller 注解有什么用？
 
-`@Controller` 注解，它将一个类标记为 Spring Web MVC **控制器** Controller 。
+`@Controller` 注解，**它将一个类标记为 Spring Web MVC 控制器Controller 。**
 
 ## @RestController 和 @Controller 有什么区别？
 
@@ -876,7 +771,7 @@ ViewResolver 结合 Model 和 View，来渲染视图，并写回给用户( 浏�
 
 ## @RequestMapping 注解有什么用？
 
-`@RequestMapping` 注解，用于将特定 HTTP 请求方法映射到将处理相应请求的控制器中的特定类/方法。此注释可应用于两个级别：
+`@RequestMapping` 注解，用于**将特定 HTTP 请求方法映射到将处理相应请求的控制器中的特定类/方法**。此注释可应用于两个级别：
 
 - 类级别：映射请求的 URL。
 - 方法级别：映射 URL 以及 HTTP 请求方法。
@@ -897,14 +792,9 @@ ViewResolver 结合 Model 和 View，来渲染视图，并写回给用户( 浏�
 WebApplicationContext 是实现ApplicationContext接口的子类，专门为 WEB 应用准备的。
 
 - 它允许从相对于 Web 根目录的路径中**加载配置文件**，**完成初始化 Spring MVC 组件的工作**。
-- 从 WebApplicationContext 中，可以获取 ServletContext 引用，整个 Web 应用上下文对象将作为属性放置在 ServletContext 中，以便 Web 应用环境可以访问 Spring 上下文。
+- **从 WebApplicationContext 中，可以获取 ServletContext 引用，整个 Web 应用上下文对象将作为属性放置在 ServletContext 中，以便 Web 应用环境可以访问 Spring 上下文**。
 
-关于这一块，如果想要详细了解，可以看看如下两篇文章：
-
-- [《精尽 Spring MVC 源码分析 —— 容器的初始化（一）之 Root WebApplicationContext 容器》](http://svip.iocoder.cn/Spring-MVC/context-init-Root-WebApplicationContext/)
-- [《精尽 Spring MVC 源码分析 —— 容器的初始化（二）之 Servlet WebApplicationContext 容器》](http://svip.iocoder.cn/Spring-MVC/context-init-Servlet-WebApplicationContext/)
-
-## Spring MVC 的异常处理？
+## （处理）Spring MVC 的异常处理？
 
 Spring MVC 提供了异常解析器 HandlerExceptionResolver 接口，将处理器( `handler` )执行时发生的异常，解析( 转换 )成对应的 ModelAndView 结果。代码如下：
 
