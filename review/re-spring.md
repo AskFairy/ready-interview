@@ -721,60 +721,29 @@ spring loC, spring容器，根据Xm配置，或者是你的注解，去实例化
 5. 事件，观察者模式
 6. 开始对象实例化
 
-
-
-[回到首页](http://svip.iocoder.cn/index)
-
-# [芋道源码 —— 知识星球](http://svip.iocoder.cn/)
-
-我是一段不羁的公告！
-记得给艿艿这两个项目加油，添加一个 STAR 噢。
-https://github.com/YunaiV/SpringBoot-Labs
-https://github.com/YunaiV/onemall
-
- [SPRING MVC](http://svip.iocoder.cn/categories/Spring-MVC/)
-
-# 精尽 Spring MVC 面试题
-
-以下面试题，基于网络整理，和自己编辑。具体参考的文章，会在文末给出所有的链接。
-
-如果胖友有自己的疑问，欢迎在星球提问，我们一起整理吊吊的 Spring MVC 面试题的大保健。
-
-而题目的难度，艿艿尽量按照从容易到困难的顺序，逐步下去。
-
-当然，艿艿还是非常推荐胖友去撸一撸 Spring MVC 的源码，特别是如下两篇：
-
-- [《精尽 Spring MVC 源码分析 —— 组件一览》](http://svip.iocoder.cn/Spring-MVC/Components-intro/)
-- [《精尽 Spring MVC 源码分析 —— 请求处理一览》](http://svip.iocoder.cn/Spring-MVC/DispatcherServlet-process-request-intro/)
-
-考虑到 Spring MVC 和 Rest 关系比较大，所以本文一共分成两大块：
-
-- Spring MVC
-- REST
-
 # Spring MVC
 
 ## Spring MVC 框架有什么用？
 
-Spring Web MVC 框架提供”模型-视图-控制器”( Model-View-Controller )架构和随时可用的组件，用于开发灵活且松散耦合的 Web 应用程序。
+Spring Web MVC 框架快速灵活开发 **Web 应用程序**。
 
 MVC 模式有助于分离应用程序的不同方面，如输入逻辑，业务逻辑和 UI 逻辑，同时在所有这些元素之间提供松散耦合。
 
 ## 介绍下 Spring MVC 的核心组件？
 
-Spring MVC 一共有九大核心组件，分别是：
+Spring MVC 一共有[九大核心组件](https://blog.csdn.net/qq_43716366/article/details/107308013)，分别是：
 
-- MultipartResolver
-- LocaleResolver
-- ThemeResolver
-- HandlerMapping
-- HandlerAdapter
-- HandlerExceptionResolver
-- RequestToViewNameTranslator
-- ViewResolver
-- FlashMapManager
+- MultipartResolver：文件解析器，用于**处理上传请求**
+- LocaleResolver：LocaleResolver用于从request解析出Locale，Locale就是**zh-cn之类**，表示一个区域，有了这个就可以对不同区域的用户显示不同的结果
+- ThemeResolver：用于**解析主题**。SpringMVC中一个主题对应一个properties文件，里面存放着跟当前主题相关的所有资源、如图片、css样式等。
+- HandlerMapping：处理映射器，根据需要干的活找到相应的工具
+- HandlerAdapter：处理适配器，使用工具干活的人
+- HandlerExceptionResolver：处理**异常**解析，根据异常设置ModelAndView
+- RequestToViewNameTranslator：请求**视图名称翻译器,**从request中获取ViewName就是RequestToViewNameTranslator要做的事情了
+- ViewResolver：视图解析器，String类型的视图名和Locale解析为View类型的视图
+- FlashMapManager：用来管理FlashMap的，FlashMap主要用在redirect中传递参数。
 
-虽然很多，但是在前后端分离的架构中，在 [「描述一下 DispatcherServlet 的工作流程？」](http://svip.iocoder.cn/Spring-MVC/Interview/#) 问题中，我们会明白，最关键的只有 HandlerMapping + HandlerAdapter + HandlerExceptionResolver 。
+最关键的只有 `HandlerMapping + HandlerAdapter + HandlerExceptionResolver 。`
 
 关于每个组件的说明，直接看 [《精尽 Spring MVC 源码分析 —— 组件一览》](http://svip.iocoder.cn/Spring-MVC/Components-intro/) 。
 
