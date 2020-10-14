@@ -1046,17 +1046,15 @@ Spring Boot 目前支持两种格式的配置文件：
 
 ## Spring Boot 默认配置文件是什么？
 
-对于 Spring Boot 应用，默认的配置文件根目录下的 **application** 配置文件，当然可以是 Properties 格式，也可以是 YAML 格式。
+对于 Spring Boot 应用，默认的配置文件根目录下的 **application** 配置文件，
 
-可能有胖友说，我在网上看到面试题中，说还有一个根目录下的 **bootstrap** 配置文件。这个是 Spring Cloud 新增的启动配置文件，[需要引入 `spring-cloud-context` 依赖后，才会进行加载](https://my.oschina.net/freeskyjs/blog/1843048)。它的特点和用途主要是：
+还有一个根目录下的 **bootstrap** 配置文件。这个是 Spring Cloud 新增的启动配置文件。它的特点和用途主要是：
 
 > 参考 [《Spring Cloud 中配置文件名 bootstrap.yml 和 application.yml 区别》](https://my.oschina.net/neverforget/blog/1525947) 文章。
 
-- 【特点】因为 bootstrap 由父 ApplicationContext 加载，比 application 优先加载。
+- 【特点】因为 bootstrap 由父 ApplicationContext 加载，**比 application 优先加载**。
 - 【特点】因为 bootstrap 优先于 application 加载，所以不会被它覆盖。
-- 【用途】使用配置中心 Spring Cloud Config 时，需要在 bootstrap 中配置配置中心的地址，从而实现父 ApplicationContext 加载时，从配置中心拉取相应的配置到应用中。
-
-另外，[《Appendix A. Common application properties》](https://docs.spring.io/spring-boot/docs/current/reference/html/common-application-properties.html) 中，有 application 配置文件的通用属性列表。
+- 【用途】使用`配置中心 Spring Cloud Config` 时，需要在 bootstrap 中配置配置中心的地址，从而实现父 ApplicationContext 加载时，从配置中心拉取相应的配置到应用中。
 
 ## Spring Boot 如何定义多套不同环境配置？
 
@@ -1064,146 +1062,17 @@ Spring Boot 目前支持两种格式的配置文件：
 
 但是，需要考虑一个问题，生产环境的配置文件的安全性，显然我们不能且不应该把生产的配置放到项目的 Git 仓库中进行管理。那么应该怎么办呢？
 
-- 方案一，生产环境的配置文件放在生产环境的服务器中，以 `java -jar myproject.jar --spring.config.location=/xxx/yyy/application-prod.properties` 命令，设置 参数 `spring.config.location` 指向配置文件。
-- 方案二，使用 Jenkins 在执行打包，配置上 Maven Profile 功能，使用服务器上的配置文件。😈 整体来说，和【方案一】的差异是，将配置文件打包进了 Jar 包中。
+- 方案一，设置 参数 `spring.config.location` 指向配置文件。
+- 方案二，使用 `Jenkins` 在执行打包，配置上 Maven Profile 功能，使用服务器上的配置文件。😈 整体来说，和【方案一】的差异是，将配置文件打包进了 Jar 包中。
 - 方案三，使用配置中心。
-
-## Spring Boot 配置加载顺序？
-
-在 Spring Boot 中，除了我们常用的 application 配置文件之外，还有：
-
-- 系统环境变量
-- 命令行参数
-- 等等…
-
-参考 [《Externalized Configuration》](https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html) 文档，我们整理顺序如下：
-
-1. ```
-   spring-boot-devtools
-   ```
-
-    
-
-   依赖的
-
-    
-
-   ```
-   spring-boot-devtools.properties
-   ```
-
-    
-
-   配置文件。
-
-   > 这个灰常小众，具体说明可以看看 [《Spring Boot参考文档（12）开发者工具》](https://blog.csdn.net/u011499747/article/details/71746325) ，建议无视。
-
-2. 单元测试上的
-
-    
-
-   ```
-   @TestPropertySource
-   ```
-
-    
-
-   和
-
-    
-
-   ```
-   @SpringBootTest
-   ```
-
-    
-
-   注解指定的参数。
-
-   > 前者的优先级高于后者。可以看看 [《Spring、Spring Boot 和TestNG 测试指南 - @TestPropertySource》](https://segmentfault.com/a/1190000010854607) 一文。
-
-3. 命令行指定的参数。例如 `java -jar springboot.jar --server.port=9090` 。
-
-4. 命令行中的 `spring.application.json` 指定参数。例如 `java -Dspring.application.json='{"name":"Java"}' -jar springboot.jar` 。
-
-5. ServletConfig 初始化参数。
-
-6. ServletContext 初始化参数。
-
-7. JNDI 参数。例如 `java:comp/env` 。
-
-8. Java 系统变量，即 `System#getProperties()` 方法对应的。
-
-9. 操作系统环境变量。
-
-10. RandomValuePropertySource 配置的 `random.*` 属性对应的值。
-
-11. Jar **外部**的带指定 profile 的 application 配置文件。例如 `application-{profile}.yaml` 。
-
-12. Jar **内部**的带指定 profile 的 application 配置文件。例如 `application-{profile}.yaml` 。
-
-13. Jar **外部** application 配置文件。例如 `application.yaml` 。
-
-14. Jar **内部** application 配置文件。例如 `application.yaml` 。
-
-15. 在自定义的 `@Configuration` 类中定于的 `@PropertySource` 。
-
-16. 启动的 main 方法中，定义的默认配置。即通过 `SpringApplication#setDefaultProperties(Map defaultProperties)` 方法进行设置。
-
-嘿嘿，是不是很多很长，不用真的去记住。
-
-- 一般来说，面试官不会因为这个题目回答的不好，对你扣分。
-- 实际使用时，做下测试即可。
-- 每一种配置方式的详细说明，可以看看 [《Spring Boot 参考指南（外部化配置）》](https://segmentfault.com/a/1190000015069140) 。
 
 ## Spring Boot 有哪些配置方式？
 
 和 Spring 一样，一共提供了三种方式。
 
 - 1、XML 配置文件。
-
-  Bean 所需的依赖项和服务在 XML 格式的配置文件中指定。这些配置文件通常包含许多 bean 定义和特定于应用程序的配置选项。它们通常以 bean 标签开头。例如：
-
-  ```
-  <bean id="studentBean" class="org.edureka.firstSpring.StudentBean">
-      <property name="name" value="Edureka"></property>
-  </bean>
-  ```
-
 - 2、注解配置。
-
-  您可以通过在相关的类，方法或字段声明上使用注解，将 Bean 配置为组件类本身，而不是使用 XML 来描述 Bean 装配。默认情况下，Spring 容器中未打开注解装配。因此，您需要在使用它之前在 Spring 配置文件中启用它。例如：
-
-  ```
-  <beans>
-  <context:annotation-config/>
-  <!-- bean definitions go here -->
-  </beans>
-  ```
-
 - 3、Java Config 配置。
-
-  Spring 的 Java 配置是通过使用 @Bean 和 @Configuration 来实现。
-
-  - `@Bean` 注解扮演与 `` 元素相同的角色。
-
-  - `@Configuration` 类允许通过简单地调用同一个类中的其他 `@Bean` 方法来定义 Bean 间依赖关系。
-
-  - 例如：
-
-    ```
-    @Configuration
-    public class StudentConfig {
-        
-        @Bean
-        public StudentBean myStudent() {
-            return new StudentBean();
-        }
-        
-    }
-    ```
-
-    - 是不是很熟悉 😈
 
 目前主要使用 **Java Config** 配置为主。当然，三种配置方式是可以混合使用的。例如说：
 
@@ -1217,110 +1086,35 @@ Spring Boot 目前支持两种格式的配置文件：
 
 ## Spring Boot 的核心注解是哪个？
 
-```
-package cn.iocoder.skywalking.web01;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class Web01Application {
-
-    public static void main(String[] args) {
-        SpringApplication.run(Web01Application.class, args);
-    }
-
-}
-```
-
 - `@SpringBootApplication` 注解，就是 Spring Boot 的核心注解。
 
-`org.springframework.boot.autoconfigure.@SpringBootApplication` 注解的代码如下：
-
-```
-// SpringBootApplication.java
-
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Inherited
-@SpringBootConfiguration
-@EnableAutoConfiguration
-@ComponentScan(
-    excludeFilters = {@Filter(
-    type = FilterType.CUSTOM,
-    classes = {TypeExcludeFilter.class}
-), @Filter(
-    type = FilterType.CUSTOM,
-    classes = {AutoConfigurationExcludeFilter.class}
-)}
-)
-public @interface SpringBootApplication {
-    @AliasFor(
-        annotation = EnableAutoConfiguration.class
-    )
-    Class<?>[] exclude() default {};
-
-    @AliasFor(
-        annotation = EnableAutoConfiguration.class
-    )
-    String[] excludeName() default {};
-
-    @AliasFor(
-        annotation = ComponentScan.class,
-        attribute = "basePackages"
-    )
-    String[] scanBasePackages() default {};
-
-    @AliasFor(
-        annotation = ComponentScan.class,
-        attribute = "basePackageClasses"
-    )
-    Class<?>[] scanBasePackageClasses() default {};
-}
-```
-
-- 它组合了 3 个注解，详细说明，胖友看看 [《Spring Boot 系列：@SpringBootApplication 注解》](https://blog.csdn.net/claram/article/details/75125749) 。
+- **它组合了 3 个注解**
 
 - `@Configuration` 注解，指定类是 **Bean 定义**的配置类。
 
   > `@Configuration` 注解，来自 `spring-context` 项目，用于 Java Config ，不是 Spring Boot 新带来的。
 
-- `#ComponentScan` 注解，扫描指定包下的 Bean 们。
+- `#ComponentScan` 注解，**扫描指定包下的 Bean 们。**
 
-  > `@ComponentScan` 注解，来自 `spring-context` 项目，用于 Java Config ，不是 Spring Boot 新带来的。
+  > 用于 Java Config ，不是 Spring Boot 新带来的。
 
-- `@EnableAutoConfiguration` 注解，打开自动配置的功能。如果我们想要关闭某个类的自动配置，可以设置注解的 `exclude` 或 `excludeName` 属性。
+- `@EnableAutoConfiguration` 注解，**打开自动配置的功能**。如果我们想要关闭某个类的自动配置，可以设置注解的 `exclude` 或 `excludeName` 属性。
 
   > `@EnableAutoConfiguration` 注解，来自 `spring-boot-autoconfigure` 项目，**它才是 Spring Boot 新带来的**。
 
 ## 什么是 Spring Boot 自动配置？
 
-在 [「Spring Boot 的核心注解是哪个？」](http://svip.iocoder.cn/Spring-Boot/Interview/#) 中，我们已经看到，使用 `@@EnableAutoConfiguration` 注解，打开 Spring Boot 自动配置的功能。具体如何实现的，可以看看如下两篇文章：
-
-- [《@EnableAutoConfiguration 注解的工作原理》](https://www.jianshu.com/p/464d04c36fb1) 。
-- [《一个面试题引起的 Spring Boot 启动解析》](https://juejin.im/post/5b679fbc5188251aad213110)
-- 建议，能一边调试，一边看这篇文章。调试很简单，任一搭建一个 Spring Boot 项目即可。
-
 如下是一个比较简单的总结：
 
 1. Spring Boot 在启动时扫描项目所依赖的 jar 包，寻找包含`spring.factories` 文件的 jar 包。
-2. 根据 `spring.factories` 配置加载 AutoConfigure 类。
-3. 根据 [`@Conditional` 等条件注解](http://svip.iocoder.cn/Spring-Boot/Interview/Spring Boot 条件注解) 的条件，进行自动配置并将 Bean 注入 Spring IoC 中。
+2. 根据 `spring.factories` 配置进行自动配置并将 Bean 注入 Spring IoC 中。
 
 ## Spring Boot 有哪几种读取配置的方式？
 
 Spring Boot 目前支持 **2** 种读取配置：
 
-1. `@Value` 注解，读取配置到属性。最最最常用。
-
-   > 另外，支持和 `@PropertySource` 注解一起使用，指定使用的配置文件。
-
+1. `@Value` 注解
 2. `@ConfigurationProperties` 注解，读取配置到类上。
-
-   > 另外，支持和 `@PropertySource` 注解一起使用，指定使用的配置文件。
-
-详细的使用方式，可以参考 [《Spring Boot 读取配置的几种方式》](https://aoyouzi.iteye.com/blog/2422837) 。
 
 ## 使用 Spring Boot 后，项目结构是怎么样的呢？
 
