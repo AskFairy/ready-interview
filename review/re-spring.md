@@ -1443,8 +1443,6 @@ Ribbon 和 Feign 都是使用于调用用其余服务的，不过方式不同。
 
 Hystrix 原理，整体如下图：[![Hystrix 原理](http://static2.iocoder.cn/8848af2a2e093d0421d1c7113dedefc1)](http://static2.iocoder.cn/8848af2a2e093d0421d1c7113dedefc1)Hystrix 原理
 
-关于 Hystrix 的源码解析，可以看看艿艿写的 [《Hystrix 源码解析系列》](http://www.iocoder.cn/categories/Hystrix/) 。
-
 ### Hystrix 隔离策略？
 
 Hystrix 有两种隔离策略：
