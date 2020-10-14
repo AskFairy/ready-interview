@@ -437,6 +437,12 @@ MySQL 查询执行的顺序是：
 
 具体的，可以看看 [《SQL 查询之执行顺序解析》](http://zouzls.github.io/2017/03/23/SQL查询之执行顺序解析/) 文章。
 
+**HAVING与WHERE的区别**
+
+- HAVING和WHERE都是用来**过滤数据**的，他们可以使用相同的运算符来进行数据过滤，不同的是：
+
+- **WHERE发生在HAVING之前**，在执行HAVING之前，会先将不符合WHERE条件的数据过滤掉。**WHERE过滤的是行，而HAVING过滤的是分组聚集后的数据**。
+
 ## 【重要】聊聊 MySQL SQL 优化？
 
 可以看看如下几篇文章：
@@ -473,42 +479,17 @@ MySQL 查询执行的顺序是：
 
 ## MySQL 数据库 CPU 飙升到 500% 的话，怎么处理？
 
-当 CPU 飙升到 500% 时，先用操作系统命令 top 命令观察是不是 mysqld 占用导致的，如果不是，找出占用高的进程，并进行相关处理。
+当 CPU 飙升到 500% 时，先用操作系统命令 **top 命令**观察是不是 mysqld 占用导致的，如果不是，找出占用高的进程，并进行相关处理。
 
-> 如果此时是 IO 压力比较大，可以使用 iostat 命令，定位是哪个进程占用了磁盘 IO 。
+> 如果此时是 IO 压力比较大，可以使用 **iostat 命令**，定位是哪个进程占用了磁盘 IO 。
 
-如果是 mysqld 造成的，使用 `show processlist` 命令，看看里面跑的 Session 情况，是不是有消耗资源的 SQL 在运行。找出消耗高的 SQL ，看看执行计划是否准确， index 是否缺失，或者实在是数据量太大造成。一般来说，肯定要 kill 掉这些线程(同时观察 CPU 使用率是否下降)，等进行相应的调整(比如说加索引、改 SQL 、改内存参数)之后，再重新跑这些 SQL。
+如果是 mysqld 造成的，使用 `show processlist` 命令，**看看里面跑的 Session 情况，是不是有消耗资源的 SQL 在运行**。
 
-> 也可以查看 MySQL 慢查询日志，看是否有慢 SQL 。
+- 一般来说，肯定要 kill 掉这些线程(同时观察 CPU 使用率是否下降)，等进行相应的调整(比如说加索引、改 SQL 、改内存参数)之后，再重新跑这些 SQL。
 
-也有可能是每个 SQL 消耗资源并不多，但是突然之间，有大量的 Session 连进来导致 CPU 飙升，这种情况就需要跟应用一起来分析为何连接数会激增，再做出相应的调整，比如说限制连接数等。
+> 也可以**查看 MySQL 慢查询日志**，看是否有慢 SQL 。
 
-🦅 **在 MySQL 服务器运行缓慢的情况下输入什么命令能缓解服务器压力？**
-
-> 这个回答，和上面的回答思路是差不多的，优秀在更有层次感。
-
-1）检查系统的状态
-
-通过操作系统的一些工具检查系统的状态，比如 CPU、内存、交换、磁盘的利用率，根据经验或与系统正常时的状态相比对，有时系统表面上看起来看空闲，这也可能不是一个正常的状态，因为 CPU 可能正等待IO的完成。除此之外，还应观注那些占用系统资源(CPU、内存)的进程。
-
-- 使用 sar 来检查操作系统是否存在 IO 问题。
-- 使用 vmstat 监控内存 CPU 资源。
-- 磁盘 IO 问题，处理方式：做 raid10 提高性能 。
-- 网络问题，telnet 一下 MySQL 对外开放的端口。如果不通的话，看看防火墙是否正确设置了。另外，看看 MySQ L是不是开启了 skip-networking 的选项，如果开启请关闭。
-
-2）检查 MySQL 参数
-
-- max_connect_errors
-- connect_timeout
-- skip-name-resolve
-- slave-net-timeout=seconds
-- master-connect-retry
-
-3）检查 MySQL 相关状态值
-
-- 关注连接数
-- 关注下系统锁情况
-- 关注慢查询（slow query）日志
+**也有可能是每个 SQL 消耗资源并不多，但是突然之间，有大量的 Session 连进来导致 CPU 飙升**，这种情况就需要跟应用一起来分析为何连接数会激增，再做出相应的调整，比如说限制连接数等。
 
 # 运维
 
@@ -523,7 +504,7 @@ MySQL 查询执行的顺序是：
 
 🦅 **日志的存放形式？**
 
-- redo：在页修改的时候，先写到 redo log buffer 里面， 然后写到 redo log 的文件系统缓存里面(fwrite)，然后再同步到磁盘文件（fsync）。
+- redo：**在页修改的时候，先写到 redo log buffer 里面， 然后写到 redo log 的文件系统缓存里面(fwrite)，然后再同步到磁盘文件（fsync）**。
 - undo：在 MySQL5.5 之前，undo 只能存放在 ibdata *文件里面， 5.6 之后，可以通过设置 innodb_undo_tablespaces 参数把 undo log 存放在 ibdata* 之外。
 
 🦅 **事务是如何通过日志来实现的，说得越深入越好**
@@ -533,93 +514,16 @@ MySQL 查询执行的顺序是：
 基本流程如下：
 
 - 因为事务在修改页时，要先记 undo ，在记 undo 之前要记 undo 的 redo， 然后修改数据页，再记数据页修改的 redo。 redo（里面包括 undo 的修改）一定要比数据页先持久化到磁盘。
-- 当事务需要回滚时，因为有 undo，可以把数据页回滚到前镜像的状态。
+- 当事务需要回滚时，**因为有 undo**，可以把数据页回滚到前镜像的状态。
 - 崩溃恢复时，如果 redo log 中事务没有对应的 commit 记录，那么需要用 undo 把该事务的修改回滚到事务开始之前。如果有 commit 记录，就用 redo 前滚到该事务完成时并提交掉。
 
 ## MySQL binlog 的几种日志录入格式以及区别
-
-🦅 **各种日志格式的涵义**
-
-binlog 有三种格式类型，分别如下：
-
-1）Statement
-
-每一条会修改数据的 SQL 都会记录在 binlog 中。
-
-- 优点：不需要记录每一行的变化，减少了 binlog 日志量，节约了 IO，提高性能。(相比 row 能节约多少性能与日志量，这个取决于应用的 SQL 情况，正常同一条记录修改或者插入 row 格式所产生的日志量还小于 Statement 产生的日志量，但是考虑到如果带条件的 update 操作，以及整表删除，alter 表等操作，ROW 格式会产生大量日志，因此在考虑是否使用 ROW 格式日志时应该跟据应用的实际情况，其所产生的日志量会增加多少，以及带来的 IO 性能问题。)
-
-- 缺点：由于记录的只是执行语句，为了这些语句能在 slave 上正确运行，因此还必须记录每条语句在执行的时候的一些相关信息，以保证所有语句能在 slave 得到和在 master 端执行时候相同 的结果。另外 MySQL 的复制，像一些特定函数功能，slave 可与 master 上要保持一致会有很多相关问题(如 `sleep()` 函数，`last_insert_id()`，以及 user-defined functions(udf) 会出现问题)。
-
-- 使用以下函数的语句也无法被复制：
-
-  - `LOAD_FILE()`
-
-  - `UUID()`
-
-  - `USER()`
-
-  - `FOUND_ROWS()`
-
-  - `SYSDATE()` (除非启动时启用了 `--sysdate-is-now` 选项)
-
-    > 同时在 INSERT …SELECT 会产生比 RBR 更多的行级锁 。
-
-2）Row
-
-不记录 SQL 语句上下文相关信息，仅保存哪条记录被修改。
-
-- 优点：binlog 中可以不记录执行的 SQL 语句的上下文相关的信息，仅需要记录那一条记录被修改成什么了。所以 rowlevel 的日志内容会非常清楚的记录下每一行数据修改的细节。而且不会出现某些特定情况下的存储过程，或 function ，以及 trigger 的调用和触发无法被正确复制的问题。
-- 缺点：所有的执行的语句当记录到日志中的时候，都将以每行记录的修改来记录，这样可能会产生大量的日志内容,比如一条 Update 语句，修改多条记录，则 binlog 中每一条修改都会有记录，这样造成 binlog 日志量会很大，特别是当执行 alter table 之类的语句的时候，由于表结构修改，每条记录都发生改变，那么该表每一条记录都会记录到日志中。
-
-3）Mixedlevel
-
-是以上两种 level 的混合使用。
-
-- 一般的语句修改使用 Statement 格式保存 binlog 。
-- 如一些函数，statement 无法完成主从复制的操作，则采用 Row 格式保存 binlog 。
-
-MySQL 会根据执行的每一条具体的 SQL 语句来区分对待记录的日志形式，也就是在 Statement 和 Row 之间选择 一种。
-
-新版本的 MySQL 中对 row level 模式也被做了优化，并不是所有的修改都会以 row level 来记录。
-
-- 像遇到表结构变更的时候就会以 Statement 模式来记录。
-- 至于 Update 或者 Delete 等修改数据的语句，还是会记录所有行的变更，即使用 Row 模式。
-
-🦅 **适用场景？**
-
-在一条 SQL 操作了多行数据时， Statement 更节省空间，Row 更占用空间。但是， Row 模式更可靠。
-
-因为，互联网公司，使用 MySQL 的功能相对少，基本不使用存储过程、触发器、函数的功能，选择默认的语句模式，Statement Level（默认）即可。
-
-🦅 **结合第一个问题，每一种日志格式在复制中的优劣？**
-
-- Statement 可能占用空间会相对小一些，传送到 slave 的时间可能也短，但是没有 Row 模式的可靠。
-- Row 模式在操作多行数据时更占用空间，但是可靠。
-
-所以，这是在占用空间和可靠之间的选择。
-
-**如何在线正确清理 MySQL binlog？**
-
-MySQL 中的 binlog 日志记录了数据中的数据变动，便于对数据的基于时间点和基于位置的恢复。但日志文件的大小会越来越大，占用大量的磁盘空间，因此需要定时清理一部分日志信息。
-
-```
-# 首先查看主从库正在使用的binlog文件名称
-show master(slave) status
-
-# 删除之前一定要备份
-purge master logs before'2017-09-01 00:00:00'; # 删除指定时间前的日志
-purge master logs to'mysql-bin.000001'; # 删除指定的日志文件
-
-# 自动删除：通过设置binlog的过期时间让系统自动删除日志
-show variables like 'expire_logs_days'; # 查看过期时间
-set global expire_logs_days = 30; # 设置过期时间
-```
 
 ## MySQL 主从复制的流程是怎么样的？
 
 MySQL 的主从复制是基于如下 3 个线程的交互（多线程复制里面应该是 4 类线程）：
 
-- 1、Master 上面的 binlog dump 线程，该线程负责将 master 的 binlog event 传到 slave 。
+- 1、**Master 上面的 binlog dump 线程，该线程负责将 master 的 binlog event 传到 slave 。**
 - 2、Slave 上面的 IO 线程，该线程负责接收 Master 传过来的 binlog，并写入 relay log 。
 - 3、Slave 上面的 SQL 线程，该线程负责读取 relay log 并执行。
 - 4、如果是多线程复制，无论是 5.6 库级别的假多线程还是 MariaDB 或者 5.7 的真正的多线程复制， SQL 线程只做 coordinator ，只负责把 relay log 中的 binlog 读出来然后交给 worker 线程， woker 线程负责具体 binlog event 的执行。
