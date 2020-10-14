@@ -959,42 +959,19 @@ Spring 的完整名字，应该是 Spring Framework 。它提供了多个模块�
 >
 > 经过研究，Starter 主要用来**简化依赖用的**。您可以获得所需的所有 Spring 和相关技术的一站式服务，**无需通过示例代码搜索和复制粘贴依赖**。
 
-比较**书名**的说法：
-
-> FROM [《Spring Boot Starter 介绍》](http://www.importnew.com/27101.html)
->
-> 依赖管理是任何复杂项目的关键部分。以手动的方式来实现依赖管理不太现实，你得花更多时间，同时你在项目的其他重要方面能付出的时间就会变得越少。
->
-> Spring Boot Starter 就是为了解决这个问题而诞生的。Starter **POM** 是一组方便的依赖描述符，您可以将其包含在应用程序中。您可以获得所需的所有 Spring 和相关技术的一站式服务，无需通过示例代码搜索和复制粘贴依赖。
-
 ## Spring Boot 常用的 Starter 有哪些？
 
 - `spring-boot-starter-web` ：提供 Spring MVC + 内嵌的 Tomcat 。
-- `spring-boot-starter-data-jpa` ：提供 Spring JPA + Hibernate 。
 - `spring-boot-starter-data-redis` ：提供 Redis 。
 - `mybatis-spring-boot-starter` ：提供 MyBatis 。
 
-## 创建一个 Spring Boot Project 的最简单的方法是什么？
-
-Spring Initializr 是创建 Spring Boot Projects 的一个很好的工具。打开 `"https://start.spring.io/"` 网站，我们可以看到 Spring Initializr 工具，如下图所示：
-
-[![Spring Initializr](http://static2.iocoder.cn/images/Spring/2018-12-26/04.png)](http://static2.iocoder.cn/images/Spring/2018-12-26/04.png)Spring Initializr
-
-- 图中的每一个**红线**，都可以填写相应的配置。相信胖友都很熟悉，就不哔哔了。
-- 点击生 GenerateProject ，生成 Spring Boot Project 。
-- 将项目导入 IDEA ，记得选择现有的 Maven 项目。
-
-------
-
-当然，我们以前使用 IDEA 创建 Spring 项目的方式，也一样能创建 Spring Boot Project 。Spring Initializr 更多的是，提供一个便捷的工具。
-
 ## 如何统一引入 Spring Boot 版本？
 
-**目前有两种方式**。
+**目前有两种方式**：
 
 ① 方式一：继承 `spring-boot-starter-parent` 项目。配置代码如下：
 
-```
+```java
 <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
@@ -1004,7 +981,7 @@ Spring Initializr 是创建 Spring Boot Projects 的一个很好的工具。打�
 
 ② 方式二：导入 spring-boot-dependencies 项目依赖。配置代码如下：
 
-```
+```java
 <dependencyManagement>
     <dependencies>
         <dependency>
@@ -1026,29 +1003,21 @@ Spring Initializr 是创建 Spring Boot Projects 的一个很好的工具。打�
 
 另外，在使用 Spring Cloud 的时候，也可以使用这样的方式。
 
-## 运行 Spring Boot 有哪几种方式？
-
-- 1、打包成 Fat Jar ，直接使用 `java -jar` 运行。目前主流的做法，推荐。
-- 2、在 IDEA 或 Eclipse 中，直接运行应用的 Spring Boot 启动类的 `#main(String[] args)` 启动。适用于开发调试场景。
-- 3、如果是 Web 项目，可以打包成 War 包，使用外部 Tomcat 或 Jetty 等容器。
-
 ## 如何打包 Spring Boot 项目？
 
 通过引入 `spring-boot-maven-plugin` 插件，执行 `mvn clean package` 命令，将 Spring Boot 项目打成一个 Fat Jar 。后续，我们就可以直接使用 `java -jar` 运行。
-
-关于 `spring-boot-maven-plugin` 插件，更多详细的可以看看 [《创建可执行 jar》](https://qbgbook.gitbooks.io/spring-boot-reference-guide-zh/II. Getting started/11.5. Creating an executable jar.html) 。
 
 ## 如果更改内嵌 Tomcat 的端口？
 
 - 方式一，修改 `application.properties` 配置文件的 `server.port` 属性。
 
-  ```
+  ```java
   server.port=9090
   ```
 
 - 方式二，通过启动命令增加 `server.port` 参数进行修改。
 
-  ```
+  ```java
   java -jar xxx.jar --server.port=9090
   ```
 
@@ -1058,52 +1027,22 @@ Spring Initializr 是创建 Spring Boot Projects 的一个很好的工具。打�
 
 一共有三种方式，可以实现效果：
 
-- 【推荐】`spring-boot-devtools` 插件。注意，这个工具需要配置 IDEA 的自动编译。
-
-- Spring Loaded 插件。
-
-  > Spring Boot 2.X 后，官方宣布不再支持 Spring Loaded 插件 的更新，所以基本可以无视它了。
-
-- [JRebel](https://www.jianshu.com/p/bab43eaa4e14) 插件，需要付费。
-
-关于如何使用 `spring-boot-devtools` 和 Spring Loaded 插件，胖友可以看看 [《Spring Boot 学习笔记：Spring Boot Developer Tools 与热部署》](https://segmentfault.com/a/1190000014488100) 。
-
 ## Spring Boot 的配置文件有哪几种格式？
 
 Spring Boot 目前支持两种格式的配置文件：
 
 - `.properties` 格式。示例如下：
 
-  ```
+  ```java
   server.port = 9090
   ```
 
 - `.yaml` 格式。示例如下：
 
-  ```
+  ```java
   server:
       port: 9090
   ```
-
-------
-
-可能有胖友不了解 **YAML 格式**？
-
-YAML 是一种人类可读的数据序列化语言，它通常用于配置文件。
-
-- 与 Properties 文件相比，如果我们想要在配置文件中添加复杂的属性 YAML 文件就更加**结构化**。从上面的示例，我们可以看出 YAML 具有**分层**配置数据。
-
-- 当然 YAML 在 Spring 会存在一个缺陷，
-
-  `@PropertySource`
-
-   
-
-  注解不支持读取 YAML 配置文件，仅支持 Properties 配置文件。
-
-  - 不过这个问题也不大，可以麻烦一点使用 [`@Value`](https://blog.csdn.net/lafengwnagzi/article/details/74178374) 注解，来读取 YAML 配置项。
-
-实际场景下，艿艿相对比较喜欢使用 Properties 配置文件。个人喜欢~当然，YAML 已经越来越流行了。
 
 ## Spring Boot 默认配置文件是什么？
 
