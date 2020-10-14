@@ -1360,7 +1360,12 @@ Ribbon 原理，整体如下图：
 
 Ribbon作为后端负载均衡器，比Nginx更注重的是**承担并发**而不是请求分发，可以直接感知后台动态变化来指定分发策略。
 
-- 
+- 选择一个最小的并发请求的server
+- 过滤**短路或者高并发**的后端
+- 响应时间分配权重
+- 随机
+- **轮询**
+- 。。。。等等
 
 ### 聊聊 Ribbon 重试机制？
 
@@ -1369,21 +1374,19 @@ Ribbon作为后端负载均衡器，比Nginx更注重的是**承担并发**而�
 
 ### Ribbon 是怎么和 Eureka 整合的？
 
-对着我们看到那张 Ribbon 原理图：
+Ribbon 原理
 
-[![Ribbon 原理](http://static2.iocoder.cn/36465fd7d91b3a4aeb3b28c3777649e6)](http://static2.iocoder.cn/36465fd7d91b3a4aeb3b28c3777649e6)Ribbon 原理
-
-- 首先，Ribbon 会从 Eureka Client 里获取到对应的服务列表。
-- 然后，Ribbon 使用负载均衡算法获得使用的服务。
-- 最后，Ribbon 调用对应的服务。
+- 首先，Ribbon 会从 Eureka Client 里**获取到对应的服务列表。**
+- 然后，Ribbon 使用**负载均衡算法**获得使用的服务。
+- 最后，Ribbon **调用**对应的服务。
 
 另外，此处的 Eureka 仅仅是作为注册中心的举例，也是可以配合其它的注册中心使用，例如 Zookeeper 。可参考 [《以 Zookeeper 为注册中心搭建 Spring Cloud 环境》](https://www.jianshu.com/p/775c363d0fda) 文章。
 
 # 声明式调用
 
-在 Spring Cloud 中，目前使用的声明式调用组件，只有：
+在 Spring Cloud 中，目前使用的**声明式调用组件**，只有：
 
-- `spring-cloud-openfeign` ，基于 Feign 实现。
+- `spring-cloud-openfeign` ，基于 **Feign 实现**。
 
 如果熟悉 Dubbo 胖友的会知道，Dubbo 的 Service API 接口，也是一种声明式调用的提现。
 
@@ -1391,11 +1394,7 @@ Ribbon作为后端负载均衡器，比Nginx更注重的是**承担并发**而�
 
 ## Feign
 
-[Feign](https://github.com/OpenFeign/feign) 是受到 Retrofit、JAXRS-2.0 和 WebSocket 启发的 Java 客户端联编程序。Feign 的主要目标是将Java Http 客户端变得简单。
-
-具体 Feign 如何使用，可以看看 [《对于 Spring Cloud Feign 入门示例的一点思考》](https://blog.csdn.net/u013815546/article/details/76637541) 。
-
-有一点要注意，Feign 并非一定要在 Spring Cloud 下使用，单独使用也是没问题的。
+Feign 的主要目标是将Java Http 客户端变得简单。
 
 ### Feign 实现原理？
 
@@ -1403,8 +1402,8 @@ Ribbon作为后端负载均衡器，比Nginx更注重的是**承担并发**而�
 
 - 首先，如果你对某个接口定义了 `@FeignClient` 注解，Feign 就会针对这个接口创建一个动态代理。
 - 接着你要是调用那个接口，本质就是会调用 Feign 创建的动态代理，这是核心中的核心。
-- Feig n的动态代理会根据你在接口上的 `@RequestMapping` 等注解，来动态构造出你要请求的服务的地址。
-- 最后针对这个地址，发起请求、解析响应。
+- Feign的动态代理会根据你在接口上的 `@RequestMapping` 等注解，来动态构造出你要请求的服务的地址。
+- 最**后针对这个地址，发起请求、解析响应**。
 
 [![Feign 原理](http://static2.iocoder.cn/6650aa32de0def76db0e4c5228619aef)](http://static2.iocoder.cn/6650aa32de0def76db0e4c5228619aef)Feign 原理
 
@@ -1415,40 +1414,9 @@ Ribbon 和 Feign 都是使用于调用用其余服务的，不过方式不同。
 - 启动类用的注解不同。
   - Ribbon 使用的是 `@RibbonClient` 。
   - Feign 使用的是 `@EnableFeignClients` 。
-- 服务的指定位置不同。
-  - Ribbon 是在 `@RibbonClient` 注解上设置。
-  - Feign 则是在定义声明方法的接口中用 `@FeignClient` 注解上设置。
 - 调使用方式不同。
-  - Ribbon 需要自己构建 Http 请求，模拟 Http 请求而后用 RestTemplate 发送给其余服务，步骤相当繁琐。
-  - Feign 采使用接口的方式，将需要调使用的其余服务的方法定义成声明方法就可，不需要自己构建 Http 请求。不过要注意的是声明方法的注解、方法签名要和提供服务的方法完全一致。
-
-### Feign 是怎么和 Ribbon、Eureka 整合的？
-
-结合 [「 Ribbon 是怎么和 Eureka 整合的？」](http://svip.iocoder.cn/Spring-Cloud/Interview/#) 问题，并结合如下图：
-
-[![Feign + Ribbon + Eureka](http://static2.iocoder.cn/252461fbb6d64d3dbc1914b7eadbfb86)](http://static2.iocoder.cn/252461fbb6d64d3dbc1914b7eadbfb86)Feign + Ribbon + Eureka
-
-- 首先，用户调用 Feign 创建的动态代理。
-
-- 然后，Feign 调用 Ribbon 发起调用流程。
-
-  - 首先，Ribbon 会从 Eureka Client 里获取到对应的服务列表。
-
-  - 然后，Ribbon 使用负载均衡算法获得使用的服务。
-
-  - ~~最后，Ribbon 调用对应的服务。~~最后，Ribbon 调用 Feign ，而 Feign 调用 HTTP 库最终调用使用的服务。
-
-    > 这可能是比较绕的，艿艿自己也困惑了一下，后来去请教了下 didi 。因为 Feign 和 Ribbon 都存在使用 HTTP 库调用指定的服务，那么两者在集成之后，必然是只能保留一个。比较正常的理解，也是保留 Feign 的调用，而 Ribbon 更纯粹的只负责负载均衡的功能。
-
-想要完全理解，建议胖友直接看如下两个类：
-
-- [LoadBalancerFeignClient](https://github.com/spring-cloud/spring-cloud-openfeign/blob/master/spring-cloud-openfeign-core/src/main/java/org/springframework/cloud/openfeign/ribbon/LoadBalancerFeignClient.java) ，Spring Cloud 实现 Feign Client 接口的二次封装，实现对 Ribbon 的调用。
-
-- [FeignLoadBalancer](https://github.com/spring-cloud/spring-cloud-openfeign/blob/master/spring-cloud-openfeign-core/src/main/java/org/springframework/cloud/openfeign/ribbon/FeignLoadBalancer.java) ，Ribbon 的集成。
-
-  > 集成的是 AbstractLoadBalancerAwareClient 抽象类，它会自动注入项目中所使用的负载均衡组件。
-
-- LoadBalancerFeignClient =》调用=》 FeignLoadBalancer 。
+  - Ribbon 需要自己构建 Http 请求，模拟 Http 请求而，步骤相当繁琐。
+  - Feign 采使用接口的方式，不需要自己构建 Http 请求。
 
 ### 聊聊 Feign 重试机制？
 
@@ -1464,16 +1432,14 @@ Ribbon 和 Feign 都是使用于调用用其余服务的，不过方式不同。
 
 ## 为什么要使用服务保障？
 
-在微服务架构中，我们将业务拆分成一个个的服务，服务与服务之间可以相互调用（RPC）。为了保证其高可用，单个服务又必须集群部署。由于网络原因或者自身的原因，服务并不能保证服务的 100% 可用，如果单个服务出现问题，调用这个服务就会出现网络延迟，此时若有大量的网络涌入，会形成任务累积，导致服务瘫痪，甚至导致服务“雪崩”。为了解决这个问题，就出现断路器模型。
+由于网络原因或者自身的原因，服务并不能保证服务的 100% 可用，如果单个服务出现问题，调用这个服务就会出现网络延迟，此时若有大量的网络涌入，会形成任务累积，导致服务瘫痪，甚至导致服务“雪崩”。为了解决这个问题，就出现**断路器模型**。
 
-详细的内容，可以看看 [《为什么要使用断路器 Hystrix？》](https://www.cnblogs.com/xyhero/p/53852cf0245c229fe3e22756a220508b.html) 。
+
 
 ## Hystrix
 
-[![Hystrix](http://static2.iocoder.cn/7832f7526998500b2253f5bc0683e930)](http://static2.iocoder.cn/7832f7526998500b2253f5bc0683e930)Hystrix
-
-- 作用：断路器，保护系统，控制故障范围。
-- 简介：Hystrix 是一个延迟和容错库，旨在隔离远程系统，服务和第三方库的访问点，当出现故障是不可避免的故障时，停止级联故障并在复杂的分布式系统中实现弹性。
+- 作用：断路器，保护系统，**控制故障范围**。
+- 简介：Hystrix 旨在**隔离**远程系统，服务和第三方库的访问点，当出现故障是不可避免的故障时，停止级联故障并在复杂的分布式系统中实现弹性。
 
 Hystrix 原理，整体如下图：[![Hystrix 原理](http://static2.iocoder.cn/8848af2a2e093d0421d1c7113dedefc1)](http://static2.iocoder.cn/8848af2a2e093d0421d1c7113dedefc1)Hystrix 原理
 
