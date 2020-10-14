@@ -794,39 +794,15 @@ WebApplicationContext 是实现ApplicationContext接口的子类，专门为 WEB
 - 它允许从相对于 Web 根目录的路径中**加载配置文件**，**完成初始化 Spring MVC 组件的工作**。
 - **从 WebApplicationContext 中，可以获取 ServletContext 引用，整个 Web 应用上下文对象将作为属性放置在 ServletContext 中，以便 Web 应用环境可以访问 Spring 上下文**。
 
-## （处理）Spring MVC 的异常处理？
+## （谷粒商城）Spring MVC 的异常处理？
 
-Spring MVC 提供了异常解析器 HandlerExceptionResolver 接口，将处理器( `handler` )执行时发生的异常，解析( 转换 )成对应的 ModelAndView 结果。代码如下：
-
-```
-// HandlerExceptionResolver.java
-
-public interface HandlerExceptionResolver {
-
-    /**
-     * 解析异常，转换成对应的 ModelAndView 结果
-     */
-    @Nullable
-    ModelAndView resolveException(
-            HttpServletRequest request, HttpServletResponse response, @Nullable Object handler, Exception ex);
-
-}
-```
-
-- 也就是说，如果异常被解析成功，则会返回 ModelAndView 对象。
-- 详细的源码解析，见 [《精尽 Spring MVC 源码解析 —— HandlerExceptionResolver 组件》](http://svip.iocoder.cn/Spring-MVC/HandlerExceptionResolver/) 。
-
-一般情况下，我们使用 `@ExceptionHandler` 注解来实现过异常的处理，可以先看看 [《Spring 异常处理 ExceptionHandler 的使用》](https://www.jianshu.com/p/12e1a752974d) 。
-
-- 一般情况下，艿艿喜欢使用**第三种**。
+一般情况下，我们使用 `@ExceptionHandler` 注解来实现过异常的处理，
 
 ## Spring MVC 有什么优点？
 
-1. 使用真的真的真的非常**方便**，无论是添加 HTTP 请求方法映射的方法，还是不同数据格式的响应。
+1. 使用真的真的真的非常**方便**，开发简单
 2. 提供**拦截器机制**，可以方便的对请求进行拦截处理。
 3. 提供**异常机制**，可以方便的对异常做统一处理。
-4. 可以任意使用各种**视图**技术，而不仅仅局限于 JSP ，例如 Freemarker、Thymeleaf 等等。
-5. 不依赖于 Servlet API (目标虽是如此，但是在实现的时候确实是依赖于 Servlet 的，当然仅仅依赖 Servlet ，而不依赖 Filter、Listener )。
 
 ## Spring MVC 怎样设定重定向和转发 ？
 
@@ -857,46 +833,15 @@ public interface HandlerExceptionResolver {
    - Spring MVC 是基于**方法**开发，传递参数是通过**方法形参**，一般设置为**单例**。
    - Struts2 是基于**类**开发，传递参数是通过**类的属性**，只能设计为**多例**。
 
-- 视图
-
-  不同
-
-  - Spring MVC 通过参数解析器是将 Request 对象内容进行解析成方法形参，将响应数据和页面封装成 **ModelAndView** 对象，最后又将模型数据通过 **Request** 对象传输到页面。其中，如果视图使用 JSP 时，默认使用 **JSTL** 。
-  - Struts2 采用**值栈**存储请求和响应的数据，通过 **OGNL** 存取数据。
-
-当然，更详细的也可以看看 [《面试题：Spring MVC 和 Struts2 的区别》](http://www.voidcn.com/article/p-ylualwcj-c.html) 一文。
-
 ## 详细介绍下 Spring MVC 拦截器？
 
 `org.springframework.web.servlet.HandlerInterceptor` ，拦截器接口。代码如下：
 
-```
-// HandlerInterceptor.java
+HandlerInterceptor接口
 
-/**
- * 拦截处理器，在 {@link HandlerAdapter#handle(HttpServletRequest, HttpServletResponse, Object)} 执行之前
- */
-default boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-		throws Exception {
-	return true;
-}
 
-/**
- * 拦截处理器，在 {@link HandlerAdapter#handle(HttpServletRequest, HttpServletResponse, Object)} 执行成功之后
- */
-default void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-		@Nullable ModelAndView modelAndView) throws Exception {
-}
 
-/**
- * 拦截处理器，在 {@link HandlerAdapter#handle(HttpServletRequest, HttpServletResponse, Object)} 执行完之后，无论成功还是失败
- *
- * 并且，只有该处理器 {@link #preHandle(HttpServletRequest, HttpServletResponse, Object)} 执行成功之后，才会被执行
- */
-default void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler,
-		@Nullable Exception ex) throws Exception {
-}
-```
+
 
 - 一共有三个方法，分别为：
 
@@ -904,26 +849,12 @@ default void afterCompletion(HttpServletRequest request, HttpServletResponse res
 
   - `#postHandle(...)` 方法，调用 Controller 方法之**后**执行。
 
-  - ```
-    #afterCompletion(...)
-    ```
+  - `#afterCompletion(...)`方法，**处理完 Controller 方法返回结果之**
 
-     
-
-    方法，处理完 Controller 方法返回结果之
-
-    后
-
-    执行。
+    **后执行**。
 
     - 例如，页面渲染后。
     - **当然，要注意，无论调用 Controller 方法是否成功，都会执行**。
-
-- 举个例子：
-
-  - 当俩个拦截器都实现放行操作时，执行顺序为 `preHandle[1] => preHandle[2] => postHandle[2] => postHandle[1] => afterCompletion[2] => afterCompletion[1]` 。
-  - 当第一个拦截器 `#preHandle(...)` 方法返回 `false` ，也就是对其进行拦截时，第二个拦截器是完全不执行的，第一个拦截器只执行 `#preHandle(...)` 部分。
-  - 当第一个拦截器 `#preHandle(...)` 方法返回 `true` ，第二个拦截器 `#preHandle(...)` 返回 `false` ，执行顺序为 `preHandle[1] => preHandle[2] => afterCompletion[1]` 。
 
 - 总结来说：
 
@@ -932,45 +863,31 @@ default void afterCompletion(HttpServletRequest request, HttpServletResponse res
   - `#postHandler(...)` 方法，在调用 Controller 方法之**后**执行。
   - `#afterCompletion(...)` 方法，只有该拦截器在 `#preHandle(...)` 方法返回 `true` 时，才能够被调用，且一定会被调用。为什么“且一定会被调用”呢？即使 `#afterCompletion(...)` 方法，按拦截器定义**逆序**调用时，前面的拦截器发生异常，后面的拦截器还能够调用，**即无视异常**。
 
-------
 
-关于这块，可以看看如下两篇文章：
-
-- [《Spring MVC 多个拦截器执行顺序及拦截器使用方法》](https://blog.csdn.net/amaxiaochen/article/details/77210880) 文章，通过**实践**更加理解。
-- [《精尽 Spring MVC 源码分析 —— HandlerMapping 组件（二）之 HandlerInterceptor》](http://svip.iocoder.cn/Spring-MVC/HandlerMapping-2-HandlerInterceptor/) 文章，通过**源码**更加理解。
 
 ## Spring MVC 的拦截器可以做哪些事情？
 
 拦截器能做的事情非常非常非常多，例如：
 
-- 记录访问日志。
+- 记录访问**日志**。
 - 记录异常日志。
-- 需要登陆的请求操作，拦截未登陆的用户。
-- …
+- **鉴权**，需要登陆的请求操作，拦截未登陆的用户。
 
 ## Spring MVC 的拦截器和 Filter 过滤器有什么差别？
 
-看了文章 [《过滤器( Filter )和拦截器( Interceptor )的区别》](https://blog.csdn.net/xiaodanjava/article/details/32125687) ，感觉对比的怪怪的。艿艿觉得主要几个点吧：
+
 
 - **功能相同**：拦截器和 Filter都能实现相应的功能，谁也不比谁强。
 - **容器不同**：拦截器构建在 Spring MVC 体系中；Filter 构建在 Servlet 容器之上。
-- **使用便利性不同**：拦截器提供了三个方法，分别在不同的时机执行；过滤器仅提供一个方法，当然也能实现拦截器的执行时机的效果，就是麻烦一些。
+- **使用便利性不同**：拦截器提供了三个方法，分别在不同的时机执行；**过滤器仅提供一个方法**，当然也能实现拦截器的执行时机的效果，就是麻烦一些。
 
-另外，😈 再补充一点小知识。我们会发现，拓展性好的框架，都会提供相应的拦截器或过滤器机制，方便的我们做一些拓展。例如：
+另外，😈 再补充一点小知识。我们会发现，**拓展性好的框架，都会提供相应的拦截器或过滤器机制**，方便的我们做一些拓展。例如：
 
 - Dubbo 的 Filter 机制。
 - Spring Cloud Gateway 的 Filter 机制。
 - Struts2 的拦截器机制。
 
 # REST
-
-本小节的内容，基本是基于 [《排名前 20 的 REST 和 Spring MVC 面试题》](http://www.spring4all.com/article/1445) 之上，做增补。
-
-## REST 代表着什么?
-
-REST 代表着抽象状态转移，它是根据 HTTP 协议从客户端发送数据到服务端，例如：服务端的一本书可以以 XML 或 JSON 格式传递到客户端。
-
-然而，假如你不熟悉REST，我建议你先看看 [REST API design and development](http://bit.ly/2zIGzWK) 这篇文章来更好的了解它。不过对于大多数胖友的英语，可能不太好，所以也可以阅读知乎上的 [《怎样用通俗的语言解释 REST，以及 RESTful？》](https://www.zhihu.com/question/28557115) 讨论。
 
 ## 资源是什么?
 
