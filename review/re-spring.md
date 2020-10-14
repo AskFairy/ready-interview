@@ -953,11 +953,11 @@ Spring 的完整名字，应该是 Spring Framework 。它提供了多个模块�
 
 比较**通俗**的说法：
 
-> FROM [《Spring Boot 中 Starter 是什么》](https://www.cnblogs.com/EasonJim/p/7615801.html)
+> [《Spring Boot 中 Starter 是什么》](https://www.cnblogs.com/EasonJim/p/7615801.html)
 >
-> 比如我们要在 Spring Boot 中引入 Web MVC 的支持时，我们通常会引入这个模块 `spring-boot-starter-web` ，而这个模块如果解压包出来会发现里面什么都没有，只定义了一些 **POM** 依赖。如下图所示：[![`spring-boot-starter-web`](http://static2.iocoder.cn/images/Spring/2018-12-26/03.png)](http://static2.iocoder.cn/images/Spring/2018-12-26/03.png)`spring-boot-starter-web`
+> ![`spring-boot-starter-web`](http://static2.iocoder.cn/images/Spring/2018-12-26/03.png)
 >
-> 经过研究，Starter 主要用来简化依赖用的。比如我们之前做MVC时要引入日志组件，那么需要去找到log4j的版本，然后引入，现在有了Starter之后，直接用这个之后，log4j就自动引入了，也不用关心版本这些问题。
+> 经过研究，Starter 主要用来**简化依赖用的**。您可以获得所需的所有 Spring 和相关技术的一站式服务，**无需通过示例代码搜索和复制粘贴依赖**。
 
 比较**书名**的说法：
 
