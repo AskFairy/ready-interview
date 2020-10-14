@@ -1282,17 +1282,7 @@ Eureka 做到了CAP定理（C-数据一致性；A-服务可用性；P-服务对�
 
 艿艿画了下 Eureka 的缓存机制，如下图所示：
 
-[![Eureka 缓存机制](http://svip.iocoder.cn/images/SpringCloud/2018_10_28/01.png)](http://svip.iocoder.cn/images/SpringCloud/2018_10_28/01.png)Eureka 缓存机制
-
-> 原图可见地址：https://www.processon.com/view/link/5f49e2055653bb0c71de11e4
->
-> 建议胖友可以手绘下，便于面试和面试官你侬我侬~
-
-推荐额外阅读下如下三篇文章：
-
-- [《详解 Eureka 缓存机制》](https://www.infoq.cn/article/y_1BCrbLONU61s1gbGsU)
-- [《Eureka 的多级缓存机制》](https://blog.csdn.net/qq_38545713/article/details/105535950)
-- [《Eureka 缓存细节以及生产环境的最佳配置》](http://bhsc881114.github.io/2018/04/01/eureka缓存细节以及生产环境的最佳配置/)
+![image-20201014173018956](https://gitee.com/chenchong0817/picture/raw/master/Aaron/image-20201014173018956.png)
 
 ### 什么是 Eureka 自我保护机制？
 
