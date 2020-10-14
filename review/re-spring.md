@@ -1,4 +1,4 @@
-# Spring 整体
+
 
 ## 什么是 Spring Framework？
 
@@ -927,94 +927,27 @@ REST 通常不是安全的，但是您可以通过使用 `Spring Security` 来�
 
 ## Spring Boot 是什么？
 
-[Spring Boot](https://github.com/spring-projects/spring-boot) 是 Spring 的**子项目**，开发者可以快速配置 Spring 项目，引入各种 Spring MVC、Spring Transaction、Spring AOP、MyBatis 等等框架，而无需不断重复编写繁重的 Spring 配置，降低了 Spring 的使用成本。
+[Spring Boot](https://github.com/spring-projects/spring-boot) 是 Spring 的**子项目**，开发者可以**快速配置 Spring 项目**，**引入**各种 Spring MVC、Spring Transaction、Spring AOP、MyBatis 等等**框架**，而无需不断重复**编写繁重的 Spring 配置**，**降低了 Spring 的使用成本**。
 
-> 艿艿：犹记当年，Spring XML 为主的时代，大晚上各种搜索 Spring 的配置，苦不堪言。现在有了 Spring Boot 之后，生活真美好。
+Spring Boot 提供了各种 Starter 启动器，提供标准化的默认配置。
 
-Spring Boot 提供了各种 Starter 启动器，提供标准化的默认配置。例如：
+## Spring Boot 提供了哪些核心功能/优点、缺点？
 
-- [`spring-boot-starter-web`](https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-web/2.1.1.RELEASE) 启动器，可以快速配置 Spring MVC 。
-- [`mybatis-spring-boot-starter`](https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter/1.3.2) 启动器，可以快速配置 MyBatis 。
+- 1、可以以 jar 包独立运行 Spring 项目
 
-并且，Spring Boot 基本已经一统 Java 项目的开发，大量的开源项目都实现了其的 Starter 启动器。例如：
+- 2、内嵌 Servlet 容器：Tomcat
+- 3、提供 Starter 简化 Maven 的依赖加载
+- 4、[对大多数开发场景自动配置 Spring Bean](https://www.jianshu.com/p/ddb6e32e3faf)
 
-- [`incubator-dubbo-spring-boot-project`](https://github.com/apache/incubator-dubbo-spring-boot-project) 启动器，可以快速配置 Dubbo 。
-- [`rocketmq-spring-boot-starter`](https://github.com/maihaoche/rocketmq-spring-boot-starter) 启动器，可以快速配置 RocketMQ 。
+缺点:
 
-## Spring Boot 提供了哪些核心功能？
-
-- 1、独立运行 Spring 项目
-
-  Spring Boot 可以以 jar 包形式独立运行，运行一个 Spring Boot 项目只需要通过 `java -jar xx.jar` 来运行。
-
-- 2、内嵌 Servlet 容器
-
-  Spring Boot 可以选择内嵌 Tomcat、Jetty 或者 Undertow，这样我们无须以 war 包形式部署项目。
-
-  > 第 2 点是对第 1 点的补充，在 Spring Boot 未出来的时候，大多数 Web 项目，是打包成 war 包，部署到 Tomcat、Jetty 等容器。
-
-- 3、提供 Starter 简化 Maven 配置
-
-  Spring 提供了一系列的 starter pom 来简化 Maven 的依赖加载。例如，当你使用了 `spring-boot-starter-web` ，会自动加入如下依赖：[![`spring-boot-starter-web` 的 pom 文件](http://static2.iocoder.cn/images/Spring/2018-12-26/01.png)](http://static2.iocoder.cn/images/Spring/2018-12-26/01.png)`spring-boot-starter-web` 的 pom 文件
-
-- 4、[自动配置 Spring Bean](https://www.jianshu.com/p/ddb6e32e3faf)
-
-  Spring Boot 检测到特定类的存在，就会针对这个应用做一定的配置，进行自动配置 Bean ，这样会极大地减少我们要使用的配置。
-
-  当然，Spring Boot 只考虑大多数的开发场景，并不是所有的场景，若在实际开发中我们需要配置Bean ，而 Spring Boot 没有提供支持，则可以自定义自动配置进行解决。
-
-- 5、[准生产的应用监控](https://blog.csdn.net/wangshuang1631/article/details/72810412)
-
-  Spring Boot 提供基于 HTTP、JMX、SSH 对运行时的项目进行监控。
-
-- 6、无代码生成和 XML 配置
-
-  Spring Boot 没有引入任何形式的代码生成，它是使用的 Spring 4.0 的条件 `@Condition` 注解以实现根据条件进行配置。同时使用了 Maven /Gradle 的**依赖传递解析机制**来实现 Spring 应用里面的自动配置。
-
-  > 第 6 点是第 3 点的补充。
-
-## Spring Boot 有什么优缺点？
-
-> 艿艿：任何技术栈，有优点必有缺点，没有银弹。
->
-> 另外，这个问题的回答，我们是基于 [《Spring Boot浅谈(是什么/能干什么/优点和不足)》](https://blog.csdn.net/fly_zhyu/article/details/76407830) 整理，所以胖友主要看下这篇文章。
-
-**Spring Boot 的优点**
-
-> 艿艿：优点和 [「Spring Boot 提供了哪些核心功能？」](http://svip.iocoder.cn/Spring-Boot/Interview/#) 问题的答案，是比较重叠的。
-
-- 1、使【编码】变简单。
-- 2、使【配置】变简单。
-- 3、使【部署】变简单。
-- 4、使【监控】变简单。
-
-**Spring Boot 的缺点**
-
-> 艿艿：如下的缺点，基于 [《Spring Boot浅谈(是什么/能干什么/优点和不足)》](https://blog.csdn.net/fly_zhyu/article/details/76407830)，考虑的出发点是把 Spring Boot 作为微服务的框架的选型的角度进行考虑。
-
-- 1、没有提供相应的【服务发现和注册】的配套功能。
-
-  > 艿艿：当然，实际上 Spring Boot 本身是不需要提供这样的功能。服务发现和注册的功能，是在 Spring Cloud 中进行提供。
-
-- 2、自身的 acturator 所提供的【监控功能】，也需要与现有的监控对接。
-
-- 3、没有配套的【安全管控】方案。
-
-  > 艿艿：关于这一点，艿艿也有点迷糊，Spring Security 是可以比较方便的集成到 Spring Boot 中，所以不晓得这里的【安全管控】的定义是什么。所以这一点，面试的时候回答，可以暂时先省略。
-
-- 4、对于 REST 的落地，还需要自行结合实际进行 URI 的规范化工作
-
-  > 艿艿：这个严格来说，不算缺点。本身，是规范的范畴。
-
-所以，上面的缺点，严格来说可能不太适合在面试中回答。艿艿认为，Spring Boot 的缺点主要是，因为自动配置 Spring Bean 的功能，我们可能无法知道，哪些 Bean 被进行创建了。这个时候，如果我们想要自定义一些 Bean ，可能存在冲突，或者不知道实际注入的情况。
+​	1. 为满足快速开发的，进一步隐藏是细节。
 
 ## Spring Boot、Spring MVC 和 Spring 有什么区别？
 
-Spring 的完整名字，应该是 Spring Framework 。它提供了多个模块，Spring IoC、Spring AOP、Spring MVC 等等。所以，Spring MVC 是 Spring Framework 众多模块中的一个。
+Spring 的完整名字，应该是 Spring Framework 。它提供了多个模块，Spring IoC、Spring AOP、Spring MVC 等等。所以，**Spring MVC 是 Spring Framework** 众多模块中的一个。
 
-而 Spring Boot 是构造在 Spring Framework 之上的 Boot 启动器，旨在更容易的配置一个 Spring 项目。
-
-总结说来，如下图所示：[![Spring Boot 对比 Spring MVC 对比 Spring ？](http://static2.iocoder.cn/images/Spring/2018-12-26/02.png)](http://static2.iocoder.cn/images/Spring/2018-12-26/02.png)Spring Boot 对比 Spring MVC 对比 Spring ？
+而 Spring Boot 是构造在 Spring Framework 之上的 **Boot 启动器**，旨在更容易的配置一个 Spring 项目。
 
 ## Spring Boot 中的 Starter 是什么？
 
