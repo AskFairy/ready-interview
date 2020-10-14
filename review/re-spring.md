@@ -506,74 +506,21 @@ Spring AOP 中的动态代理主要有两种方式，
 1. 定义责事务管理的接口PlatformTransactionManager
    - 返回的是 TransactionStatus 对象方法
    - 提交事务方法`#commit(TransactionStatus status)`
-   - 回滚事务方法
+   - 回滚事务方法`#rollback(TransactionStatus status)`、
+2. 基于**模板方法**，抽象子类AbstractPlatformTransactionManager
+   - #doCommit(TransactionStatus status)
+   - #doRollback(TransactionStatus status)
+3. 最后，不同的数据持久层框架，会有其对应的 `PlatformTransactionManager` 实现类
 
-② 然后，Spring 事PlatformTransactionManager` 务的管理，是通过 `org.springframework.transaction.PlatformTransactionManager` 进行管理，定义如下：
-
-```
-// PlatformTransactionManager.java
-
-public interface PlatformTransactionManager {
-
-    // 根据事务定义 TransactionDefinition ，获得 TransactionStatus 。 
-    TransactionStatus getTransaction(@Nullable TransactionDefinition definition) throws TransactionException;
-
-    // 根据情况，提交事务
-    void commit(TransactionStatus status) throws TransactionException;
-    
-    // 根据情况，回滚事务
-    void rollback(TransactionStatus status) throws TransactionException;
-    
-}
-```
-
-- PlatformTransactionManager 是负责事务管理的接口，一共有三个接口方法，分别负责事务的获得、提交、回滚。
-
-- `#getTransaction(TransactionDefinition definition)`方法，根据事务定义 TransactionDefinition ，获得 TransactionStatus 。
-  - 一般来说会跟当前线程进行绑定。如果不存在事务，则进行创建。
-  - 为什么返回的是 TransactionStatus 对象？在 TransactionStatus 中，不仅仅包含事务属性，还包含事务的其它信息，例如是否只读、是否为新创建的事务等等。😈 下面，也会详细解析 TransactionStatus 。
-- 事务 TransactionDefinition 是什么？😈 下面，也会详细解析 TransactionStatus 。
-  
-- `#commit(TransactionStatus status)`方法，根据 TransactionStatus 情况，提交事务。
-  - 为什么根据 TransactionStatus 情况，进行提交？例如说，带@Transactional注解的的 A 方法，会调用@Transactional注解的的 B 方法。
-
-- `#rollback(TransactionStatus status)`方法，根据 TransactionStatus 情况，回滚事务。
-  - 为什么根据 TransactionStatus 情况，进行回滚？原因同上。
-
-③ 再之后，PlatformTransactionManager 有**抽象子**类 `org.springframework.transaction.support.AbstractPlatformTransactionManager` ，基于 [模板方法模式](https://blog.csdn.net/carson_ho/article/details/54910518) ，实现事务整体逻辑的骨架，而抽象 `#doCommit(DefaultTransactionStatus status)`、`#doRollback(DefaultTransactionStatus status)` 等等方法，交由子类类来实现。
-
-> 前方高能，即将进入关键的 ④ 步骤。
-
-④ 最后，不同的数据持久层框架，会有其对应的 `PlatformTransactionManager` 实现类，如下图所示：[![事务的特性](http://static2.iocoder.cn/images/Spring/2018-12-24/07.png)](http://static2.iocoder.cn/images/Spring/2018-12-24/07.png)事务的特性
-
-- 所有的实现类，都基于 AbstractPlatformTransactionManager 这个骨架类。
-- HibernateTransactionManager ，和 Hibernate5 的事务管理做集成。
-- DataSourceTransactionManager ，和 JDBC 的事务管理做集成。所以，它也适用于 MyBatis、Spring JDBC 等等。
-- JpaTransactionManager ，和 JPA 的事务管理做集成。
-
-- [《精尽 Spring 源码分析 —— Transaction 源码简单导读》](http://svip.iocoder.cn/categories/Spring/)
-- [《精尽 MyBatis 源码分析 —— 事务模块》](http://svip.iocoder.cn/MyBatis/transaction-package/)
-- [《精尽 MyBatis 源码解析 —— Spring 集成（四）之事务》](http://svip.iocoder.cn/MyBatis/Spring-Integration-4/)
+[![事务的特性](http://static2.iocoder.cn/images/Spring/2018-12-24/07.png)](http://static2.iocoder.cn/images/Spring/2018-12-24/07.png)http://svip.iocoder.cn/MyBatis/Spring-Integration-4/)
 
 ## 为什么在 Spring 事务中不能切换数据源？
 
-做过 Spring 多数据源的胖友，都会有个惨痛的经历，为什么在开启事务的 Service 层的方法中，无法切换数据源呢？因为，在 Spring 的事务管理中，**所使用的数据库连接会和当前线程所绑定**，即使我们设置了另外一个数据源，使用的还是当前的数据源连接。
+因为，在 Spring 的事务管理中，**所使用的数据库连接会和当前线程所绑定**，即使我们设置了另外一个数据源，使用的还是当前的数据源连接。
 
 ## @Transactional 注解有哪些属性？如何使用？
 
-`@Transactional` 注解的**属性**如下：
-
-| 属性                   | 类型                               | 描述                                       |
-| :--------------------- | :--------------------------------- | :----------------------------------------- |
-| value                  | String                             | 可选的限定描述符，**指定使用的事务管理器** |
-| propagation            | enum: Propagation                  | 可选的事务**传播行为**设置                 |
-| isolation              | enum: Isolation                    | 可选的事务**隔离级别**设置                 |
-| readOnly               | boolean                            | **读写或只读**事务，默认**读写**           |
-| timeout                | int (in seconds granularity)       | **事务超时时间**设置                       |
-| rollbackFor            | Class对象数组，必须继承自Throwable | **导致事务回滚的异常类数组**               |
-| rollbackForClassName   | 类名数组，必须继承自Throwable      | 导致事务回滚的异常类名字数组               |
-| noRollbackFor          | Class对象数组，必须继承自Throwable | 不会导致事务回滚的异常类数组               |
-| noRollbackForClassName | 类名数组，必须继承自Throwable      | 不会导致事务回滚的异常类名字数组           |
+`@Transactional` 注解的**属性**如下：事务管理器，**传播行为**,**隔离级别**,**读写或只读**事务，默认**读写**,**事务超时时间**设置,导致/不导致回滚数组等
 
 - 一般情况下，我们直接使用 `@Transactional` 的**所有属性默认值**即可。
 
@@ -584,55 +531,18 @@ public interface PlatformTransactionManager {
 
 ## 什么是事务的隔离级别？分成哪些隔离级别？
 
-关于这个问题，涉及的内容会比较多，胖友直接看如下两篇文章：
-
-- [《数据库四大特性以及事务隔离级别》](https://zhuanlan.zhihu.com/p/25419593)
-- [《五分钟搞清楚 MySQL 事务隔离级别》](https://www.jianshu.com/p/4e3edbedb9a8)
-
-不同数据库对四个隔离级别的支持和实现略有不同。因为我们目前互联网主要使用 MySQL 为主，所以至少要搞懂 MySQL 对隔离级别的支持和实现情况。
-
-在 TransactionDefinition 接口中，定义了“**四种**”的隔离级别枚举。代码如下：
-
-```java
-// TransactionDefinition.java
-
-/**
  * 【Spring 独有】使用后端数据库默认的隔离级别
- *
  * MySQL 默认采用的 REPEATABLE_READ隔离级别
  * Oracle 默认采用的 READ_COMMITTED隔离级别
- */
-int ISOLATION_DEFAULT = -1;
-
-/**
- * 最低的隔离级别，允许读取尚未提交的数据变更，可能会导致脏读、幻读或不可重复读
- */
-int ISOLATION_READ_UNCOMMITTED = Connection.TRANSACTION_READ_UNCOMMITTED;
-
-/**
- * 允许读取并发事务已经提交的数据，可以阻止脏读，但是幻读或不可重复读仍有可能发生
- */
-int ISOLATION_READ_COMMITTED = Connection.TRANSACTION_READ_COMMITTED;
-/**
- * 对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，可以阻止脏读和不可重复读，但幻读仍有可能发生。
- */
-int ISOLATION_REPEATABLE_READ = Connection.TRANSACTION_REPEATABLE_READ;
-/**
- * 最高的隔离级别，完全服从ACID的隔离级别。所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，该级别可以防止脏读、不可重复读以及幻读。
- *
- * 但是这将严重影响程序的性能。通常情况下也不会用到该级别。
- */
-int ISOLATION_SERIALIZABLE = Connection.TRANSACTION_SERIALIZABLE;
-```
 
 ## 什么是事务的传播级别？分成哪些传播级别？
 
 事务的**传播行为**，指的是**当前带有事务配置的方法，需要怎么处理事务**。
 
-- 有一点需要注意，事务的传播级别，并不是数据库事务规范中的名词，**而是 Spring 自身所定义的**。*通过事务的传播级别，Spring 才知道如何处理事务，是创建一个新事务呢，还是继续使用当前的事务*。
+- 。*通过事务的传播级别，Spring 才知道如何处理事务，是创建一个新事务呢，还是继续使用当前的事务*。
 
 
-在 TransactionDefinition 接口中，定义了**三类七种**传播级别。代码如下：
+在 TransactionDefinition 接口中，定义了**三类七种**传播级别0-6。代码如下：
 
 支持当前事务: 存在继续用，不存在创建新的、非事物、抛异常
 
