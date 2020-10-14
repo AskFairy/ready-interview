@@ -1247,7 +1247,7 @@ Spring Cloud的 组件相当繁杂，拥有诸多子项目。如下脑图所示�
 - [`spring-cloud-alibaba-nacos-discovery`](https://github.com/spring-cloud-incubator/spring-cloud-alibaba/tree/master/spring-cloud-alibaba-nacos-discovery) ，基于 Nacos 实现。
 - [`spring-cloud-zookeeper-discovery`](https://github.com/spring-cloud/spring-cloud-zookeeper/tree/master/spring-cloud-zookeeper-discovery) ，基于 Zookeeper 实现。
 
-以上的实现，都是基于 [`spring-cloud-commons`](https://github.com/spring-cloud/spring-cloud-commons) 的 [`discovery`](https://github.com/spring-cloud/spring-cloud-commons/blob/master/spring-cloud-commons/src/main/java/org/springframework/cloud/client/discovery/) 的 [DiscoveryClient](https://github.com/spring-cloud/spring-cloud-commons/blob/master/spring-cloud-commons/src/main/java/org/springframework/cloud/client/discovery/DiscoveryClient.java) 接口，实现统一的客户端的注册发现。
+以上的实现，都是基于`spring-cloud-commons`的 [DiscoveryClient](https://github.com/spring-cloud/spring-cloud-commons/blob/master/spring-cloud-commons/src/main/java/org/springframework/cloud/client/discovery/DiscoveryClient.java) 接口，实现**统一的客户端的注册发现**。
 
 ## 为什么要使用服务发现？
 
@@ -1255,10 +1255,10 @@ Spring Cloud的 组件相当繁杂，拥有诸多子项目。如下脑图所示�
 
 当然，实际情况下，会分成两种注册中心的发现模式：
 
-1. 客户端发现模式
-2. 服务端发现模式
+1. 客户端发现模式：使用客户端服务发现的系统中，**客户端查询服务注册表**，选择可用的服务实例，然后发出请求。
+2. 服务端发现模式：在使用服务端发现的系统中，客户端通过**路由转发请求**，路由器查询服务注册表并转发请求到可用的实例。
 
-在 Spring Cloud 中，我们使用前者，即客户端发现模式。
+**在 Spring Cloud 中，我们使用前者，即客户端发现模式**。
 
 详细的内容，可以看看 [《为什么要使用服务发现》](https://blog.csdn.net/u013035373/article/details/79414529) 。
 
@@ -1269,20 +1269,14 @@ Spring Cloud的 组件相当繁杂，拥有诸多子项目。如下脑图所示�
 - 作用：实现服务治理（服务注册与发现）
 - 简介：Spring Cloud Eureka是Spring Cloud Netflix项目下的服务治理模块。
 - 由两个组件组成：Eureka 服务端和 Eureka 客户端。
-  - Eureka 服务端，用作服务注册中心，支持集群部署。
-  - Eureka 客户端，是一个 Java 客户端，用来处理服务注册与发现。
+  - Eureka 服务端，用作服务注册中心，支持**集群部署**。
+  - Eureka 客户端，是一个 **Java 客户端，用来处理服务注册与发现**。
 
-在应用启动时，Eureka 客户端向服务端注册自己的服务信息，同时将服务端的服务信息缓存到本地。客户端会和服务端周期性的进行心跳交互，以更新服务租约和服务信息。
-
-Eureka 原理，整体如下图：[![Eureka 原理](http://static2.iocoder.cn/80c74f1d7cb9fc2a416e7b61a055d778)](http://static2.iocoder.cn/80c74f1d7cb9fc2a416e7b61a055d778)Eureka 原理
-
-关于 Eureka 的源码解析，可以看看艿艿写的 [《Eureka 源码解析系列》](http://www.iocoder.cn/categories/Eureka/) 。
+在应用启动时，Eureka 客户端向服务端注册自己的服务信息，同时将服务端的服务信息缓存到本地。客户端会和服务端周期性的进行**心跳交互**，以更新服务租约和服务信息。
 
 ### Eureka 如何实现集群？
 
-[《配置 Eureka Server 集群》](https://www.jianshu.com/p/5d5b2cf7d476)
-
-此处，也很容易引申出一个问题，为什么 Eureka 被设计成 AP 的系统，答案可以看看 [《为什么不应该使用 ZooKeeper 做服务发现》](http://dockone.io/article/78) 。
+Eureka 做到了CAP定理（C-数据一致性；A-服务可用性；P-服务对网络分区故障的容错性） 中 的，Eureka 被设计成 **AP** 的系统。**高可用**。
 
 ### 聊聊 Eureka 缓存机制？
 
