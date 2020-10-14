@@ -1116,207 +1116,28 @@ Spring Boot 目前支持 **2** 种读取配置：
 1. `@Value` 注解
 2. `@ConfigurationProperties` 注解，读取配置到类上。
 
-## 使用 Spring Boot 后，项目结构是怎么样的呢？
-
-我们先来说说项目的分层。一般来说，主流的有两种方式：
-
-- 方式一，`controller`、`service`、`dao` 三个包，每个包下面添加相应的 XXXController、YYYService、ZZZDAO 。
-- 方式二，按照业务模块分包，每个包里面放 Controller、Service、DAO 类。例如，业务模块分成 `user`、`order`、`item` 等等包，在 `user` 包里放 UserController、UserService、UserDAO 类。
-
-那么，使用 Spring Boot 的项目怎么分层呢？艿艿自己的想法
-
-- 现在项目都会进行服务化分拆，每个项目不会特别复杂，所以建议使用【方式一】。
-- 以前的项目，大多是单体的项目，动则项目几万到几十万的代码，当时多采用【方式二】。
-
-下面是一个简单的 Spring Boot 项目的 Demo ，如下所示：[![Spring Boot 项目的 Demo](http://static2.iocoder.cn/images/Spring/2018-12-26/05.png)](http://static2.iocoder.cn/images/Spring/2018-12-26/05.png)Spring Boot 项目的 Demo
-
 ## 如何在 Spring Boot 启动的时候运行一些特殊的代码？
 
-如果需要在 SpringApplication 启动后执行一些特殊的代码，你可以实现 ApplicationRunner 或 CommandLineRunner 接口，这两个接口工作方式相同，都只提供单一的 run 方法，该方法仅在 `SpringApplication#run(...)` 方法**完成之前调用**。
-
-一般情况下，我们不太会使用该功能。如果真需要，胖友可以详细看看 [《使用 ApplicationRunner 或 CommandLineRunner 》](https://qbgbook.gitbooks.io/spring-boot-reference-guide-zh/IV. Spring Boot features/23.8 Using the ApplicationRunner or CommandLineRunner.html) 。
+如果需要在 SpringApplication 启动后执行一些特殊的代码，你可以**实现接口**，这两个接口工作方式相同，都只提供单一的 run 方法，该方法仅在 `SpringApplication#run(...)` 方法**完成之前调用**。
 
 ## Spring Boot 2.X 有什么新特性？
 
 1. 起步 JDK 8 和支持 JDK 9
 2. 第三方库的升级
-3. Reactive Spring
-4. HTTP/2 支持
-5. 配置属性的绑定
-6. Gradle 插件
-7. Actuator 改进
-8. 数据支持的改进
-9. Web 的改进
-10. 支持 Quartz 自动配置
-11. 测试的改进
-12. 其它…
-
-详细的说明，可以看看 [《Spring Boot 2.0系列文章(二)：Spring Boot 2.0 新特性详解》](http://www.54tianzhisheng.cn/2018/03/06/SpringBoot2-new-features) 。
+3. HTTP/2 支持
 
 # 整合篇
-
-## 如何将内嵌服务器换成 Jetty ？
-
-默认情况下，`spring-boot-starter-web` 模块使用 Tomcat 作为内嵌的服务器。所以需要去除对 `spring-boot-starter-tomcat` 模块的引用，添加 `spring-boot-starter-jetty` 模块的引用。代码如下：
-
-```
-<dependency>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-web</artifactId>
-    <exclusions>
-        <exclusion> <!-- 去除 Tomcat -->
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-tomcat</artifactId>
-        </exclusion>
-    </exclusions>
-</dependency>
-<dependency> <!-- 引入 Jetty -->
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-jetty</artifactId>
-</dependency>
-```
-
-## Spring Boot 中的监视器 Actuator 是什么？
-
-`spring-boot-actuator` 提供 Spring Boot 的监视器功能，可帮助我们访问生产环境中正在运行的应用程序的**当前状态**。
-
-- 关于 Spring Boot Actuator 的教程，可以看看 [《Spring Boot Actuator 使用》](https://www.jianshu.com/p/af9738634a21) 。
-- 上述教程是基于 Spring Boot 1.X 的版本，如果胖友使用 Spring Boot 2.X 的版本，你将会发现 `/beans` 等 Endpoint 是不存在的，参考 [《Spring boot 2 - Actuator endpoint, where is /beans endpoint》](https://stackoverflow.com/questions/49174700/spring-boot-2-actuator-endpoint-where-is-beans-endpoint) 问题来解决。
-
-**安全性**
-
-Spring Boot 2.X 默认情况下，`spring-boot-actuator` 产生的 Endpoint 是没有安全保护的，但是 Actuator 可能暴露敏感信息。
-
-所以一般的做法是，引入 `spring-boot-start-security` 依赖，使用 Spring Security 对它们进行安全保护。
 
 ## 如何集成 Spring Boot 和 Spring MVC ？
 
 1. 引入 `spring-boot-starter-web` 的依赖。
-
 2. 实现 WebMvcConfigurer 接口，可添加自定义的 Spring MVC 配置。
-
-   > 因为 Spring Boot 2 基于 JDK 8 的版本，而 JDK 8 提供 `default` 方法，所以 Spring Boot 2 废弃了 WebMvcConfigurerAdapter 适配类，直接使用 WebMvcConfigurer 即可。
-
-   ```
-   // WebMvcConfigurer.java
-   public interface WebMvcConfigurer {
-   
-       /** 配置路径匹配器 **/
-       default void configurePathMatch(PathMatchConfigurer configurer) {}
-       
-       /** 配置内容裁决的一些选项 **/
-       default void configureContentNegotiation(ContentNegotiationConfigurer configurer) { }
-   
-       /** 异步相关的配置 **/
-       default void configureAsyncSupport(AsyncSupportConfigurer configurer) { }
-   
-       default void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) { }
-   
-       default void addFormatters(FormatterRegistry registry) {
-       }
-   
-       /** 添加拦截器 **/
-       default void addInterceptors(InterceptorRegistry registry) { }
-   
-       /** 静态资源处理 **/
-       default void addResourceHandlers(ResourceHandlerRegistry registry) { }
-   
-       /** 解决跨域问题 **/
-       default void addCorsMappings(CorsRegistry registry) { }
-   
-       default void addViewControllers(ViewControllerRegistry registry) { }
-   
-       /** 配置视图解析器 **/
-       default void configureViewResolvers(ViewResolverRegistry registry) { }
-   
-       /** 添加参数解析器 **/
-       default void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-       }
-   
-       /** 添加返回值处理器 **/
-       default void addReturnValueHandlers(List<HandlerMethodReturnValueHandler> handlers) { }
-   
-       /** 这里配置视图解析器 **/
-       default void configureMessageConverters(List<HttpMessageConverter<?>> converters) { }
-   
-       /** 配置消息转换器 **/
-       default void extendMessageConverters(List<HttpMessageConverter<?>> converters) { }
-   
-      /** 配置异常处理器 **/
-       default void configureHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) { }
-   
-       default void extendHandlerExceptionResolvers(List<HandlerExceptionResolver> resolvers) { }
-   
-       @Nullable
-       default Validator getValidator() { return null; }
-   
-       @Nullable
-       default MessageCodesResolver getMessageCodesResolver() {  return null; }
-   
-   }
-   ```
-
-------
-
-在使用 Spring MVC 时，我们一般会做如下几件事情：
 
 1. 实现自己项目需要的拦截器，并在 WebMvcConfigurer 实现类中配置。可参见 [MVCConfiguration](https://github.com/YunaiV/oceans/blob/2a2d3746905f1349e260e88049e7e28346c7648f/bff/webapp-bff/src/main/java/cn/iocoder/oceans/webapp/bff/config/MVCConfiguration.java) 类。
 2. 配置 `@ControllerAdvice` + `@ExceptionHandler` 注解，实现全局异常处理。可参见 [GlobalExceptionHandler](https://github.com/YunaiV/oceans/blob/2a2d3746905f1349e260e88049e7e28346c7648f/bff/webapp-bff/src/main/java/cn/iocoder/oceans/webapp/bff/config/GlobalExceptionHandler.java) 类。
 3. 配置 `@ControllerAdvice` ，实现 ResponseBodyAdvice 接口，实现全局统一返回。可参见 [GlobalResponseBodyAdvice](https://github.com/YunaiV/oceans/blob/2a2d3746905f1349e260e88049e7e28346c7648f/bff/webapp-bff/src/main/java/cn/iocoder/oceans/webapp/bff/config/GlobalResponseBodyAdvice.java) 。
 
-当然，有一点需要注意，WebMvcConfigurer、ResponseBodyAdvice、`@ControllerAdvice`、`@ExceptionHandler` 接口，都是 Spring MVC 框架自身已经有的东西。
-
 - `spring-boot-starter-web` 的依赖，帮我们解决的是 Spring MVC 的依赖以及相关的 Tomcat 等组件。
-
-## 如何集成 Spring Boot 和 Spring Security ？
-
-目前比较主流的安全框架有两个：
-
-1. Spring Security
-2. Apache Shiro
-
-对于任何项目来说，安全认证总是少不了，同样适用于使用 Spring Boot 的项目。相对来说，Spring Security 现在会比 Apache Shiro 更流行。
-
-Spring Boot 和 Spring Security 的配置方式比较简单：
-
-1. 引入 `spring-boot-starter-security` 的依赖。
-2. 继承 WebSecurityConfigurerAdapter ，添加**自定义**的安全配置。
-
-当然，每个项目的安全配置是不同的，需要胖友自己选择。更多详细的使用，建议认真阅读如下文章：
-
-- [《Spring Boot中 使用 Spring Security 进行安全控制》](http://blog.didispace.com/springbootsecurity/) ，快速上手。
-- [《Spring Security 实现原理与源码解析系统 —— 精品合集》](http://www.iocoder.cn/Spring-Security/good-collection/) ，深入源码。
-
-另外，安全是一个很大的话题，感兴趣的胖友，可以看看 [《Spring Boot 十种安全措施》](https://www.jdon.com/49653) 一文。
-
-## 如何集成 Spring Boot 和 Spring Security OAuth2 ？
-
-参见 [《Spring Security OAuth2 入门》](http://www.iocoder.cn/Spring-Security/OAuth2-learning/) 文章，内容有点多。
-
-## 如何集成 Spring Boot 和 JPA ？
-
-1. 引入 `spring-boot-starter-data-jpa` 的依赖。
-2. 在 application 配置文件中，加入 JPA 相关的少量配置。当然，数据库的配置也要添加进去。
-3. 具体编码。
-
-详细的使用，胖友可以参考：
-
-- [《一起来学 SpringBoot 2.x | 第六篇：整合 Spring Data JPA》](http://www.iocoder.cn/Spring-Boot/battcn/v2-orm-jpa/)
-
-有两点需要注意：
-
-- Spring Boot 2 默认使用的数据库连接池是 [HikariCP](https://github.com/brettwooldridge/HikariCP) ，目前最好的性能的数据库连接池的实现。
-- `spring-boot-starter-data-jpa` 的依赖，使用的默认 JPA 实现是 Hibernate 5.X 。
-
-## 如何集成 Spring Boot 和 MyBatis ？
-
-1. 引入 `mybatis-spring-boot-starter` 的依赖。
-2. 在 application 配置文件中，加入 MyBatis 相关的少量配置。当然，数据库的配置也要添加进去。
-3. 具体编码。
-
-详细的使用，胖友可以参考：
-
-- [《一起来学 SpringBoot 2.x | 第七篇：整合 Mybatis》](http://www.iocoder.cn/Spring-Boot/battcn/v2-orm-mybatis/)
 
 ## 如何集成 Spring Boot 和 RabbitMQ ？
 
